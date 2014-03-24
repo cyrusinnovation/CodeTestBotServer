@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cyrusinnovation/CodeTestBotServer.svg?branch=master)](https://travis-ci.org/cyrusinnovation/CodeTestBotServer)
+{<img src="https://travis-ci.org/cyrusinnovation/CodeTestBotServer.svg?branch=travis" alt="Build Status" />}[https://travis-ci.org/cyrusinnovation/CodeTestBotServer]
 
 == README
 
