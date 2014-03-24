@@ -56,9 +56,6 @@ group :development, :test do
   gem 'rspec-rails',  '~> 3.0.0.beta2'
   gem 'guard',        '~> 2.6.0'
   gem 'guard-rspec',  '~> 4.2.7'
-  gem 'guard-spork',  '~> 1.5.1'
-  gem 'spork-rails',  '~> 4.0.0'
-  gem 'childprocess', '~> 0.5.1'
 end
 
 group :test do

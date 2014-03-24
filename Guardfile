@@ -1,18 +1,4 @@
-guard 'spork' do
-  watch 'config/application.rb'
-  watch 'config/environment.rb'
-  watch %r{^config/environments/.*\.rb$}
-  watch %r{^config/initializers/.*\.rb$}
-  watch 'config/routes.rb'
-  watch 'Gemfile.lock'
-  watch 'spec/factories.rb'
-  watch 'spec/spec_helper.rb'
-  watch %r{^spec/support/.*\.rb$}
-  watch 'config/locales/.*'
-end
-
-
-guard :rspec, :all_after_pass => false, :cli => '--drb'  do
+guard :rspec, :all_after_pass => false do
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { "spec" }
@@ -32,4 +18,3 @@ guard :rspec, :all_after_pass => false, :cli => '--drb'  do
   watch(%r{^spec/acceptance/(.+)\.feature$})
   watch(%r{^spec/acceptance/steps/(.+)_steps\.rb$})   { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'spec/acceptance' }
 end
-
