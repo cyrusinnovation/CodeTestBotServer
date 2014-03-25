@@ -52,5 +52,12 @@ gem 'rails-api'
 gem 'rails_12factor'
 
 group :development, :test do
-  gem 'rspec-rails', '~> 3.0.0.beta'
+  gem 'rspec',        '~> 3.0.0.beta2'
+  gem 'rspec-rails',  '~> 3.0.0.beta2'
+  gem 'guard',        '~> 2.6.0'
+  gem 'guard-rspec',  '~> 4.2.7'
+end
+
+group :test do
+  gem 'growl', '1.0.3'
 end
