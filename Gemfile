@@ -31,6 +31,10 @@ gem 'jbuilder', '~> 1.2'
 gem 'omniauth-openid'
 gem 'ruby-openid-apps-discovery'
 
+# Paperclip and AWS sdk for uploading zip files to S3
+gem 'paperclip',  '~> 3.5.1'
+gem 'aws-sdk',    '~> 1.8.5'
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
