@@ -22,11 +22,12 @@ describe SessionsController do
     it 'returns success and auth_uri if request ok' do
       ENV['BASE_URI'] = 'http://example.com'
       redirect_uri = 'http://example.com/auth/complete'
-      encoded_uri = URI.encode_www_form_component redirect_uri
+      params = {redirect_uri: redirect_uri}
+      state = URI.encode_www_form(params)
 
-      get :new, {redirect_uri: redirect_uri}
+      get :new, params
       expect(response.status).to eq(200)
-      expect(response.body).to eq({auth_uri: "http://example.com/auth/google?state=#{encoded_uri}"}.to_json)
+      expect(response.body).to eq({auth_uri: "http://example.com/auth/google?state=#{state}"}.to_json)
     end
 
     # TODO: Add CSRF token to state

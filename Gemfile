@@ -63,5 +63,5 @@ end
 group :test do
   gem 'growl', '1.0.3'
   gem 'simplecov', '~> 0.7.1'
-  gem "codeclimate-test-reporter", require: nil
+  gem 'codeclimate-test-reporter', require: nil
 end
