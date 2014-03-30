@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby '2.0.0'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.4'
 
@@ -28,8 +30,7 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'
 
 # OpenID/Google Apps Auth
-gem 'omniauth-openid'
-gem 'ruby-openid-apps-discovery'
+gem 'omniauth-google-oauth2'
 
 # Paperclip and AWS sdk for uploading zip files to S3
 gem 'paperclip',  '~> 3.5.1'
@@ -54,10 +55,11 @@ end
 
 gem 'rails-api'
 gem 'rails_12factor'
+gem 'rack-cors'
 
 group :development, :test do
-  gem 'rspec',        '~> 3.0.0.beta2'
-  gem 'rspec-rails',  '~> 3.0.0.beta2'
+  gem 'rspec',        '~> 2.14.1'
+  gem 'rspec-rails',  '~> 2.14.1'
   gem 'guard',        '~> 2.6.0'
   gem 'guard-rspec',  '~> 4.2.7'
 end
@@ -65,5 +67,5 @@ end
 group :test do
   gem 'growl', '1.0.3'
   gem 'simplecov', '~> 0.7.1'
-  gem "codeclimate-test-reporter", require: nil
+  gem 'codeclimate-test-reporter', require: nil
 end

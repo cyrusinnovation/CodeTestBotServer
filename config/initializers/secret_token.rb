@@ -10,3 +10,7 @@
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
 CodeTestBotServer::Application.config.secret_key_base = ENV['SECRET_TOKEN']
+
+if %w(test development).include? Rails.env
+  CodeTestBotServer::Application.config.secret_key_base ||= 'fake_token'
+end

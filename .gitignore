@@ -17,3 +17,5 @@
 /coverage
 
 .idea/workspace.xml
+.idea/dataSources.xml
+.idea/dictionaries/

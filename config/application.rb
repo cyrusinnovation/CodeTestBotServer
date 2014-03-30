@@ -22,5 +22,12 @@ module CodeTestBotServer
     config.middleware.use "ActionDispatch::Cookies"
     config.middleware.use "ActionDispatch::Session::CookieStore"
     config.middleware.use "ActionDispatch::Flash"
+
+    config.middleware.use Rack::Cors do
+      allow do
+        origins 'localhost:3001'
+        resource '*', :headers => :any, :methods => [:get, :post, :delete, :options]
+      end
+    end
   end
 end
