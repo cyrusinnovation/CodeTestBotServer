@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
       return
     end
 
-    auth_uri = URI::join(ENV['BASE_URI'], '/auth/google')
+    auth_uri = URI::join(Figaro.env.base_uri, '/auth/google')
     auth_uri += "?state=#{URI::encode_www_form({ redirect_uri: redirect_uri })}"
 
     render :json => { auth_uri: auth_uri.to_s }

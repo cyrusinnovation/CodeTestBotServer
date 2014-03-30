@@ -57,6 +57,8 @@ gem 'rails-api'
 gem 'rails_12factor'
 gem 'rack-cors'
 
+gem 'figaro'
+
 group :development, :test do
   gem 'rspec',        '~> 2.14.1'
   gem 'rspec-rails',  '~> 2.14.1'

@@ -20,7 +20,10 @@ describe SessionsController do
     end
 
     it 'returns success and auth_uri if request ok' do
-      ENV['BASE_URI'] = 'http://example.com'
+      fake_env = double(:fake_env)
+      allow(Figaro).to receive(:env).and_return fake_env
+
+      allow(fake_env).to receive(:base_uri).and_return 'http://example.com'
       redirect_uri = 'http://example.com/auth/complete'
       params = {redirect_uri: redirect_uri}
       state = URI.encode_www_form(params)

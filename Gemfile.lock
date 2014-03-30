@@ -57,6 +57,9 @@ GEM
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.3)
+    figaro (0.7.0)
+      bundler (~> 1.0)
+      rails (>= 3, < 5)
     formatador (0.2.4)
     growl (1.0.3)
     guard (2.6.0)
@@ -220,6 +223,7 @@ DEPENDENCIES
   aws-sdk (~> 1.8.5)
   codeclimate-test-reporter
   coffee-rails (~> 4.0.0)
+  figaro
   growl (= 1.0.3)
   guard (~> 2.6.0)
   guard-rspec (~> 4.2.7)
