@@ -3,6 +3,16 @@ require 'spec_helper'
 describe Submission do
   before do
     FakeWeb.allow_net_connect = false
+
+    @fake_env = double(:fake_env)
+    allow(@fake_env).to receive(:submissions_bucket).and_return('codetestbot-submissions-test')
+    allow(@fake_env).to receive(:aws_access_key_id).and_return('fake_key')
+    allow(@fake_env).to receive(:aws_secret_access_key).and_return('fake_secret')
+    allow(Figaro).to receive(:env).and_return(@fake_env)
+  end
+
+  after do
+    FakeWeb.allow_net_connect = true
   end
 
   it { should respond_to(:zipfile) }
