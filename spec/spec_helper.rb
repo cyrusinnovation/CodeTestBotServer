@@ -46,3 +46,10 @@ RSpec.configure do |config|
 
 end
 
+# Monkey patch to fix test errors
+module FakeWeb
+  class StubSocket
+    def read_timeout=(ignored)
+    end
+  end
+end
