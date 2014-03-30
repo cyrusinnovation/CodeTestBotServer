@@ -1,5 +1,7 @@
 {<img src="https://travis-ci.org/cyrusinnovation/CodeTestBotServer.svg?branch=travis" alt="Build Status" />}[https://travis-ci.org/cyrusinnovation/CodeTestBotServer]
 {<img src="https://codeclimate.com/github/cyrusinnovation/CodeTestBotServer.png" />}[https://codeclimate.com/github/cyrusinnovation/CodeTestBotServer]
+{<img src="https://coveralls.io/repos/cyrusinnovation/CodeTestBotServer/badge.png" alt="Coverage Status" />}[https://coveralls.io/r/cyrusinnovation/CodeTestBotServer]
+
 
 == README
 

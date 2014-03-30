@@ -67,6 +67,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'coveralls', require: false
   gem 'fakeweb', '~> 1.3'
   gem 'growl', '1.0.3'
   gem 'simplecov', '~> 0.7.1'
