@@ -17,6 +17,7 @@ describe Submission do
 
   it { should respond_to(:zipfile) }
   it { should respond_to(:email_text)}
+  it { should respond_to(:candidate)}
   
   it 'has zipfile attachments that can be added and removed' do
     FakeWeb.register_uri(:put, 'https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/test-codetest.zip', :body => '')
@@ -31,5 +32,12 @@ describe Submission do
 
     submission.zipfile.clear
     expect(submission.zipfile.url()).to eq "/zipfiles/original/missing.png" 
+  end
+
+  it 'belongs to a candidate' do
+    candidate = Candidate.create(name: 'Bob')
+    submission = Submission.create(candidate: candidate)
+
+    expect(Submission.find(submission.id).candidate_id).to eql(candidate.id)
   end
 end
