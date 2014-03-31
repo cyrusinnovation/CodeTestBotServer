@@ -6,7 +6,7 @@ class SubmissionsController < ApplicationController
   end
 
   def index
-
+    render :json => Submission.all
   end
 
   def show

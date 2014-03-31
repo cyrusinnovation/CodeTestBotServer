@@ -15,7 +15,28 @@ describe SubmissionsController do
     FakeWeb.allow_net_connect = true
   end
 
-  describe 'POST' do
+  describe :index do
+    before(:each) do
+
+    end
+
+    it 'returns an empty list when there are no submissions' do
+      get :index
+      expect(response.body).to have_json_size(0).at_path('submissions')
+    end
+
+    it 'returns all submissions as JSON' do
+      Submission.create({ email_text: 'test' })
+      expected = [{email_text: 'test', zipfile: '/zipfiles/original/missing.png'}].to_json
+
+      get :index
+      expect(response.body).to have_json_size(1).at_path('submissions')
+      expect(response.body).to be_json_eql(expected).at_path('submissions').excluding('id')
+    end
+
+  end
+
+  describe :create do
     before do
       @file = Tempfile.new('codetestbot-submission')
       allow(Base64FileDecoder).to receive(:decode_to_file).and_return(@file)

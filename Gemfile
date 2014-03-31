@@ -56,6 +56,7 @@ end
 gem 'rails-api'
 gem 'rails_12factor'
 gem 'rack-cors'
+gem 'active_model_serializers'
 
 gem 'figaro'
 
@@ -67,9 +68,10 @@ group :development, :test do
 end
 
 group :test do
+  gem 'codeclimate-test-reporter', require: nil
   gem 'coveralls', require: false
   gem 'fakeweb', '~> 1.3'
   gem 'growl', '1.0.3'
+  gem 'json_spec'
   gem 'simplecov', '~> 0.7.1'
-  gem 'codeclimate-test-reporter', require: nil
 end
