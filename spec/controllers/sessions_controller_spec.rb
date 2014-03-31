@@ -7,7 +7,7 @@ describe SessionsController do
       get :new
       expect(response.status).to eq(400)
 
-      expected_error = {error: 'Missing required parameter redirect_uri.'}
+      expected_error = {error: 'Missing required parameter: redirect_uri'}
       expect(response.body).to eq(expected_error.to_json)
     end
 

@@ -1,20 +1,23 @@
 class SessionsController < ApplicationController
+  include ParameterValidation
+  include URIValidation
+
   def new
-    unless params.include? 'redirect_uri'
-      render status: 400, :json => { error: 'Missing required parameter redirect_uri.' }
-      return
-    end
+    validate_parameters_present('redirect_uri')
 
     redirect_uri = URI::parse(params[:redirect_uri])
-
-    unless [URI::HTTP, URI::HTTPS].include? redirect_uri.class
-      render status: 400, :json => { error: 'Parameter redirect_uri must be a valid HTTP/HTTPS URI.' }
-      return
-    end
+    validate_protocol(redirect_uri)
 
     auth_uri = URI::join(Figaro.env.base_uri, '/auth/google')
     auth_uri += "?state=#{URI::encode_www_form({ redirect_uri: redirect_uri })}"
 
     render :json => { auth_uri: auth_uri.to_s }
+  end
+
+  private
+
+  def validate_protocol(uri)
+    message = 'Parameter redirect_uri must be a valid HTTP/HTTPS URI.'
+    raise HttpStatus::BadRequest.new message unless matches_protocol?(uri, :http, :https)
   end
 end
