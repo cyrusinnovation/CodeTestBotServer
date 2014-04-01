@@ -5,3 +5,5 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+levels = Level.create(['Junior', 'Mid', 'Senior', 'Tech Lead'].collect_concat {|l| {text: l}})

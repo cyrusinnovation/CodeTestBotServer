@@ -44,6 +44,7 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
+  config.before { Rails.application.load_seed }
 end
 
 # Monkey patch to fix test errors
