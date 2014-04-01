@@ -15,6 +15,6 @@ describe CandidatesController do
 
     get :index
 
-    expect(response.body).to have_json_size(1).at_path('candidates')
+    expect(response.body).to be_json_eql([{name:'Bob', email: 'bob@example.com'}].to_json).at_path('candidates')
   end
 end
