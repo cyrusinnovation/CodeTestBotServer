@@ -26,12 +26,12 @@ describe SubmissionsController do
     end
 
     it 'returns all submissions as JSON' do
-      Submission.create({ email_text: 'test' })
+      Submission.create({email_text: 'test'})
       expected = [{email_text: 'test', zipfile: '/zipfiles/original/missing.png'}].to_json
 
       get :index
-      expect(response.body).to have_json_size(1).at_path('submissions')
-      expect(response.body).to be_json_eql(expected).at_path('submissions').excluding('id')
+      expect(response.body).to be_json_eql(expected).at_path('submissions')
+      expect(response.body).to have_json_type(Integer).at_path('submissions/0/id')
     end
 
   end
