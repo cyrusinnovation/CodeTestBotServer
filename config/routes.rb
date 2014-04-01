@@ -1,4 +1,5 @@
 CodeTestBotServer::Application.routes.draw do
+  resources :candidates
   resources :sessions
   resources :submissions, except: [:new, :edit]
 
