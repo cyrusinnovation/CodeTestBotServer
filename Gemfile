@@ -40,7 +40,8 @@ group :development, :test do
 end
 
 group :development do
-  gem 'spring',   '~> 1.1.2'
+  gem 'spring',                '~> 1.1.2'
+  gem 'spring-commands-rspec', '~> 1.0.1'
 end
 
 group :test do
