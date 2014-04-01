@@ -7,3 +7,4 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 levels = Level.create(['Junior', 'Mid', 'Senior', 'Tech Lead'].collect_concat {|l| {text: l}})
+languages = Language.create([{name: 'Java'}, {name: 'Ruby'}])

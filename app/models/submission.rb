@@ -1,5 +1,6 @@
 class Submission < ActiveRecord::Base
   belongs_to :candidate
+  belongs_to :language
 
   has_attached_file :zipfile,
                     :storage => :s3,

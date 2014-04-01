@@ -40,4 +40,11 @@ describe Submission do
 
     expect(Submission.find(submission.id).candidate_id).to eql(candidate.id)
   end
+
+  it 'has a language' do
+    java = Language.find_by_name('Java')
+    Submission.create(language: java)
+
+    expect(Submission.first.language.name).to eql(java.name)
+  end
 end
