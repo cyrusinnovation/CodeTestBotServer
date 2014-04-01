@@ -40,7 +40,7 @@ group :development, :test do
 end
 
 group :development do
-
+  gem 'spring',   '~> 1.1.2'
 end
 
 group :test do
