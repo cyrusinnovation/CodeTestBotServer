@@ -71,4 +71,18 @@ describe SubmissionsController do
       expect(Submission.last.language.name).to eql(@language.name)
     end
   end
+
+  describe :show do
+    before(:each) do
+      @submission1 = Submission.create({email_text: 'first'})
+      @submission2 = Submission.create({email_text: 'second'})
+    end
+
+    it 'renders JSON for the specified submission' do
+      get :show, id: @submission2.id
+
+      expected = {email_text: 'second', zipfile: '/zipfiles/original/missing.png', candidate_id: nil, language_id: nil}
+      expect(response.body).to be_json_eql(expected.to_json).at_path('submission')
+    end
+  end
 end

@@ -17,6 +17,6 @@ class SubmissionsController < ApplicationController
   end
 
   def show
-
+    render :json => Submission.find(params[:id])
   end
 end
