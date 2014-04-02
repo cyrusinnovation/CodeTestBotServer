@@ -1,7 +1,8 @@
 class CandidatesController < ApplicationController
   def create
     candidate = params[:candidate]
-    Candidate.create(name: candidate[:name], email: candidate[:email])
+    level = Level.find(candidate[:level])
+    Candidate.create(name: candidate[:name], email: candidate[:email], level: level)
   end
 
   def index

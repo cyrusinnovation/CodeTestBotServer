@@ -41,6 +41,7 @@ describe SubmissionsController do
       @file = Tempfile.new('codetestbot-submission')
       allow(Base64FileDecoder).to receive(:decode_to_file).and_return(@file)
       FakeWeb.register_uri(:put, "https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/#{File.basename(@file)}", :body => '')
+      @language = Language.find_by_name('Java')
     end
 
     it 'saves the email text' do
@@ -58,5 +59,11 @@ describe SubmissionsController do
       expect(Submission.last.zipfile.url).to include File.basename(@file)
     end
 
+    it 'can set the level for a submission' do
+      post :create, {submission: {emailText: '', zipfile: 'header,====', language: @language.id}}
+      expect(response).to be_success
+      expect(Submission.count).to eql(1)
+      expect(Submission.last.language.name).to eql(@language.name)
+    end
   end
 end

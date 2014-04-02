@@ -1,8 +1,14 @@
 class SubmissionsController < ApplicationController
   def create
-    file = Base64FileDecoder.decode_to_file params['submission']['zipfile']
+    submission = params[:submission]
+    file = Base64FileDecoder.decode_to_file submission['zipfile']
 
-    Submission.create(email_text: params['submission']['emailText'], zipfile: file)
+    language = nil
+    if submission.include? :language
+      language = Language.find(submission[:language])
+    end
+
+    Submission.create(email_text: submission['emailText'], zipfile: file, language: language)
   end
 
   def index
