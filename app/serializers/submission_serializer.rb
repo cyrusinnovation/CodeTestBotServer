@@ -1,3 +1,6 @@
 class SubmissionSerializer < ActiveModel::Serializer
-  attributes :id, :email_text, :zipfile
+  embed :ids, include: true
+  attributes :id, :email_text, :zipfile, :created_at
+  has_one :language
+  has_one :candidate
 end

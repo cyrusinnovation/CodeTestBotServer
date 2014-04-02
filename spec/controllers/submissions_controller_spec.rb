@@ -25,13 +25,17 @@ describe SubmissionsController do
       expect(response.body).to have_json_size(0).at_path('submissions')
     end
 
-    it 'returns all submissions as JSON' do
-      Submission.create({email_text: 'test'})
-      expected = [{email_text: 'test', zipfile: '/zipfiles/original/missing.png'}].to_json
+    it 'returns all submissions as JSON with language/candidate in payload' do
+      candidate = Candidate.create({name: 'Bob'})
+      language = Language.find_by_name('Java')
+      Submission.create({email_text: 'test', language: language, candidate: candidate})
+      expected = [{email_text: 'test', zipfile: '/zipfiles/original/missing.png', language_id: language.id, candidate_id: candidate.id}].to_json
 
       get :index
       expect(response.body).to be_json_eql(expected).at_path('submissions')
       expect(response.body).to have_json_type(Integer).at_path('submissions/0/id')
+      expect(response.body).to be_json_eql([{name: language.name}].to_json).at_path('languages')
+      expect(response.body).to be_json_eql([{name: candidate.name, email: nil, level_id: nil}].to_json).at_path('candidates')
     end
 
   end
@@ -42,25 +46,26 @@ describe SubmissionsController do
       allow(Base64FileDecoder).to receive(:decode_to_file).and_return(@file)
       FakeWeb.register_uri(:put, "https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/#{File.basename(@file)}", :body => '')
       @language = Language.find_by_name('Java')
+      @candidate = Candidate.create({name: 'Bob'})
     end
 
     it 'saves the email text' do
       email_text = 'a new code test.'
-      post :create, {submission: {emailText: email_text, zipfile: 'header,===='}}
+      post :create, {submission: {email_text: email_text, zipfile: 'header,====', candidate_id: @candidate.id}}
       expect(response).to be_success
       expect(Submission.count).to eql(1)
       expect(Submission.last.email_text).to eq email_text
     end
 
     it 'can upload a zipfile' do
-      post :create, {submission: {emailText: '', zipfile: 'header,===='}}
+      post :create, {submission: {email_text: '', zipfile: 'header,====', candidate_id: @candidate.id}}
       expect(response).to be_success
       expect(Submission.count).to eql(1)
       expect(Submission.last.zipfile.url).to include File.basename(@file)
     end
 
     it 'can set the level for a submission' do
-      post :create, {submission: {emailText: '', zipfile: 'header,====', language: @language.id}}
+      post :create, {submission: {email_text: '', zipfile: 'header,====', candidate_id: @candidate.id, language_id: @language.id}}
       expect(response).to be_success
       expect(Submission.count).to eql(1)
       expect(Submission.last.language.name).to eql(@language.name)
