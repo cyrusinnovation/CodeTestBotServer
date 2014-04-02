@@ -1,6 +1,8 @@
 class Submission < ActiveRecord::Base
   belongs_to :candidate
   belongs_to :language
+  has_many :assessments
+  has_many :assessors, through: :assessments
 
   has_attached_file :zipfile,
                     :storage => :s3,

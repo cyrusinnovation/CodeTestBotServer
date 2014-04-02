@@ -47,4 +47,16 @@ describe Submission do
 
     expect(Submission.first.language.name).to eql(java.name)
   end
+
+  it 'has a list of assessments and assessors through assessments' do
+    java = Language.find_by_name('Java')
+    submission = Submission.create(language: java)
+    assessor = Assessor.create({name: 'Bob'})
+    assessment = Assessment.create({submission: submission, assessor: assessor, score: 1})
+
+    expect(submission.assessments.size).to eql(1)
+    expect(submission.assessors.size).to eql(1)
+    expect(submission.assessments.first).to eql(assessment)
+    expect(submission.assessors.first).to eql(assessor)
+  end
 end
