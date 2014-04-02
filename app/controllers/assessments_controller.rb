@@ -11,4 +11,17 @@ class AssessmentsController < ApplicationController
         notes: assessment[:notes]
                       })
   end
+
+  def index
+    filters = {}
+    if params.include? :submission_id
+      filters[:submission_id] = params[:submission_id]
+    end
+
+    if params.include? :assessor_id
+      filters[:assessor_id] = params[:assessor_id]
+    end
+
+    render :json => Assessment.all.where(filters)
+  end
 end
