@@ -1,10 +1,6 @@
 class Users::OmniauthCallbacksController < ApplicationController
   def google
     auth_details = env['omniauth.auth']
-    puts "Got omniauth.auth: #{auth_details}"
-    info = auth_details['info']
-
-    @user = {name: info['name'], email: info['email']}
 
     # Relevant fields:
     # auth_details['uid']
@@ -12,6 +8,8 @@ class Users::OmniauthCallbacksController < ApplicationController
     # auth_details['credentials'] -- all
 
     # TODO: Check auth_details['extra']['raw_info']['hd'] == 'cyrusinnovation.com'
+
+    User.find_or_create_from_auth_hash(auth_details)
 
     state = URI::decode_www_form(params['state']).inject({}) {|r, (key,value)| r[key] = value;r}
 
