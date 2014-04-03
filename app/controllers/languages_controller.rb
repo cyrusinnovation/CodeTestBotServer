@@ -1,5 +1,5 @@
 class LanguagesController < ApplicationController
-  def show
+  def index
     render :json => Language.all
   end
 end

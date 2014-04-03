@@ -1,5 +1,5 @@
 class LevelsController < ApplicationController
-  def show
+  def index
     render :json => Level.all
   end
 end
