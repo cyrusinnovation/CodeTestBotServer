@@ -4,8 +4,8 @@ CodeTestBotServer::Application.routes.draw do
   resources :submissions, except: [:new, :edit]
   resources :assessments, except: [:new, :edit]
 
-  get 'levels', to: 'levels#index'
-  get 'languages', to: 'languages#index'
+  resource :level, only: [:show]
+  resource :language, only: [:show]
 
   get '/auth/google/callback', to: 'users/omniauth_callbacks#google'
 end
