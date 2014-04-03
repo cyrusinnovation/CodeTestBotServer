@@ -7,7 +7,7 @@ describe Session do
 
     expect(Session.count).to eql(1)
     expect(Session.first.token).to eq(session.token)
-    expect(Session.first.token_expiry).to eq(session.token_expiry)
+    expect(Session.first.token_expiry).to be_within(1.second).of(session.token_expiry)
     expect(Session.first.user).to eq(user)
   end
 
