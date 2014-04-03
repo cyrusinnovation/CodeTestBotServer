@@ -14,6 +14,22 @@ class SessionsController < ApplicationController
     render :json => { auth_uri: auth_uri.to_s }
   end
 
+  def show
+    authorization = request.headers['Authorization']
+    if authorization == nil
+      return render :nothing => true, :status => 403
+    end
+
+    type, token = authorization.split(' ')
+
+    session = Session.find_by_token token
+    if session == nil || session.expired?
+      return render :nothing => true, :status => 403
+    end
+
+    render :json => session
+  end
+
   private
 
   def validate_protocol(uri)

@@ -9,7 +9,8 @@ class Users::OmniauthCallbacksController < ApplicationController
 
     # TODO: Check auth_details['extra']['raw_info']['hd'] == 'cyrusinnovation.com'
 
-    User.find_or_create_from_auth_hash(auth_details)
+    user = User.find_or_create_from_auth_hash(auth_details)
+    Session.create({token: auth_details['credentials']['token'], token_expiry: Time.at(auth_details['credentials']['expires_at']), user: user})
 
     state = URI::decode_www_form(params['state']).inject({}) {|r, (key,value)| r[key] = value;r}
 

@@ -1,6 +1,6 @@
 CodeTestBotServer::Application.routes.draw do
   resources :candidates
-  resources :sessions
+  resources :sessions, only: [:new, :show]
   resources :submissions, except: [:new, :edit]
   resources :assessments, except: [:new, :edit]
 

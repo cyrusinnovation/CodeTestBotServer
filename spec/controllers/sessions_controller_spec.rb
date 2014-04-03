@@ -36,4 +36,45 @@ describe SessionsController do
     # TODO: Add CSRF token to state
   end
 
+  describe :show do
+    it 'returns 403 if no Authorization header present' do
+      get :show, :id => 'current'
+
+      expect(response).to be_forbidden
+    end
+
+    it 'returns 403 if no session exists' do
+      @request.headers['Authorization'] = 'Bearer 1234'
+      get :show, :id => 'current'
+
+      expect(response).to be_forbidden
+    end
+
+    it 'returns 403 if session expired' do
+      token = '123456789'
+      expiry = Time.now.utc - 1.second
+      user = User.create({ name: 'Bob', email: 'bob@example.com' })
+      Session.create({token: token, token_expiry: expiry, user: user})
+
+      @request.headers['Authorization'] = "Bearer #{token}"
+      get :show, :id => 'current'
+
+      expect(response).to be_forbidden
+    end
+
+    it 'returns a session as JSON with the user' do
+      token = '123456789'
+      expiry = Time.now.utc + 20.minutes
+      user = User.create({ name: 'Bob', email: 'bob@example.com' })
+      Session.create({token: token, token_expiry: expiry, user: user})
+
+      @request.headers['Authorization'] = "Bearer #{token}"
+      get :show, :id => 'current'
+
+      expected_session = { token: token, token_expiry: expiry, user_id: user.id }
+      expected_user = [{name: user.name, email: user.email}]
+      expect(response.body).to be_json_eql(expected_session.to_json).at_path('session')
+      expect(response.body).to be_json_eql(expected_user.to_json).at_path('users')
+    end
+  end
 end
