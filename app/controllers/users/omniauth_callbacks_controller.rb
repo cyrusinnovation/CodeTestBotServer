@@ -19,4 +19,33 @@ class Users::OmniauthCallbacksController < ApplicationController
 
     redirect_to "#{redirect_uri}?#{redirect_params}"
   end
+
+  def development_token
+    puts Rails.env
+    unless Rails.env == 'development'
+      return render :nothing => true, :status => 403
+    end
+
+    auth = {
+        uid: 'dev',
+        info: {
+            name: 'Development User',
+            email: 'dev@localhost'
+        }
+    }
+
+    dev_user = User.find_or_create_from_auth_hash auth
+    token = SecureRandom.hex(16)
+    Session.create({ token: token, token_expiry: 0, user: dev_user })
+
+    state = URI::decode_www_form(params['state']).inject({}) {|r, (key,value)| r[key] = value;r}
+
+    redirect_uri = state['redirect_uri']
+    redirect_params = URI.encode_www_form({
+                                              token: token,
+                                              expires: 0
+                                          })
+
+    redirect_to "#{redirect_uri}?#{redirect_params}"
+  end
 end

@@ -7,4 +7,6 @@ CodeTestBotServer::Application.routes.draw do
   resources :languages, only: [:index]
 
   get '/auth/google/callback', to: 'users/omniauth_callbacks#google'
+
+  get '/auth/development_token', to: 'users/omniauth_callbacks#development_token'
 end

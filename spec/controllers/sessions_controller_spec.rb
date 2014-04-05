@@ -34,6 +34,20 @@ describe SessionsController do
     end
 
     # TODO: Add CSRF token to state
+
+    it 'returns the development token route if the USE_DEV_TOKEN env var is set' do
+      fake_env = double(:fake_env)
+      allow(Figaro).to receive(:env).and_return fake_env
+      allow(fake_env).to receive(:base_uri).and_return 'http://example.com'
+      allow(fake_env).to receive(:use_dev_token).and_return true
+      redirect_uri = 'http://example.com/auth/complete'
+      params = {redirect_uri: redirect_uri}
+      state = URI.encode_www_form(params)
+
+      get :new, params
+      expect(response).to be_ok
+      expect(response.body).to eq({auth_uri: "http://example.com/auth/development_token?state=#{state}"}.to_json)
+    end
   end
 
   describe :show do

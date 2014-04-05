@@ -8,7 +8,12 @@ class SessionsController < ApplicationController
     redirect_uri = URI::parse(params[:redirect_uri])
     validate_protocol(redirect_uri)
 
-    auth_uri = URI::join(Figaro.env.base_uri, '/auth/google')
+    if Figaro.env.respond_to? :use_dev_token
+      path = '/auth/development_token'
+    else
+      path = '/auth/google'
+    end
+    auth_uri = URI::join(Figaro.env.base_uri, path)
     auth_uri += "?state=#{URI::encode_www_form({ redirect_uri: redirect_uri })}"
 
     render :json => { auth_uri: auth_uri.to_s }

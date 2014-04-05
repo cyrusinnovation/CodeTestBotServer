@@ -29,6 +29,10 @@ describe Session do
       expect(session_with_expiry(expiry).expired?).to be_false
     end
 
+    it 'is not expired if the expiry is 0' do
+      expect(session_with_expiry(0).expired?).to be_false
+    end
+
     private
 
     def session_with_expiry(expiry)
