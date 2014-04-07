@@ -3,7 +3,7 @@ require 'pry'
 
 describe RolesController do
 
-  def add_normal_user_to_session
+  def add_user_without_role_to_session
     token = '123456789'
     expiry = Time.now.utc + 20.minutes
     @user = User.create({ name: 'Bob', email: 'bob@example.com' })
@@ -11,11 +11,11 @@ describe RolesController do
     @request.headers['Authorization'] = "Bearer #{token}"
   end
 
-  def add_admin_to_session
+  def add_user_to_session(role_name)
     token = '123456789'
     expiry = Time.now.utc + 20.minutes
-    admin_role = Role.find_by_name('Administrator')
-    @user = User.create({ name: 'Admin', email: 'admin@example.com', role_id: admin_role.id })
+    @role = Role.find_by_name(role_name)
+    @user = User.create({ name: 'Bob', email: 'bob@example.com', role_id: @role.id })
     Session.create({token: token, token_expiry: expiry, user: @user})
     @request.headers['Authorization'] = "Bearer #{token}"
   end
@@ -23,7 +23,7 @@ describe RolesController do
   describe :index do
 
     before(:each) do
-      add_normal_user_to_session
+      add_user_without_role_to_session
     end
 
     it 'should render all Roles as JSON' do
@@ -35,17 +35,28 @@ describe RolesController do
 
   describe :assign_role_to_user do
 
-  	it 'should not allow unauthorised people to add roles' do
-      add_normal_user_to_session
+  	it 'should not allow users without a role to assign roles' do
+      add_user_without_role_to_session
   		role = Role.find_by_name('Assessor')
       lambda {post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+    end
 
+    it 'should not allow users with the Assessor role to assign roles' do
+      add_user_to_session('Assessor')
+      role = Role.find_by_name('Assessor')
+      lambda {post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+    end
+
+    it 'should not allow users with the Recruiter role to assign roles' do
+      add_user_to_session('Recruiter')
+      role = Role.find_by_name('Assessor')
+      lambda {post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should allow users with the administrator role to assign roles' do
-      add_admin_to_session
-      role = Role.find_by_name('Assessor')
+      add_user_to_session('Administrator')
       user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      role = Role.find_by_name('Assessor')
       post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
       expect(response).to be_success
       user2 = User.find_by_name('Kate')
