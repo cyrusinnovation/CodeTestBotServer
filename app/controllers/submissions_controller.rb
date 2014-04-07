@@ -9,7 +9,7 @@ class SubmissionsController < ApplicationController
       language = Language.find(submission[:language_id])
     end
 
-    Submission.create(email_text: submission['email_text'], zipfile: file, candidate: candidate, language: language)
+    render :json => Submission.create(email_text: submission['email_text'], zipfile: file, candidate: candidate, language: language)
   end
 
   def index
