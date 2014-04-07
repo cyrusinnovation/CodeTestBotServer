@@ -21,7 +21,6 @@ class Users::OmniauthCallbacksController < ApplicationController
   end
 
   def development_token
-    puts Rails.env
     unless Rails.env == 'development'
       return render :nothing => true, :status => 403
     end
