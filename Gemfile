@@ -28,6 +28,9 @@ gem 'aws-sdk',    '~> 1.8.5'
 
 gem 'figaro', github: 'laserlemon/figaro'
 
+#authoriszation
+gem 'cancan', '~> 1.6.10'
+
 group :doc do
   gem 'sdoc', require: false
 end
