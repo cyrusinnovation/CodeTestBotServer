@@ -2,6 +2,7 @@ class RolesController < ApplicationController
   include CanCan::ControllerAdditions
 
   def index
+    authorize! :read, User
     render :json => Role.all
   end
 
@@ -18,7 +19,7 @@ class RolesController < ApplicationController
   end
 
   def assign_role_to_user
-  	authorize! :edit, User
+  	authorize! :assign_role, User
   	role_change = params[:role_change]
     user = User.find(role_change[:user_id])
     role = Role.find(role_change[:role_id])
