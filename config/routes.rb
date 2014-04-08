@@ -5,6 +5,8 @@ CodeTestBotServer::Application.routes.draw do
   resources :assessments, except: [:new, :edit]
   resources :levels, only: [:index]
   resources :languages, only: [:index]
+  resources :roles, except: [:new]
+  post '/roles/assign_role_to_user', to: 'roles#assign_role_to_user'
 
   get '/auth/google/callback', to: 'omniauth_callbacks#google'
 
