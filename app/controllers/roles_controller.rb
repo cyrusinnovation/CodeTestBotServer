@@ -1,21 +1,8 @@
-class RolesController < ApplicationController
-  include CanCan::ControllerAdditions
+class RolesController < UserAwareController
 
   def index
     authorize! :read, User
     render :json => Role.all
-  end
-
-  def get_session
-    authorization = request.headers['Authorization']
-    type, token = authorization.split(' ')
-    session = Session.find_by_token token
-    return session
-  end
-
-  def current_user
-    session = get_session
-    return session.user
   end
 
   def assign_role_to_user
