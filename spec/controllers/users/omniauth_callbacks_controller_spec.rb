@@ -1,6 +1,6 @@
 require 'rspec'
 
-describe Users::OmniauthCallbacksController do
+describe OmniauthCallbacksController do
   describe :development_token do
     before(:each) do
       @original_env = Rails.env

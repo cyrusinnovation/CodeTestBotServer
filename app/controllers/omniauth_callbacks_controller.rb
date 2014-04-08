@@ -1,4 +1,4 @@
-class Users::OmniauthCallbacksController < ApplicationController
+class OmniauthCallbacksController < ApplicationController
   include SessionInitialization
 
   def google
