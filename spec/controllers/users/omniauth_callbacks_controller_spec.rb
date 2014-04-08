@@ -20,7 +20,7 @@ describe Users::OmniauthCallbacksController do
         allow(SecureRandom).to receive(:hex).and_return('arandomhexstring')
         get :development_token, @params
 
-        expect(response).to redirect_to('http://client/complete?token=arandomhexstring&expires=0')
+        expect(response).to redirect_to('http://client/complete?token=arandomhexstring&expires_at=0')
       end
 
       it 'creates a dev user if one does not exist' do
@@ -39,7 +39,7 @@ describe Users::OmniauthCallbacksController do
         expect(Session.count).to eq(1)
         expect(Session.first.user).to eq(User.first)
         expect(Session.first.token).to eq('arandomhexstring')
-        expect(Session.first.token_expiry).to eq(nil)
+        expect(Session.first.token_expiry).to eq(Time.at(0))
       end
     end
 

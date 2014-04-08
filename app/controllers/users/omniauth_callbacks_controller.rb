@@ -1,6 +1,9 @@
 class Users::OmniauthCallbacksController < ApplicationController
+  include SessionInitialization
+
   def google
     auth_details = env['omniauth.auth']
+    credentials = auth_details[:credentials]
 
     # Relevant fields:
     # auth_details['uid']
@@ -9,15 +12,8 @@ class Users::OmniauthCallbacksController < ApplicationController
 
     # TODO: Check auth_details['extra']['raw_info']['hd'] == 'cyrusinnovation.com'
 
-    user = User.find_or_create_from_auth_hash(auth_details)
-    Session.create({token: auth_details['credentials']['token'], token_expiry: Time.at(auth_details['credentials']['expires_at']), user: user})
-
-    state = URI::decode_www_form(params['state']).inject({}) {|r, (key,value)| r[key] = value;r}
-
-    redirect_uri = state['redirect_uri']
-    redirect_params = URI.encode_www_form(auth_details['credentials'])
-
-    redirect_to "#{redirect_uri}?#{redirect_params}"
+    start_session_for_user_with_token auth_details, credentials
+    redirect_to build_redirect_uri_from_params(params, credentials)
   end
 
   def development_token
@@ -25,26 +21,35 @@ class Users::OmniauthCallbacksController < ApplicationController
       return render :nothing => true, :status => 403
     end
 
-    auth = {
+    auth_details = build_dev_auth_details
+    credentials = auth_details[:credentials]
+
+    start_session_for_user_with_token auth_details, credentials
+    redirect_to build_redirect_uri_from_params(params, credentials)
+  end
+
+  private
+
+  def build_redirect_uri_from_params(params, redirect_params)
+    state = URI::decode_www_form(params['state']).inject({}) {|r, (key,value)| r[key] = value;r}
+
+    redirect_uri = state['redirect_uri']
+    redirect_params = URI.encode_www_form(redirect_params)
+
+    "#{redirect_uri}?#{redirect_params}"
+  end
+
+  def build_dev_auth_details
+    {
         uid: 'dev',
         info: {
             name: 'Development User',
             email: 'dev@localhost'
+        },
+        credentials: {
+            token: SecureRandom.hex(16),
+            expires_at: 0
         }
     }
-
-    dev_user = User.find_or_create_from_auth_hash auth
-    token = SecureRandom.hex(16)
-    Session.create({ token: token, token_expiry: 0, user: dev_user })
-
-    state = URI::decode_www_form(params['state']).inject({}) {|r, (key,value)| r[key] = value;r}
-
-    redirect_uri = state['redirect_uri']
-    redirect_params = URI.encode_www_form({
-                                              token: token,
-                                              expires: 0
-                                          })
-
-    redirect_to "#{redirect_uri}?#{redirect_params}"
   end
 end
