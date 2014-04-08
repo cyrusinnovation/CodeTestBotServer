@@ -8,3 +8,4 @@
 
 levels = Level.create(['Junior', 'Mid', 'Senior', 'Tech Lead'].collect_concat {|l| {text: l}})
 languages = Language.create([{name: 'Java'}, {name: 'Ruby'}])
+roles = Role.create([{name: 'Assessor'}, {name: 'Recruiter'}, {name: 'Administrator'}])

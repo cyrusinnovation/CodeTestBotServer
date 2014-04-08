@@ -44,6 +44,7 @@ GEM
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
     builder (3.2.2)
+    cancan (1.6.10)
     celluloid (0.15.2)
       timers (~> 1.1.0)
     celluloid-io (0.15.0)
@@ -242,6 +243,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers
   aws-sdk (~> 1.8.5)
+  cancan (~> 1.6.10)
   codeclimate-test-reporter
   coveralls
   fakeweb (~> 1.3)
