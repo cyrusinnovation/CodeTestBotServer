@@ -15,7 +15,8 @@ describe RolesController do
     token = '123456789'
     expiry = Time.now.utc + 20.minutes
     @role = Role.find_by_name(role_name)
-    @user = User.create({ name: 'Bob', email: 'bob@example.com', role_id: @role.id })
+    @user = User.create({ name: 'Bob', email: 'bob@example.com'})
+    @user.roles.push(@role)
     Session.create({token: token, token_expiry: expiry, user: @user})
     @request.headers['Authorization'] = "Bearer #{token}"
   end
@@ -57,10 +58,11 @@ describe RolesController do
       add_user_to_session('Administrator')
       user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
       role = Role.find_by_name('Assessor')
+      expect(user2.roles.include? role).should be_false
       post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
       expect(response).to be_success
       user2 = User.find_by_name('Kate')
-      expect(user2.role.name).to eql(role.name)
+      expect(user2.roles.include? role).should be_true
     end
 
   end

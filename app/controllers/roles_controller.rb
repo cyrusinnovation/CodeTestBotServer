@@ -10,7 +10,7 @@ class RolesController < UserAwareController
   	role_change = params[:role_change]
     user = User.find(role_change[:user_id])
     role = Role.find(role_change[:role_id])
-    user.role_id = role.id
+    user.roles.push(role)
     user.save
   end
 end
