@@ -58,11 +58,35 @@ describe RolesController do
       add_user_to_session('Administrator')
       user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
       role = Role.find_by_name('Assessor')
-      expect(user2.roles.include? role).should be_false
+      expect(user2.roles.include? role).to be_false
       post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
       expect(response).to be_success
       user2 = User.find_by_name('Kate')
-      expect(user2.roles.include? role).should be_true
+      expect(user2.roles.include? role).to be_true
+    end
+
+    it 'should only assign a role once' do
+      add_user_to_session('Administrator')
+      user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      role = Role.find_by_name('Assessor')
+      expect(user2.roles.include? role).to be_false
+      post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
+      post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
+      user2 = User.find_by_name('Kate')
+      expect(user2.roles.size).to eql(1)
+    end
+
+    it 'should be able to assign multiple roles' do
+      add_user_to_session('Administrator')
+      user3 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      assessor_role = Role.find_by_name('Assessor')
+      admin_role = Role.find_by_name('Administrator')
+      post :assign_role_to_user, {role_change: {user_id: user3.id, role_id: assessor_role.id}}
+      post :assign_role_to_user, {role_change: {user_id: user3.id, role_id: admin_role.id}}
+      user3 = User.find_by_name('Kate')
+      expect(user3.roles.size).to eql(2)
+      expect(user3.roles.include? assessor_role).to be_true
+      expect(user3.roles.include? admin_role).to be_true
     end
 
   end
