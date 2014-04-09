@@ -15,4 +15,16 @@ class RolesController < UserAwareController
       user.save
     end
   end
+
+  def remove_role_from_user
+    authorize! :remove_role, User
+    role_change = params[:role_change]
+    user = User.find(role_change[:user_id])
+    role = Role.find(role_change[:role_id])
+    if user.roles.include? role
+      user.roles.delete(role)
+      user.save
+    end
+
+  end
 end

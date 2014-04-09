@@ -90,4 +90,52 @@ describe RolesController do
     end
 
   end
+
+  describe :remove_role_from_user do
+
+    it 'should not allow users without a role to remove roles' do
+      add_user_without_role_to_session
+      role = Role.find_by_name('Assessor')
+      lambda {post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+    end
+
+    it 'should not allow users with the Assessor role to remove roles' do
+      add_user_to_session('Assessor')
+      role = Role.find_by_name('Assessor')
+      lambda {post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+    end
+
+    it 'should not allow users with the Recruiter role to remove roles' do
+      add_user_to_session('Recruiter')
+      role = Role.find_by_name('Recruiter')
+      lambda {post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+    end
+
+    it 'should allow users with the administrator role to remove roles' do
+      add_user_to_session('Administrator')
+      user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      role = Role.find_by_name('Assessor')
+      user2.roles.push(role)
+      expect(user2.roles.include? role).to be_true
+      post :remove_role_from_user, {role_change: {user_id: user2.id, role_id: role.id}}
+      expect(response).to be_success
+      user2 = User.find_by_name('Kate')
+      expect(user2.roles.include? role).to be_false
+    end
+
+    it 'should do nothing if asked to remove a role the user doesnt have' do
+      add_user_to_session('Administrator')
+      user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      role = Role.find_by_name('Assessor')
+      user2.roles.push(role)
+      expect(user2.roles.include? role).to be_true
+      admin_role = Role.find_by_name('Administrator')
+      post :remove_role_from_user, {role_change: {user_id: user2.id, role_id: admin_role.id}}
+      expect(response).to be_success
+      user2 = User.find_by_name('Kate')
+      expect(user2.roles.include? role).to be_true
+      expect(user2.roles.size).to eql(1)
+    end
+
+  end
 end
