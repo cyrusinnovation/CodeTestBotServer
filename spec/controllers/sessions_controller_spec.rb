@@ -48,6 +48,25 @@ describe SessionsController do
       expect(response).to be_ok
       expect(response.body).to eq({auth_uri: "http://example.com/auth/development_token?state=#{state}"}.to_json)
     end
+
+    it 'returns the google auth route if USE_DEV_TOKEN is not set to true' do
+      fake_env = double(:fake_env)
+      allow(Figaro).to receive(:env).and_return fake_env
+      allow(fake_env).to receive(:base_uri).and_return 'http://example.com'
+
+      redirect_uri = 'http://example.com/auth/complete'
+      params = {redirect_uri: redirect_uri}
+      state = URI.encode_www_form(params)
+
+      get :new, params
+      expect(response.status).to eq(200)
+      expect(response.body).to eq({auth_uri: "http://example.com/auth/google?state=#{state}"}.to_json)
+
+      allow(fake_env).to receive(:use_dev_token).and_return false
+      get :new, params
+      expect(response.status).to eq(200)
+      expect(response.body).to eq({auth_uri: "http://example.com/auth/google?state=#{state}"}.to_json)
+    end
   end
 
   describe :show do
