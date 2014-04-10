@@ -3,6 +3,9 @@ class UserAwareController < ApplicationController
 
   def get_session
     authorization = request.headers['Authorization']
+    if not authorization
+      raise 'No User found'
+    end
     type, token = authorization.split(' ')
     session = Session.find_by_token token
     return session
