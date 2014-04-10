@@ -8,9 +8,6 @@ require 'rspec/rails'
 require 'coveralls'
 Coveralls.wear!
 
-require 'spec_helpers/http_status_helper'
-include HTTPStatusHelper
-
 Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each {|f| require f}
 include CodeTestBotServer::Matchers
 
