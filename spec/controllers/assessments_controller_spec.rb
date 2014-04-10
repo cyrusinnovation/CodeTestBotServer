@@ -4,7 +4,7 @@ describe AssessmentsController do
   describe :create do
     it 'creates an assessment from submission and assessor' do
       submission = Submission.create({email_text: 'A submission'})
-      assessor = Assessor.create({name: 'Bob'})
+      assessor = Assessor.create({name: 'Bob', email: 'bob@example.com'})
 
       post :create, {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!'}}
 
@@ -22,8 +22,8 @@ describe AssessmentsController do
     before(:each) do
       @submission1 = Submission.create({email_text: 'first'})
       @submission2 = Submission.create({email_text: 'second'})
-      @assessor1 = Assessor.create({name: 'Bob'})
-      @assessor2 = Assessor.create({name: 'Alice'})
+      @assessor1 = Assessor.create({name: 'Bob', email: 'bob@example.com'})
+      @assessor2 = Assessor.create({name: 'Alice', email: 'alice@example.com'})
 
       @assessment1 = Assessment.create({submission: @submission1, assessor: @assessor1, score: 1, notes: 'Terrible!'})
       @assessment2 = Assessment.create({submission: @submission2, assessor: @assessor2, score: 5, notes: 'Amazing!'})
@@ -50,7 +50,7 @@ describe AssessmentsController do
     it 'includes the assessor objects in the JSON payload' do
       get :index
 
-      expect(response.body).to be_json_eql([{name: 'Bob'}, {name: 'Alice'}].to_json).at_path('assessors')
+      expect(response.body).to be_json_eql([{email: 'bob@example.com', name: 'Bob'}, {email: 'alice@example.com', name: 'Alice'}].to_json).at_path('assessors')
     end
 
     it 'should filter assessments by the submission_id parameter' do

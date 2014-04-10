@@ -1,3 +1,3 @@
 class AssessorSerializer < ActiveModel::Serializer
-  attributes :name
+  attributes :name, :email
 end
