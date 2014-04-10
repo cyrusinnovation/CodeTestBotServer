@@ -4,7 +4,7 @@ class AssessmentsController < ApplicationController
     submission = Submission.find(assessment[:submission_id])
     assessor = Assessor.find(assessment[:assessor_id])
 
-    Assessment.create({
+    render :json => Assessment.create({
         submission: submission,
         assessor: assessor,
         score: assessment[:score],
