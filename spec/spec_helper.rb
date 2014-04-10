@@ -8,6 +8,9 @@ require 'rspec/rails'
 require 'coveralls'
 Coveralls.wear!
 
+require 'spec_helpers/http_status_helper'
+include HTTPStatusHelper
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -54,3 +57,4 @@ module FakeWeb
     end
   end
 end
+

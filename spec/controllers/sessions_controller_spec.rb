@@ -5,7 +5,7 @@ describe SessionsController do
   describe 'GET new' do
     it 'returns error if no redirect_uri given' do
       get :new
-      expect(response.status).to eq(400)
+      expect(response).to be_bad_request
 
       expected_error = {error: 'Missing required parameter: redirect_uri'}
       expect(response.body).to eq(expected_error.to_json)
@@ -13,7 +13,7 @@ describe SessionsController do
 
     it 'returns error if redirect_uri is not a valid uri' do
       get :new, {redirect_uri: 'test'}
-      expect(response.status).to eq(400)
+      expect(response).to be_bad_request
 
       expected_error = {error: 'Parameter redirect_uri must be a valid HTTP/HTTPS URI.'}
       expect(response.body).to eq(expected_error.to_json)
@@ -29,7 +29,7 @@ describe SessionsController do
       state = URI.encode_www_form(params)
 
       get :new, params
-      expect(response.status).to eq(200)
+      expect(response).to be_ok
       expect(response.body).to eq({auth_uri: "http://example.com/auth/google?state=#{state}"}.to_json)
     end
 
