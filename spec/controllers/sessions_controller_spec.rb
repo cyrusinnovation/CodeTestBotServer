@@ -10,34 +10,33 @@ describe SessionsController do
     let(:google_auth_uri) { "http://example.com/auth/google?state=#{state}" }
     let(:dev_auth_uri) { "http://example.com/auth/development_token?state=#{state}" }
 
+    subject(:response) { get :new, params }
+
     context 'when redirect_uri is missing' do
-      subject(:response) { get :new }
+      let(:params) { {} }
       it { should be_bad_request }
       it { should match_json('Missing required parameter: redirect_uri', 'error') }
     end
 
     context 'when redirect_uri is invalid' do
-      subject(:response) { get :new, { redirect_uri: 'test' } }
+      let(:params) { { redirect_uri: 'test' } }
       it { should be_bad_request }
       it { should match_json('Parameter redirect_uri must be a valid HTTP/HTTPS URI.', 'error') }
     end
 
     context 'when request is ok' do
-      subject(:response) { get :new, params }
       it { should be_ok }
       it { should match_json(google_auth_uri, 'auth_uri')}
     end
 
     context 'when USE_DEV_TOKEN is set' do
       let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return true }
-      subject(:response) { get :new, params }
       it { should be_ok }
       it { should match_json(dev_auth_uri, 'auth_uri')}
     end
 
     context 'when USE_DEV_TOKEN is set but not true' do
       let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return false }
-      subject(:response) { get :new, params }
       it { should be_ok }
       it { should match_json(google_auth_uri, 'auth_uri')}
     end
