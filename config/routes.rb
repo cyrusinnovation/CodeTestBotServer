@@ -6,6 +6,7 @@ CodeTestBotServer::Application.routes.draw do
   resources :levels, only: [:index]
   resources :languages, only: [:index]
   resources :roles, except: [:new]
+  resources :assessors
   post '/roles/assign_role_to_user', to: 'roles#assign_role_to_user'
   post '/roles/remove_role_from_user', to: 'roles#remove_role_from_user'
 
