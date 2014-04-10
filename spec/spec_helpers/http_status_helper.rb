@@ -14,6 +14,10 @@ module HTTPStatusHelper
       @target == @status
     end
 
+    def description
+      "respond with #{@status}"
+    end
+
     def failure_message_for_should
       "expected #{@target} to be #{@status}"
     end

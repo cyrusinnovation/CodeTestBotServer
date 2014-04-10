@@ -11,6 +11,9 @@ Coveralls.wear!
 require 'spec_helpers/http_status_helper'
 include HTTPStatusHelper
 
+Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each {|f| require f}
+include CodeTestBotServer::Matchers
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -57,4 +60,6 @@ module FakeWeb
     end
   end
 end
+
+
 
