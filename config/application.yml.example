@@ -1,3 +1,4 @@
+# note: keys and other settings are stored in the Code Test Bot page on the wiki. Add them to this file.
 
 development:
   BASE_URI: http://localhost:3000
