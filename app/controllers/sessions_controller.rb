@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
     redirect_uri = URI::parse(params[:redirect_uri])
     validate_protocol(redirect_uri)
 
-    if Figaro.env.respond_to?(:use_dev_token) && Figaro.env.use_dev_token == true
+    if Figaro.env.respond_to?(:use_dev_token) && Figaro.env.use_dev_token == 'true'
       path = '/auth/development_token'
     else
       path = '/auth/google'

@@ -30,13 +30,13 @@ describe SessionsController do
     end
 
     context 'when USE_DEV_TOKEN is set' do
-      let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return true }
+      let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return 'true' }
       it { should be_ok }
       it { should match_json(dev_auth_uri, 'auth_uri')}
     end
 
     context 'when USE_DEV_TOKEN is set but not true' do
-      let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return false }
+      let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return 'false' }
       it { should be_ok }
       it { should match_json(google_auth_uri, 'auth_uri')}
     end
