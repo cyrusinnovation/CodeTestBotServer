@@ -9,7 +9,7 @@ describe AssessmentsController do
       assessment_data = {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!'}}
       post :create, assessment_data
 
-      expect(response).to be_success
+      expect(response).to be_ok
       expect(response.body).to be_json_eql(assessment_data[:assessment].to_json).at_path('assessment')
 
       expect(Assessment.count).to eql(1)

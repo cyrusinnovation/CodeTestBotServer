@@ -22,14 +22,16 @@ class SessionsController < ApplicationController
   def show
     authorization = request.headers['Authorization']
     if authorization == nil
-      return render :nothing => true, :status => 403
+      response.headers['WWW-Authenticate'] = 'Bearer'
+      return render :nothing => true, :status => 401
     end
 
     type, token = authorization.split(' ')
 
     session = Session.find_by_token token
     if session == nil || session.expired?
-      return render :nothing => true, :status => 403
+      response.headers['WWW-Authenticate'] = 'Bearer error="invalid_token", error_description="Access Token Expired"'
+      return render :nothing => true, :status => 401
     end
 
     render :json => session

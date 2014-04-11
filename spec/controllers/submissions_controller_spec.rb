@@ -52,21 +52,21 @@ describe SubmissionsController do
     it 'saves the email text' do
       email_text = 'a new code test.'
       post :create, {submission: {email_text: email_text, zipfile: 'header,====', candidate_id: @candidate.id}}
-      expect(response).to be_success
+      expect(response).to be_ok
       expect(Submission.count).to eql(1)
       expect(Submission.last.email_text).to eq email_text
     end
 
     it 'can upload a zipfile' do
       post :create, {submission: {email_text: '', zipfile: 'header,====', candidate_id: @candidate.id}}
-      expect(response).to be_success
+      expect(response).to be_ok
       expect(Submission.count).to eql(1)
       expect(Submission.last.zipfile.url).to include File.basename(@file)
     end
 
     it 'can set the level for a submission' do
       post :create, {submission: {email_text: '', zipfile: 'header,====', candidate_id: @candidate.id, language_id: @language.id}}
-      expect(response).to be_success
+      expect(response).to be_ok
       expect(Submission.count).to eql(1)
       expect(Submission.last.language.name).to eql(@language.name)
     end
