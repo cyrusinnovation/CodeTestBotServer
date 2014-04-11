@@ -21,7 +21,10 @@ class OmniauthCallbacksController < ApplicationController
       return render :nothing => true, :status => 403
     end
 
-    auth_details = build_dev_auth_details
+
+    tomorrow = Time.now + 1.day
+    expire_time = tomorrow.to_i
+    auth_details = build_dev_auth_details(expire_time)
     credentials = auth_details[:credentials]
 
     start_session_for_user_with_token auth_details, credentials
@@ -39,7 +42,7 @@ class OmniauthCallbacksController < ApplicationController
     "#{redirect_uri}?#{redirect_params}"
   end
 
-  def build_dev_auth_details
+  def build_dev_auth_details(expiry_time)
     {
         uid: 'dev',
         info: {
@@ -48,7 +51,7 @@ class OmniauthCallbacksController < ApplicationController
         },
         credentials: {
             token: SecureRandom.hex(16),
-            expires_at: 0
+            expires_at: expiry_time
         }
     }
   end
