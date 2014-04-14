@@ -17,7 +17,7 @@ describe OmniauthCallbacksController do
       end
 
       it 'redirects to the client redirect_uri with a token' do
-        @time_now = Time.parse("April 11 2014")
+        @time_now = Time.parse("April 11 2014").utc
         Time.stub!(:now).and_return(@time_now)
 
         allow(SecureRandom).to receive(:hex).and_return('arandomhexstring')

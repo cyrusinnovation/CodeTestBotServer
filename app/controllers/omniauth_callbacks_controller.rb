@@ -23,7 +23,8 @@ class OmniauthCallbacksController < ApplicationController
 
 
     tomorrow = Time.now + 1.day
-    expire_time = tomorrow.to_i
+    utc_tomorrow = tomorrow.utc
+    expire_time = utc_tomorrow.to_i
     auth_details = build_dev_auth_details(expire_time)
     credentials = auth_details[:credentials]
 
