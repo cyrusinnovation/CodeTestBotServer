@@ -22,7 +22,8 @@ describe AssessorsController do
       bob = User.create({ name: 'Bob', email: 'bob@example.com' })
       bob.roles.push(@assessor_role)
 
-      expected = [{email: 'kate@example.com', name: 'Kate'}, {email: 'bob@example.com', name: 'Bob'}].to_json
+      expected = [{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}]},
+                  {email: 'bob@example.com', name: 'Bob', roles: [{name: 'Assessor'}]}].to_json
       get :index
       expect(response.body).to be_json_eql(expected).at_path('assessors')
     end
@@ -33,7 +34,7 @@ describe AssessorsController do
       bob = User.create({ name: 'Bob', email: 'bob@example.com' })
       bob.roles.push(@admin_role)
 
-      expected = [{email: 'kate@example.com', name: 'Kate'}].to_json
+      expected = [{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}]}].to_json
       get :index
       expect(response.body).to be_json_eql(expected).at_path('assessors')
     end
@@ -43,7 +44,7 @@ describe AssessorsController do
       kate.roles.push(@assessor_role)
       kate.roles.push(@admin_role)
 
-      expected = [{email: 'kate@example.com', name: 'Kate'}].to_json
+      expected = [{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}, {name: 'Administrator'}]}].to_json
       get :index
       expect(response.body).to be_json_eql(expected).at_path('assessors')
     end

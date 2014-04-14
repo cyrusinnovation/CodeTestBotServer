@@ -78,10 +78,7 @@ describe SessionsController do
       it { should be_ok }
       it 'should return session as JSON' do
         expected_session_json = { token: token, token_expiry: expiry, user_id: user.id }.to_json
-        expected_user_json = [{name: user.name, email: user.email}].to_json
-
         expect(response.body).to be_json_eql(expected_session_json).at_path('session')
-        expect(response.body).to be_json_eql(expected_user_json).at_path('users')
       end
     end
 
