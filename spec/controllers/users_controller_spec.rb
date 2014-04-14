@@ -135,6 +135,21 @@ describe UsersController do
       @assessor_role = Role.find_by_name('Assessor')
     end
 
+    it 'should throw an error if not given a role to filter by' do
+      add_user_to_session('Administrator')
+      lambda { get :filter_by_role }.should raise_exception
+    end
+
+    it 'should not allow users without a role to assign roles' do
+      add_user_without_role_to_session
+      lambda {get :filter_by_role, {role_name: 'Assessor'}}.should raise_exception(CanCan::AccessDenied)
+    end
+
+    it 'should not allow users with the Assessor role to assign roles' do
+      add_user_to_session('Assessor')
+      lambda {get :filter_by_role, {role_name: 'Assessor'}}.should raise_exception(CanCan::AccessDenied)
+    end
+
     it 'should only show users with the Assessor role' do
       add_user_to_session('Administrator')
       User.create({ name: 'Kate', email: 'kate@example.com' })
