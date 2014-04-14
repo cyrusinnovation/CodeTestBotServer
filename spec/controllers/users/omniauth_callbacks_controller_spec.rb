@@ -17,13 +17,14 @@ describe OmniauthCallbacksController do
       end
 
       it 'redirects to the client redirect_uri with a token' do
-        @time_now = Time.parse("April 11 2014").utc
+        Time.zone = "UTC"
+        @time_now = Time.zone.parse("April 11 2014")
         Time.stub!(:now).and_return(@time_now)
 
         allow(SecureRandom).to receive(:hex).and_return('arandomhexstring')
         get :development_token, @params
 
-        expect(response).to redirect_to('http://client/complete?token=arandomhexstring&expires_at=1397275200')
+        expect(response).to redirect_to('http://client/complete?token=arandomhexstring&expires_at=1397260800')
       end
 
       it 'creates a dev user if one does not exist' do
