@@ -1,7 +1,7 @@
 class UsersController < UserAwareController
 
   def index
-    authorize! :assign_role, User
+    authorize! :view_roles, User
     render :json => User.all
   end
 
@@ -25,6 +25,14 @@ class UsersController < UserAwareController
       user.roles.delete(role)
       user.save
     end
+  end
+
+  def filter_by_role
+    authorize! :view_roles, User
+    role_name = params[:role_name]
+    #if no role_name throw an error here, also test this
+    role = Role.find_by_name(role_name)
+    render :json => role.users
   end
 
 end

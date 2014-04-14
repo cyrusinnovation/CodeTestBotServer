@@ -12,7 +12,7 @@ describe UsersController do
       @assessor_role = Role.find_by_name('Assessor')
     end
 
-    it 'should show users' do
+    it 'should show all users' do
       add_user_to_session('Administrator')
       User.create({ name: 'Kate', email: 'kate@example.com' })
       expected = [{ name: 'Bob', email: 'bob@example.com', roles: [{name: 'Administrator'}] },
@@ -127,5 +127,58 @@ describe UsersController do
     end
 
   end
+
+  describe :filter_by_role do
+
+    before(:each) do
+      @admin_role = Role.find_by_name('Administrator')
+      @assessor_role = Role.find_by_name('Assessor')
+    end
+
+    it 'should only show users with the Assessor role' do
+      add_user_to_session('Administrator')
+      User.create({ name: 'Kate', email: 'kate@example.com' })
+      expected = {users:[]}.to_json
+      get :filter_by_role, {role_name: 'Assessor'}
+      expect(response.body).to be_json_eql(expected)
+    end
+
+    it 'should render all Assessors as JSON' do
+      add_user_to_session('Administrator')
+      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
+      kate.roles.push(@assessor_role)
+      bob = User.create({ name: 'Bob', email: 'bob@example.com' })
+      bob.roles.push(@assessor_role)
+
+      expected = {users: [{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}]},
+                  {email: 'bob@example.com', name: 'Bob', roles: [{name: 'Assessor'}]}]}.to_json
+      get :filter_by_role, {role_name: 'Assessor'}
+      expect(response.body).to be_json_eql(expected)
+    end
+
+    it 'should render only Assessors as JSON' do
+      add_user_to_session('Administrator')
+      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
+      kate.roles.push(@assessor_role)
+      bob = User.create({ name: 'Bob', email: 'bob@example.com' })
+      bob.roles.push(@admin_role)
+
+      expected = {users:[{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}]}]}.to_json
+      get :filter_by_role, {role_name: 'Assessor'}
+      expect(response.body).to be_json_eql(expected)
+    end
+
+    it 'should render Assessors as JSON even if they have other roles too' do
+      add_user_to_session('Administrator')
+      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
+      kate.roles.push(@assessor_role)
+      kate.roles.push(@admin_role)
+
+      expected = {users: [{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}, {name: 'Administrator'}]}]}.to_json
+      get :filter_by_role, {role_name: 'Assessor'}
+      expect(response.body).to be_json_eql(expected)
+    end
+  end
+
 
 end
