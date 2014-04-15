@@ -15,8 +15,8 @@ describe UsersController do
     it 'should show all users' do
       add_user_to_session('Administrator')
       User.create({ name: 'Kate', email: 'kate@example.com' })
-      expected = [{ name: 'Bob', email: 'bob@example.com', roles: [{name: 'Administrator'}] },
-                  {email: 'kate@example.com', name: 'Kate', roles: []}].to_json
+      expected = [{ name: 'Bob', email: 'bob@example.com', role_ids: [@admin_role.id] },
+                  {email: 'kate@example.com', name: 'Kate', role_ids: []}].to_json
       get :index
       expect(response.body).to be_json_eql(expected).at_path('users')
     end
@@ -165,8 +165,8 @@ describe UsersController do
       bob = User.create({ name: 'Bob', email: 'bob@example.com' })
       bob.roles.push(@assessor_role)
 
-      expected = {users: [{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}]},
-                  {email: 'bob@example.com', name: 'Bob', roles: [{name: 'Assessor'}]}]}.to_json
+      expected = {roles:[{id: @assessor_role.id, name: @assessor_role.name}],  users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id]},
+                  {email: 'bob@example.com', name: 'Bob', role_ids: [@assessor_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
@@ -178,7 +178,7 @@ describe UsersController do
       bob = User.create({ name: 'Bob', email: 'bob@example.com' })
       bob.roles.push(@admin_role)
 
-      expected = {users:[{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}]}]}.to_json
+      expected = {roles:[{id: @assessor_role.id, name: @assessor_role.name}], users:[{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
@@ -189,7 +189,7 @@ describe UsersController do
       kate.roles.push(@assessor_role)
       kate.roles.push(@admin_role)
 
-      expected = {users: [{email: 'kate@example.com', name: 'Kate', roles: [{name: 'Assessor'}, {name: 'Administrator'}]}]}.to_json
+      expected = {roles:[{id: @assessor_role.id, name: @assessor_role.name}, {id: @admin_role.id, name: @admin_role.name}], users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id, @admin_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
