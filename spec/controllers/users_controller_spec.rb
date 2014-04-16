@@ -23,6 +23,22 @@ describe UsersController do
 
   end
 
+  describe :show do
+    it 'should not allow assessors to view user' do
+      add_user_to_session('Assessor')
+      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
+      lambda {get :show, {id: kate.id}}.should raise_exception(CanCan::AccessDenied)
+    end
+
+    it 'should find a user based on the id for an admin user' do
+      add_user_to_session('Administrator')
+      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
+      get :show, {id: kate.id}
+      expected = {roles: [], user: {email: 'kate@example.com', name: 'Kate', role_ids: []}}.to_json
+      expect(response.body).to be_json_eql(expected)
+    end
+  end
+
   describe :assign_role_to_user do
 
     it 'should not allow users without a role to assign roles' do

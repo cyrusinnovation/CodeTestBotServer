@@ -5,6 +5,19 @@ class UsersController < UserAwareController
     render :json => User.all
   end
 
+  def show
+    authorize! :view_users, User
+    user_id = params[:id]
+    render :json => User.find(user_id)
+  end
+
+  #FIXME
+  # this is totally not the ember way to add and remove roles
+  # the assign_role_to_user and remove_role_from_user methods need to be removed.
+  # I think ember actually wants to send a modified user with roles to the update method in this controller
+  # which should ensure the roles on the saved user match the roles on the updated user.
+
+
   def assign_role_to_user
     authorize! :assign_role, User
     role_change = params[:role_change]
