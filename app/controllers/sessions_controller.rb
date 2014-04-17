@@ -8,11 +8,6 @@ class SessionsController < ApplicationController
     redirect_uri = URI::parse(params[:redirect_uri])
     validate_protocol(redirect_uri)
 
-    if Figaro.env.respond_to?(:use_dev_token) && Figaro.env.use_dev_token == 'true'
-      path = '/auth/development_token'
-    else
-      path = '/auth/google'
-    end
     auth_uri = URI::join(Figaro.env.base_uri, path)
     auth_uri += "?state=#{URI::encode_www_form({ redirect_uri: redirect_uri })}"
 
@@ -27,6 +22,10 @@ class SessionsController < ApplicationController
     end
 
     type, token = authorization.split(' ')
+    unless type == 'Bearer'
+      response.headers['WWW-Authenticate'] = 'Bearer error="invalid_request"'
+      return render :nothing => true, :status => 400
+    end
 
     session = Session.find_by_token token
     if session == nil || session.expired?
@@ -42,5 +41,13 @@ class SessionsController < ApplicationController
   def validate_protocol(uri)
     message = 'Parameter redirect_uri must be a valid HTTP/HTTPS URI.'
     raise HttpStatus::BadRequest.new message unless matches_protocol?(uri, :http, :https)
+  end
+
+  def path
+    use_dev_token? ? '/auth/development_token' : '/auth/google'
+  end
+
+  def use_dev_token?
+    (Figaro.env.respond_to?(:use_dev_token) && Figaro.env.use_dev_token == 'true')
   end
 end
