@@ -1,13 +1,20 @@
 require 'spec_helper'
+require 'controllers/user_helper'
 
 describe LanguagesController do
+  include UserHelper
 
-  describe :index do
-    it 'should render all Languages as JSON' do
-      expected = [{name: 'Java'}, {name: 'Ruby'}].to_json
-      get :index
-      expect(response.body).to be_json_eql(expected).at_path('languages')
+  describe '#index' do
+    subject(:response) { get :index }
+
+    it_behaves_like 'a secured route'
+
+    context 'with an active session' do
+      before { add_user_without_role_to_session }
+      let(:expected) { [{name: 'Java'}, {name: 'Ruby'}].to_json }
+
+      it { should be_ok }
+      its(:body) { should be_json_eql(expected).at_path('languages') }
     end
   end
-
 end
