@@ -26,10 +26,10 @@ gem 'omniauth-google-oauth2'
 gem 'paperclip',  '~> 3.5.1'
 gem 'aws-sdk',    '~> 1.8.5'
 
-gem 'figaro', github: 'laserlemon/figaro'
-
-#authorization
+# Utilities
 gem 'cancan', '~> 1.6.10'
+gem 'figaro', github: 'laserlemon/figaro'
+gem 'timecop'
 
 group :doc do
   gem 'sdoc', require: false

@@ -21,7 +21,6 @@ class OmniauthCallbacksController < ApplicationController
       return render :nothing => true, :status => 403
     end
 
-
     tomorrow = Time.now + 1.day
     expire_time = tomorrow.to_i
     auth_details = build_dev_auth_details(expire_time)

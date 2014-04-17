@@ -17,14 +17,14 @@ describe OmniauthCallbacksController do
       end
 
       it 'redirects to the client redirect_uri with a token' do
-        Time.zone = "UTC"
-        @time_now = Time.zone.parse("April 11 2014")
-        Time.stub!(:now).and_return(@time_now)
-
+        time = Time.now.utc
         allow(SecureRandom).to receive(:hex).and_return('arandomhexstring')
-        get :development_token, @params
 
-        expect(response).to redirect_to('http://client/complete?token=arandomhexstring&expires_at=1397260800')
+        Timecop.freeze(time) do
+          get :development_token, @params
+        end
+
+        expect(response).to redirect_to("http://client/complete?token=arandomhexstring&expires_at=#{(time + 1.day).to_i}")
       end
 
       it 'creates a dev user if one does not exist' do
@@ -37,18 +37,17 @@ describe OmniauthCallbacksController do
       end
 
       it 'creates a session for the dev user' do
-        @time_now = Time.parse("April 11 2014")
-        Time.stub!(:now).and_return(@time_now)
-
+        time = Time.now.utc
         allow(SecureRandom).to receive(:hex).and_return('arandomhexstring')
-        get :development_token, @params
+
+        Timecop.freeze(time) do
+          get :development_token, @params
+        end
 
         expect(Session.count).to eq(1)
         expect(Session.first.user).to eq(User.first)
         expect(Session.first.token).to eq('arandomhexstring')
-
-        tomorrow = @time_now + 1.day
-        expect(Session.first.token_expiry).to eq(Time.at(tomorrow.to_i))
+        expect(Session.first.token_expiry).to eq(Time.at((time + 1.day).to_i))
       end
     end
 
