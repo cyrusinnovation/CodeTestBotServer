@@ -45,7 +45,12 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = 'random'
 
-  config.before { Rails.application.load_seed }
+  config.before {
+    Rails.application.load_seed
+    FakeWeb.allow_net_connect = false
+  }
+
+  config.after { FakeWeb.allow_net_connect = true }
 end
 
 # Monkey patch to fix test errors
