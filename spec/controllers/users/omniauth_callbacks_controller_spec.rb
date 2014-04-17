@@ -1,35 +1,28 @@
 require 'rspec'
 
 describe OmniauthCallbacksController do
-  describe :development_token do
-    before(:each) do
-      @original_env = Rails.env
-    end
+  before { @original_env = Rails.env }
+  after { Rails.env = @original_env }
 
-    after(:each) do
-      Rails.env = @original_env
-    end
+  describe '#development_token' do
+    let(:params) { {:state => URI::encode_www_form({redirect_uri: 'http://client/complete'})} }
+    let(:time) { Time.now.utc }
+    let(:token) { 'arandomhexstring' }
+    let!(:secure_random) { allow(SecureRandom).to receive(:hex).and_return(token) }
 
-    describe 'in development mode' do
-      before(:each) do
-        Rails.env = 'development'
-        @params = {:state => URI::encode_www_form({redirect_uri: 'http://client/complete'})}
+    subject(:response) {
+      Timecop.freeze(time) do
+        get :development_token, params
       end
+    }
 
-      it 'redirects to the client redirect_uri with a token' do
-        time = Time.now.utc
-        allow(SecureRandom).to receive(:hex).and_return('arandomhexstring')
+    context 'when in development mode' do
+      before { Rails.env = 'development' }
 
-        Timecop.freeze(time) do
-          get :development_token, @params
-        end
-
-        expect(response).to redirect_to("http://client/complete?token=arandomhexstring&expires_at=#{(time + 1.day).to_i}")
-      end
+      it { should redirect_to "http://client/complete?token=#{token}&expires_at=#{(time + 1.day).to_i}" }
 
       it 'creates a dev user if one does not exist' do
-        get :development_token, @params
-
+        expect(response.status).to be_found
         expect(User.count).to eq(1)
         expect(User.first.uid).to eq('dev')
         expect(User.first.name).to eq('Development User')
@@ -37,27 +30,18 @@ describe OmniauthCallbacksController do
       end
 
       it 'creates a session for the dev user' do
-        time = Time.now.utc
-        allow(SecureRandom).to receive(:hex).and_return('arandomhexstring')
-
-        Timecop.freeze(time) do
-          get :development_token, @params
-        end
-
+        expect(response.status).to be_found
         expect(Session.count).to eq(1)
         expect(Session.first.user).to eq(User.first)
-        expect(Session.first.token).to eq('arandomhexstring')
+        expect(Session.first.token).to eq(token)
         expect(Session.first.token_expiry).to eq(Time.at((time + 1.day).to_i))
       end
     end
 
-    it 'responds with 403 if not in development mode' do
-      Rails.env = 'production'
+    context 'when not in development mode' do
+      before { Rails.env = 'production' }
 
-      get :development_token
-
-      expect(response).to be_forbidden
+      it { should be_forbidden }
     end
   end
-
 end
