@@ -67,14 +67,6 @@ describe SessionsController do
       end
     end
 
-    def expired_token
-      token = '123456789'
-      expiry = Time.now.utc - 1.second
-      Session.create({token: token, token_expiry: expiry, user: user})
-
-      @request.headers['Authorization'] = "Bearer #{token}"
-    end
-
     def valid_token(token, expiry)
       Session.create({token: token, token_expiry: expiry, user: user})
 

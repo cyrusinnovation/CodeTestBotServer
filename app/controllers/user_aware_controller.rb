@@ -1,4 +1,4 @@
-class UserAwareController < ApplicationController
+class UserAwareController < SecuredController
   include CanCan::ControllerAdditions
 
   def get_real_user

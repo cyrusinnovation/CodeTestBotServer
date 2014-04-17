@@ -1,4 +1,6 @@
 shared_examples 'a secured route' do
+  let!(:user) { User.create({ name: 'Bob', email: 'bob@example.com' }) }
+
   context 'when Authorization header is missing' do
     it { should be_unauthorized }
     it { should have_header_value('WWW-Authenticate', 'Bearer') }
@@ -20,5 +22,13 @@ shared_examples 'a secured route' do
     let!(:authorization) { expired_token }
     it { should be_unauthorized }
     it { should have_header_value('WWW-Authenticate', 'Bearer error="invalid_token", error_description="Access Token Expired"') }
+  end
+
+  def expired_token
+    token = '123456789'
+    expiry = Time.now.utc - 1.second
+    Session.create({token: token, token_expiry: expiry, user: user})
+
+    @request.headers['Authorization'] = "Bearer #{token}"
   end
 end
