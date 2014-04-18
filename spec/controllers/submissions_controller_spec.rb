@@ -94,4 +94,41 @@ describe SubmissionsController do
       its(:body) { should be_json_eql(expected).at_path('submission') }
     end
   end
+
+  describe '#update' do
+    let(:submission) { Submission.create({ email_text: 'original' }) }
+    let(:submission_id) { submission.id }
+
+    subject(:response) { put :update, { id: submission_id, submission: {email_text: 'updated'} } }
+
+    it_behaves_like 'a secured route'
+
+    %w(Recruiter Administrator).each do |role|
+      context "when user has role #{role}" do
+        before { add_user_to_session(role) }
+
+        context 'when updating an existing submission' do
+          let(:expected) { {email_text: 'updated', zipfile: '/zipfiles/original/missing.png', candidate_id: nil, language_id: nil}.to_json }
+
+          it { should be_ok }
+          its(:body) { should be_json_eql(expected).at_path('submission') }
+          it 'should update the submission' do
+            response
+            expect(Submission.first.email_text).to eq('updated')
+          end
+        end
+
+        context 'when updating a submission that does not exist' do
+          let(:submission_id) { submission.id + 1 }
+          it { should be_not_found }
+        end
+      end
+    end
+
+    context 'when user is unauthorized' do
+      before { add_user_to_session('Assessor') }
+
+      it { should be_forbidden }
+    end
+  end
 end

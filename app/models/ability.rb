@@ -12,7 +12,7 @@ class Ability
   def recruiter
     assessor
     can :manage, Candidate
-    can :create, Submission
+    can :manage, Submission
   end
 
   def administrator
