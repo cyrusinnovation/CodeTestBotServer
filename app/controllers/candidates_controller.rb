@@ -3,7 +3,7 @@ class CandidatesController < UserAwareController
     authorize! :create, Candidate
     candidate = params[:candidate]
     level = Level.find(candidate[:level_id])
-    render :json => Candidate.create(name: candidate[:name], email: candidate[:email], level: level), :status => 201
+    render :json => Candidate.create(name: candidate[:name], email: candidate[:email], level: level), :status => :created
   end
 
   def index

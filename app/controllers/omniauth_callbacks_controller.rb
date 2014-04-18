@@ -18,7 +18,7 @@ class OmniauthCallbacksController < ApplicationController
 
   def development_token
     unless Rails.env == 'development'
-      return render :nothing => true, :status => 403
+      return render :nothing => true, :status => :forbidden
     end
 
     tomorrow = Time.now + 1.day
