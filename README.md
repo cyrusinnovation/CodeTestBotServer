@@ -28,9 +28,11 @@ Note that before you can run the `createuser` script, you'll need to have create
 
 Then you can run Rake to create and seed the database.
 ```sh
-bundle exec rake db:create db:migrate db:seed RAILS_ENV=test
 bundle exec rake db:create db:migrate db:seed RAILS_ENV=development
+bundle exec rake db:create db:migrate RAILS_ENV=test
 ```
+
+Note that `db:seed` is not called for the test environment, since rspec calls it prior to running each test.
 
 ##### Running Tests
 Once the test DB is setup, you should be able to run the tests with RSpec.
