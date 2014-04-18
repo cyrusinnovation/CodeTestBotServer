@@ -1,4 +1,4 @@
-class AssessmentsController < ApplicationController
+class AssessmentsController < SecuredController
   def create
     assessment = params[:assessment]
     submission = Submission.find(assessment[:submission_id])
@@ -9,7 +9,8 @@ class AssessmentsController < ApplicationController
         assessor: assessor,
         score: assessment[:score],
         notes: assessment[:notes]
-                      })
+                      }),
+           :status => :created
   end
 
   def index
