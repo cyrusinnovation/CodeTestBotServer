@@ -34,10 +34,7 @@ class UsersController < UserAwareController
     role_change = params[:role_change]
     user = User.find(role_change[:user_id])
     role = Role.find(role_change[:role_id])
-    if user.roles.include? role
-      user.roles.delete(role)
-      user.save
-    end
+    user.remove_role!(role)
   end
 
   def filter_by_role

@@ -103,6 +103,9 @@ describe UsersController do
   end
 
   describe :remove_role_from_user do
+    let(:assessor_role) { Role.find_by_name('Assessor') }
+    let(:recruiter_role) { Role.find_by_name('Recruiter') }
+    let(:administrator_role) { Role.find_by_name('Administrator') }
 
     it 'should not allow users without a role to remove roles' do
       add_user_without_role_to_session
@@ -127,28 +130,23 @@ describe UsersController do
 
     it 'should allow users with the administrator role to remove roles' do
       add_user_to_session('Administrator')
-      user2 = User.create({name: 'Kate', email: 'kate@example.com'})
-      role = Role.find_by_name('Assessor')
-      user2.roles.push(role)
-      expect(user2.roles.include? role).to be_true
-      post :remove_role_from_user, {role_change: {user_id: user2.id, role_id: role.id}}
+      user2 = User.create({name: 'Kate', email: 'kate@example.com', roles: [assessor_role, recruiter_role]})
+      post :remove_role_from_user, {role_change: {user_id: user2.id, role_id: assessor_role.id}}
       expect(response).to be_success
       user2 = User.find_by_name('Kate')
-      expect(user2.roles.include? role).to be_false
+      expect(user2.roles.include? assessor_role).to be_false
     end
 
     it 'should do nothing if asked to remove a role the user doesnt have' do
       add_user_to_session('Administrator')
-      user2 = User.create({name: 'Kate', email: 'kate@example.com'})
-      role = Role.find_by_name('Assessor')
-      user2.roles.push(role)
-      expect(user2.roles.include? role).to be_true
+      user2 = User.create({name: 'Kate', email: 'kate@example.com', roles: [assessor_role, recruiter_role]})
       admin_role = Role.find_by_name('Administrator')
       post :remove_role_from_user, {role_change: {user_id: user2.id, role_id: admin_role.id}}
       expect(response).to be_success
       user2 = User.find_by_name('Kate')
-      expect(user2.roles.include? role).to be_true
-      expect(user2.roles.size).to eql(1)
+      expect(user2.roles.include? (assessor_role)).to be_true
+      expect(user2.roles.include? (recruiter_role)).to be_true
+      expect(user2.roles.size).to eql(2)
     end
 
   end

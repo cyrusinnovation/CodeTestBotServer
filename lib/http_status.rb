@@ -14,4 +14,10 @@ module HttpStatus
       super(400, message)
     end
   end
+
+  class Forbidden < ClientError
+    def initialize(message)
+      super(403, message)
+    end
+  end
 end
