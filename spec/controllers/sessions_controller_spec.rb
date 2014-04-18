@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe SessionsController do
+  include EnvHelper
 
   describe '#new' do
     let(:env) { fake_env }
@@ -39,12 +40,6 @@ describe SessionsController do
       let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return 'false' }
       it { should be_ok }
       it { should match_json(google_auth_uri, 'auth_uri')}
-    end
-
-    def fake_env
-      fake_env = double(:fake_env)
-      allow(Figaro).to receive(:env).and_return fake_env
-      fake_env
     end
 
     # TODO: Add CSRF token to state

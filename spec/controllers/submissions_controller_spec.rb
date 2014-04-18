@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'controllers/user_helper'
 
 describe SubmissionsController do
+  include EnvHelper
   include UserHelper
 
   let(:env) { fake_env }
@@ -88,11 +89,5 @@ describe SubmissionsController do
       it { should be_ok }
       its(:body) { should be_json_eql(expected).at_path('submission') }
     end
-  end
-
-  def fake_env
-    fake_env = double(:fake_env)
-    allow(Figaro).to receive(:env).and_return fake_env
-    fake_env
   end
 end
