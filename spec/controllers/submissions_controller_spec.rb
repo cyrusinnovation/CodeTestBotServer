@@ -58,16 +58,25 @@ describe SubmissionsController do
 
     it_behaves_like 'a secured route'
 
-    context 'with an active session' do
+    %w(Recruiter Administrator).each do |role|
+      context "when user has role #{role}" do
+        before { add_user_to_session(role) }
+
+        it 'should create a submission' do
+          expect(response).to be_created
+          expect(Submission.count).to eql(1)
+          expect(Submission.last.email_text).to eq email_text
+          expect(Submission.last.zipfile.url).to include File.basename(file)
+          expect(Submission.last.language.name).to eql(language.name)
+        end
+      end
+    end
+
+    context 'when user does not have authorization' do
       before { add_user_without_role_to_session }
 
-      it 'should create a submission' do
-        expect(response).to be_created
-        expect(Submission.count).to eql(1)
-        expect(Submission.last.email_text).to eq email_text
-        expect(Submission.last.zipfile.url).to include File.basename(file)
-        expect(Submission.last.language.name).to eql(language.name)
-      end
+      it { should be_forbidden }
+      it { should have_header_value('WWW-Authenticate', 'Bearer error="insufficient_scope"')}
     end
   end
 

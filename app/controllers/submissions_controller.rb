@@ -1,5 +1,6 @@
-class SubmissionsController < SecuredController
+class SubmissionsController < UserAwareController
   def create
+    authorize! :create, Submission
     submission = params[:submission]
     file = Base64FileDecoder.decode_to_file submission['zipfile']
     candidate = Candidate.find(submission[:candidate_id])

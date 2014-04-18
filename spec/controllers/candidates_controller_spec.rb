@@ -14,18 +14,14 @@ describe CandidatesController do
 
     context 'when user does not have a role' do
       before { add_user_without_role_to_session }
-      it 'should raise access denied exception' do
-        expect { response }.to raise_exception(CanCan::AccessDenied)
-        expect(Candidate.count).to eql(0)
-      end
+      it { should be_forbidden }
+      it { should_not have_created_candidate }
     end
 
     context 'when user has Assessor role' do
       before { add_user_to_session('Assessor') }
-      it 'should raise access denied exception' do
-        expect { response }.to raise_exception(CanCan::AccessDenied)
-        expect(Candidate.count).to eql(0)
-      end
+      it { should be_forbidden }
+      it { should_not have_created_candidate }
     end
 
     %w(Recruiter Administrator).each do |role|
@@ -40,6 +36,12 @@ describe CandidatesController do
         end
       end
     end
+
+    RSpec::Matchers.define :have_created_candidate do |expected|
+      match do
+        Candidate.count > 0
+      end
+    end
   end
 
   describe '#index' do
@@ -50,9 +52,7 @@ describe CandidatesController do
 
     context 'when user has Assessor role' do
       before { add_user_to_session('Assessor') }
-      it 'should raise access denied exception' do
-        expect { response }.to raise_exception(CanCan::AccessDenied)
-      end
+      it { should be_forbidden }
     end
 
     %w(Recruiter Administrator).each do |role|

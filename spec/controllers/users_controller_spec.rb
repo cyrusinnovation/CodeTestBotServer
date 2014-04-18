@@ -32,9 +32,7 @@ describe UsersController do
 
     context 'when user is an Assessor' do
       before { add_user_to_session('Assessor') }
-      it 'should raise access denied exception' do
-        expect { response }.to raise_exception(CanCan::AccessDenied)
-      end
+      it { should be_forbidden }
     end
 
     context 'when user is an Administrator' do
@@ -49,19 +47,22 @@ describe UsersController do
     it 'should not allow users without a role to assign roles' do
       add_user_without_role_to_session
       role = Role.find_by_name('Assessor')
-      lambda { post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
+      post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}
+      expect(response).to be_forbidden
     end
 
     it 'should not allow users with the Assessor role to assign roles' do
       add_user_to_session('Assessor')
       role = Role.find_by_name('Assessor')
-      lambda { post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
+      post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}
+      expect(response).to be_forbidden
     end
 
     it 'should not allow users with the Recruiter role to assign roles' do
       add_user_to_session('Recruiter')
       role = Role.find_by_name('Assessor')
-      lambda { post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
+      post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}
+      expect(response).to be_forbidden
     end
 
     it 'should allow users with the administrator role to assign roles' do
@@ -106,19 +107,22 @@ describe UsersController do
     it 'should not allow users without a role to remove roles' do
       add_user_without_role_to_session
       role = Role.find_by_name('Assessor')
-      lambda { post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
+      post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}
+      expect(response).to be_forbidden
     end
 
     it 'should not allow users with the Assessor role to remove roles' do
       add_user_to_session('Assessor')
       role = Role.find_by_name('Assessor')
-      lambda { post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
+      post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}
+      expect(response).to be_forbidden
     end
 
     it 'should not allow users with the Recruiter role to remove roles' do
       add_user_to_session('Recruiter')
       role = Role.find_by_name('Recruiter')
-      lambda { post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
+      post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}
+      expect(response).to be_forbidden
     end
 
     it 'should allow users with the administrator role to remove roles' do
@@ -163,12 +167,14 @@ describe UsersController do
 
     it 'should not allow users without a role to assign roles' do
       add_user_without_role_to_session
-      lambda { get :filter_by_role, {role_name: 'Assessor'} }.should raise_exception(CanCan::AccessDenied)
+      get :filter_by_role, {role_name: 'Assessor'}
+      expect(response).to be_forbidden
     end
 
     it 'should not allow users with the Assessor role to assign roles' do
       add_user_to_session('Assessor')
-      lambda { get :filter_by_role, {role_name: 'Assessor'} }.should raise_exception(CanCan::AccessDenied)
+      get :filter_by_role, {role_name: 'Assessor'}
+      expect(response).to be_forbidden
     end
 
     it 'should only show users with the Assessor role' do
