@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'controllers/user_helper'
 
 describe LevelsController do
   include UserHelper

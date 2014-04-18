@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'controllers/user_helper'
 require 'pry'
 
 describe UserAwareController do
