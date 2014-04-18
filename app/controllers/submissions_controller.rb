@@ -30,4 +30,10 @@ class SubmissionsController < UserAwareController
 
     render :json => Submission.update(params[:id], email_text: submission[:email_text])
   end
+
+  def destroy
+    authorize! :destroy, Submission
+    Submission.destroy(params[:id])
+    render :nothing => true, status: :no_content
+  end
 end

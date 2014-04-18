@@ -96,10 +96,10 @@ describe SubmissionsController do
   end
 
   describe '#update' do
-    let(:submission) { Submission.create({ email_text: 'original' }) }
+    let(:submission) { Submission.create({email_text: 'original'}) }
     let(:submission_id) { submission.id }
 
-    subject(:response) { put :update, { id: submission_id, submission: {email_text: 'updated'} } }
+    subject(:response) { put :update, {id: submission_id, submission: {email_text: 'updated'}} }
 
     it_behaves_like 'a secured route'
 
@@ -128,6 +128,39 @@ describe SubmissionsController do
     context 'when user is unauthorized' do
       before { add_user_to_session('Assessor') }
 
+      it { should be_forbidden }
+    end
+  end
+
+  describe '#destroy' do
+    let(:submission) { Submission.create({email_text: 'original'}) }
+    let(:submission_id) { submission.id }
+
+    subject(:response) { delete :destroy, {id: submission_id} }
+
+    it_behaves_like 'a secured route'
+
+    %w(Recruiter Administrator).each do |role|
+      context "when user has role #{role}" do
+        before { add_user_to_session(role) }
+
+        context 'when destroying an existing submission' do
+          it { should be_no_content }
+          it 'should delete the submission' do
+            response
+            expect(Submission.count).to eq(0)
+          end
+        end
+
+        context 'when destroying a submission that does not exist' do
+          let(:submission_id) { submission.id + 1 }
+          it { should be_not_found }
+        end
+      end
+    end
+
+    context 'when user is unauthorized' do
+      before { add_user_to_session('Assessor') }
       it { should be_forbidden }
     end
   end
