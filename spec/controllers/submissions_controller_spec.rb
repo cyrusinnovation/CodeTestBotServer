@@ -68,6 +68,12 @@ describe SubmissionsController do
         end
       end
     end
+
+    context 'when user is unauthorized' do
+      before { add_user_to_session('Assessor') }
+
+      it { should be_forbidden }
+    end
   end
 
   describe '#show' do

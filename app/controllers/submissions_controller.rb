@@ -20,6 +20,7 @@ class SubmissionsController < UserAwareController
   end
 
   def show
+    authorize! :show, Submission
     render :json => Submission.find(params[:id])
   end
 end
