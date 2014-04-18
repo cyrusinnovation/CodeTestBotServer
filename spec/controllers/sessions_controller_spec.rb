@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe SessionsController do
-  include EnvHelper
 
   describe '#new' do
     let(:env) { fake_env }

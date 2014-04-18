@@ -1,9 +1,6 @@
 require 'spec_helper'
 
 describe SubmissionsController do
-  include EnvHelper
-  include UserHelper
-
   let(:env) { fake_env }
 
   before {
@@ -18,7 +15,7 @@ describe SubmissionsController do
     it_behaves_like 'a secured route'
 
     context 'with an active session' do
-      before { add_user_without_role_to_session }
+      before { add_user_to_session('Assessor') }
 
       it { should be_ok }
 
@@ -71,13 +68,6 @@ describe SubmissionsController do
         end
       end
     end
-
-    context 'when user does not have authorization' do
-      before { add_user_without_role_to_session }
-
-      it { should be_forbidden }
-      it { should have_header_value('WWW-Authenticate', 'Bearer error="insufficient_scope"')}
-    end
   end
 
   describe '#show' do
@@ -88,7 +78,7 @@ describe SubmissionsController do
     it_behaves_like 'a secured route'
 
     context 'with an active session' do
-      before { add_user_without_role_to_session }
+      before { add_user_to_session('Assessor') }
       let!(:submission1) { Submission.create({email_text: 'first'}) }
       let!(:submission2) { Submission.create({email_text: 'second'}) }
       let(:params) { {id: submission2.id} }

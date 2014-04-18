@@ -2,16 +2,20 @@ class Ability
   include CanCan::Ability  
   
   def initialize(user)
-     admin_role = Role.find_by_name("Administrator")
-     recruiter_role = Role.find_by_name("Recruiter")
-    if user.roles.include? admin_role
-        can :manage, :all
-    elsif user.roles.include? recruiter_role
-        can :manage, Candidate
-        can :create, Submission
-        can :read, :all
-    else  
-        can :read, :all
-    end   
-  end  
+    user.roles.each { |role| send(role.name.downcase) }
+  end
+
+  def assessor
+    can :read, :all
+  end
+
+  def recruiter
+    assessor
+    can :manage, Candidate
+    can :create, Submission
+  end
+
+  def administrator
+    can :manage, :all
+  end
 end 

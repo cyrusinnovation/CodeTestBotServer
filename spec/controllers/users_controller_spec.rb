@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe UsersController do
-  include UserHelper
-
   let(:admin_role) { Role.find_by_name('Administrator') }
   let(:assessor_role) { Role.find_by_name('Assessor') }
   let(:kate) { User.create({name: 'Kate', email: 'kate@example.com'}) }
@@ -43,14 +41,6 @@ describe UsersController do
   end
 
   describe :assign_role_to_user do
-
-    it 'should not allow users without a role to assign roles' do
-      add_user_without_role_to_session
-      role = Role.find_by_name('Assessor')
-      post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}
-      expect(response).to be_forbidden
-    end
-
     it 'should not allow users with the Assessor role to assign roles' do
       add_user_to_session('Assessor')
       role = Role.find_by_name('Assessor')
@@ -107,13 +97,6 @@ describe UsersController do
     let(:recruiter_role) { Role.find_by_name('Recruiter') }
     let(:administrator_role) { Role.find_by_name('Administrator') }
 
-    it 'should not allow users without a role to remove roles' do
-      add_user_without_role_to_session
-      role = Role.find_by_name('Assessor')
-      post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}
-      expect(response).to be_forbidden
-    end
-
     it 'should not allow users with the Assessor role to remove roles' do
       add_user_to_session('Assessor')
       role = Role.find_by_name('Assessor')
@@ -161,12 +144,6 @@ describe UsersController do
     it 'should throw an error if not given a role to filter by' do
       add_user_to_session('Administrator')
       lambda { get :filter_by_role }.should raise_exception
-    end
-
-    it 'should not allow users without a role to assign roles' do
-      add_user_without_role_to_session
-      get :filter_by_role, {role_name: 'Assessor'}
-      expect(response).to be_forbidden
     end
 
     it 'should not allow users with the Assessor role to assign roles' do

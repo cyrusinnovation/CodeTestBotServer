@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe Submission do
-  include EnvHelper
-  
   before do
     FakeWeb.allow_net_connect = false
 

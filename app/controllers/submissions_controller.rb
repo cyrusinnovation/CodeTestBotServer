@@ -15,6 +15,7 @@ class SubmissionsController < UserAwareController
   end
 
   def index
+    authorize! :index, Submission
     render :json => Submission.all
   end
 

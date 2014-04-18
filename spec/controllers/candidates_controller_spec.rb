@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe CandidatesController do
-  include UserHelper
-
   let(:level) { Level.find_by_text('Junior') }
   let(:params) { {candidate: {name: 'Bob', email: 'bob@example.com', level_id: level.id}} }
 
@@ -13,7 +11,7 @@ describe CandidatesController do
     it_behaves_like 'a secured route'
 
     context 'when user does not have a role' do
-      before { add_user_without_role_to_session }
+      before { add_user_to_session('Assessor') }
       it { should be_forbidden }
       it { should_not have_created_candidate }
     end

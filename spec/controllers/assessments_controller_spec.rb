@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe AssessmentsController do
-  include UserHelper
-
   describe '#create' do
     let(:submission) { Submission.create({email_text: 'A submission'}) }
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
@@ -13,7 +11,7 @@ describe AssessmentsController do
     it_behaves_like 'a secured route'
 
     context 'with an active session' do
-      before { add_user_without_role_to_session }
+      before { add_user_to_session('Assessor') }
 
       it { should be_created }
       its(:body) { should be_json_eql(assessment_data[:assessment].to_json).at_path('assessment') }
@@ -48,7 +46,7 @@ describe AssessmentsController do
     it_behaves_like 'a secured route'
 
     context 'with an active session' do
-      before { add_user_without_role_to_session }
+      before { add_user_to_session('Assessor') }
 
       context 'with no filter' do
         it { should be_ok }

@@ -1,15 +1,13 @@
 require 'spec_helper'
 
 describe LanguagesController do
-  include UserHelper
-
   describe '#index' do
     subject(:response) { get :index }
 
     it_behaves_like 'a secured route'
 
     context 'with an active session' do
-      before { add_user_without_role_to_session }
+      before { add_user_to_session('Assessor') }
       let(:expected) { [{name: 'Java'}, {name: 'Ruby'}].to_json }
 
       it { should be_ok }
