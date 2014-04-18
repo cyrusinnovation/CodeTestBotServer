@@ -1,7 +1,7 @@
 class SessionsController < SecuredController
   include ParameterValidation
   include URIValidation
-  skip_before_action :check_authorization, only: [:new]
+  skip_before_action :check_authorization_header, only: [:new]
 
   def new
     validate_parameters_present('redirect_uri')

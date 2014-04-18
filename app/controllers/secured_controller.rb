@@ -1,9 +1,9 @@
 class SecuredController < ApplicationController
-  before_action :check_authorization
+  before_action :check_authorization_header
 
   private
 
-  def check_authorization
+  def check_authorization_header
     authorization = request.headers['Authorization']
     if authorization == nil
       response.headers['WWW-Authenticate'] = 'Bearer'
