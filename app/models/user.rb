@@ -16,7 +16,8 @@ class User < ActiveRecord::Base
     User.create({
         uid: auth_details[:uid],
         name: auth_details[:info][:name],
-        email: auth_details[:info][:email]
+        email: auth_details[:info][:email],
+        roles: [Role.find_by_name('Assessor')]
                 })
   end
 end
