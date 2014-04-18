@@ -1,4 +1,4 @@
-class SubmissionsController < ApplicationController
+class SubmissionsController < SecuredController
   def create
     submission = params[:submission]
     file = Base64FileDecoder.decode_to_file submission['zipfile']
@@ -9,7 +9,8 @@ class SubmissionsController < ApplicationController
       language = Language.find(submission[:language_id])
     end
 
-    render :json => Submission.create(email_text: submission['email_text'], zipfile: file, candidate: candidate, language: language)
+    render :json => Submission.create(email_text: submission['email_text'], zipfile: file, candidate: candidate, language: language),
+           :status => :created
   end
 
   def index

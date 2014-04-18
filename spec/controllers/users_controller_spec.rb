@@ -1,41 +1,46 @@
 require 'spec_helper'
-require 'controllers/user_helper'
 
 describe UsersController do
-
   include UserHelper
 
-  describe :index do
+  let(:admin_role) { Role.find_by_name('Administrator') }
+  let(:assessor_role) { Role.find_by_name('Assessor') }
+  let(:kate) { User.create({name: 'Kate', email: 'kate@example.com'}) }
+  let(:expected_kate) { {email: kate.email, name: kate.name, role_ids: []} }
 
-    before(:each) do
-      @admin_role = Role.find_by_name('Administrator')
-      @assessor_role = Role.find_by_name('Assessor')
+  describe '#index' do
+    subject(:response) { get :index }
+
+    it_behaves_like 'a secured route'
+
+    context 'when users exist' do
+      before { add_user_to_session('Administrator') }
+      let(:expected) { [{name: 'Bob', email: 'bob@example.com', role_ids: [admin_role.id]},
+                        expected_kate].to_json }
+
+      it { should be_ok }
+      its(:body) { should be_json_eql(expected).at_path('users') }
     end
-
-    it 'should show all users' do
-      add_user_to_session('Administrator')
-      User.create({ name: 'Kate', email: 'kate@example.com' })
-      expected = [{ name: 'Bob', email: 'bob@example.com', role_ids: [@admin_role.id] },
-                  {email: 'kate@example.com', name: 'Kate', role_ids: []}].to_json
-      get :index
-      expect(response.body).to be_json_eql(expected).at_path('users')
-    end
-
   end
 
-  describe :show do
-    it 'should not allow assessors to view user' do
-      add_user_to_session('Assessor')
-      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
-      lambda {get :show, {id: kate.id}}.should raise_exception(CanCan::AccessDenied)
+  describe '#show' do
+    let(:params) { {id: kate.id} }
+
+    subject(:response) { get :show, params }
+
+    it_behaves_like 'a secured route'
+
+    context 'when user is an Assessor' do
+      before { add_user_to_session('Assessor') }
+      it 'should raise access denied exception' do
+        expect { response }.to raise_exception(CanCan::AccessDenied)
+      end
     end
 
-    it 'should find a user based on the id for an admin user' do
-      add_user_to_session('Administrator')
-      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
-      get :show, {id: kate.id}
-      expected = {roles: [], user: {email: 'kate@example.com', name: 'Kate', role_ids: []}}.to_json
-      expect(response.body).to be_json_eql(expected)
+    context 'when user is an Administrator' do
+      before { add_user_to_session('Administrator') }
+      let(:expected) { {roles: [], user: expected_kate}.to_json }
+      its(:body) { should be_json_eql(expected) }
     end
   end
 
@@ -44,24 +49,24 @@ describe UsersController do
     it 'should not allow users without a role to assign roles' do
       add_user_without_role_to_session
       role = Role.find_by_name('Assessor')
-      lambda {post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+      lambda { post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should not allow users with the Assessor role to assign roles' do
       add_user_to_session('Assessor')
       role = Role.find_by_name('Assessor')
-      lambda {post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+      lambda { post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should not allow users with the Recruiter role to assign roles' do
       add_user_to_session('Recruiter')
       role = Role.find_by_name('Assessor')
-      lambda {post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+      lambda { post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should allow users with the administrator role to assign roles' do
       add_user_to_session('Administrator')
-      user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      user2 = User.create({name: 'Kate', email: 'kate@example.com'})
       role = Role.find_by_name('Assessor')
       expect(user2.roles.include? role).to be_false
       post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
@@ -72,7 +77,7 @@ describe UsersController do
 
     it 'should only assign a role once' do
       add_user_to_session('Administrator')
-      user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      user2 = User.create({name: 'Kate', email: 'kate@example.com'})
       role = Role.find_by_name('Assessor')
       expect(user2.roles.include? role).to be_false
       post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
@@ -83,7 +88,7 @@ describe UsersController do
 
     it 'should be able to assign multiple roles' do
       add_user_to_session('Administrator')
-      user3 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      user3 = User.create({name: 'Kate', email: 'kate@example.com'})
       assessor_role = Role.find_by_name('Assessor')
       admin_role = Role.find_by_name('Administrator')
       post :assign_role_to_user, {role_change: {user_id: user3.id, role_id: assessor_role.id}}
@@ -101,24 +106,24 @@ describe UsersController do
     it 'should not allow users without a role to remove roles' do
       add_user_without_role_to_session
       role = Role.find_by_name('Assessor')
-      lambda {post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+      lambda { post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should not allow users with the Assessor role to remove roles' do
       add_user_to_session('Assessor')
       role = Role.find_by_name('Assessor')
-      lambda {post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+      lambda { post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should not allow users with the Recruiter role to remove roles' do
       add_user_to_session('Recruiter')
       role = Role.find_by_name('Recruiter')
-      lambda {post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}}.should raise_exception(CanCan::AccessDenied)
+      lambda { post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}} }.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should allow users with the administrator role to remove roles' do
       add_user_to_session('Administrator')
-      user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      user2 = User.create({name: 'Kate', email: 'kate@example.com'})
       role = Role.find_by_name('Assessor')
       user2.roles.push(role)
       expect(user2.roles.include? role).to be_true
@@ -130,7 +135,7 @@ describe UsersController do
 
     it 'should do nothing if asked to remove a role the user doesnt have' do
       add_user_to_session('Administrator')
-      user2 = User.create({ name: 'Kate', email: 'kate@example.com' })
+      user2 = User.create({name: 'Kate', email: 'kate@example.com'})
       role = Role.find_by_name('Assessor')
       user2.roles.push(role)
       expect(user2.roles.include? role).to be_true
@@ -158,54 +163,54 @@ describe UsersController do
 
     it 'should not allow users without a role to assign roles' do
       add_user_without_role_to_session
-      lambda {get :filter_by_role, {role_name: 'Assessor'}}.should raise_exception(CanCan::AccessDenied)
+      lambda { get :filter_by_role, {role_name: 'Assessor'} }.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should not allow users with the Assessor role to assign roles' do
       add_user_to_session('Assessor')
-      lambda {get :filter_by_role, {role_name: 'Assessor'}}.should raise_exception(CanCan::AccessDenied)
+      lambda { get :filter_by_role, {role_name: 'Assessor'} }.should raise_exception(CanCan::AccessDenied)
     end
 
     it 'should only show users with the Assessor role' do
       add_user_to_session('Administrator')
-      User.create({ name: 'Kate', email: 'kate@example.com' })
-      expected = {users:[]}.to_json
+      User.create({name: 'Kate', email: 'kate@example.com'})
+      expected = {users: []}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
 
     it 'should render all Assessors as JSON' do
       add_user_to_session('Administrator')
-      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
+      kate = User.create({name: 'Kate', email: 'kate@example.com'})
       kate.roles.push(@assessor_role)
-      bob = User.create({ name: 'Bob', email: 'bob@example.com' })
+      bob = User.create({name: 'Bob', email: 'bob@example.com'})
       bob.roles.push(@assessor_role)
 
-      expected = {roles:[{id: @assessor_role.id, name: @assessor_role.name}],  users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id]},
-                  {email: 'bob@example.com', name: 'Bob', role_ids: [@assessor_role.id]}]}.to_json
+      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}], users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id]},
+                                                                                       {email: 'bob@example.com', name: 'Bob', role_ids: [@assessor_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
 
     it 'should render only Assessors as JSON' do
       add_user_to_session('Administrator')
-      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
+      kate = User.create({name: 'Kate', email: 'kate@example.com'})
       kate.roles.push(@assessor_role)
-      bob = User.create({ name: 'Bob', email: 'bob@example.com' })
+      bob = User.create({name: 'Bob', email: 'bob@example.com'})
       bob.roles.push(@admin_role)
 
-      expected = {roles:[{id: @assessor_role.id, name: @assessor_role.name}], users:[{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id]}]}.to_json
+      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}], users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
 
     it 'should render Assessors as JSON even if they have other roles too' do
       add_user_to_session('Administrator')
-      kate = User.create({ name: 'Kate', email: 'kate@example.com' })
+      kate = User.create({name: 'Kate', email: 'kate@example.com'})
       kate.roles.push(@assessor_role)
       kate.roles.push(@admin_role)
 
-      expected = {roles:[{id: @assessor_role.id, name: @assessor_role.name}, {id: @admin_role.id, name: @admin_role.name}], users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id, @admin_role.id]}]}.to_json
+      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}, {id: @admin_role.id, name: @admin_role.name}], users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id, @admin_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end

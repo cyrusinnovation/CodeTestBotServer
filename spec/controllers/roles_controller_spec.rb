@@ -1,23 +1,20 @@
 require 'spec_helper'
-require 'pry'
-require 'controllers/user_helper'
 
 describe RolesController do
-
   include UserHelper
 
-  describe :index do
+  describe '#index' do
+    subject(:response) { get :index }
 
-    before(:each) do
-      add_user_without_role_to_session
-    end
+    it_behaves_like 'a secured route'
 
-    it 'should render all Roles as JSON' do
-      expected = [{name: 'Assessor'}, {name: 'Recruiter'}, {name: 'Administrator'}].to_json
-      get :index
-      expect(response.body).to be_json_eql(expected).at_path('roles')
+    context 'when session exists' do
+      before { add_user_without_role_to_session }
+      let(:expected) { [{name: 'Assessor'}, {name: 'Recruiter'}, {name: 'Administrator'}].to_json }
+
+      subject(:body) { response.body }
+
+      it { should be_json_eql(expected).at_path('roles') }
     end
   end
-
-
 end

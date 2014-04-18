@@ -1,14 +1,15 @@
 require 'spec_helper'
 
 describe Submission do
+  include EnvHelper
+  
   before do
     FakeWeb.allow_net_connect = false
 
-    @fake_env = double(:fake_env)
-    allow(@fake_env).to receive(:submissions_bucket).and_return('codetestbot-submissions-test')
-    allow(@fake_env).to receive(:aws_access_key_id).and_return('fake_key')
-    allow(@fake_env).to receive(:aws_secret_access_key).and_return('fake_secret')
-    allow(Figaro).to receive(:env).and_return(@fake_env)
+    env = fake_env
+    allow(env).to receive(:submissions_bucket).and_return('codetestbot-submissions-test')
+    allow(env).to receive(:aws_access_key_id).and_return('fake_key')
+    allow(env).to receive(:aws_secret_access_key).and_return('fake_secret')
   end
 
   after do
