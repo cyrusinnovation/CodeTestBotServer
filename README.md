@@ -1,6 +1,6 @@
-![Build Status](https://travis-ci.org/cyrusinnovation/CodeTestBotServer.svg?branch=travis)
-![Code Climate](https://codeclimate.com/github/cyrusinnovation/CodeTestBotServer.png)
-![Coverage Status](https://coveralls.io/repos/cyrusinnovation/CodeTestBotServer/badge.png)
+[![Build Status](https://travis-ci.org/cyrusinnovation/CodeTestBotServer.svg?branch=travis)](https://travis-ci.org/cyrusinnovation/CodeTestBotServer)
+[![Code Climate](https://codeclimate.com/github/cyrusinnovation/CodeTestBotServer.png)](https://codeclimate.com/github/cyrusinnovation/CodeTestBotServer)
+[![Coverage Status](https://coveralls.io/repos/cyrusinnovation/CodeTestBotServer/badge.png)](https://coveralls.io/repos/cyrusinnovation/CodeTestBotServer)
 
 # Code Test Bot Server
 
