@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
         uid: auth_details[:uid],
         name: auth_details[:info][:name],
         email: auth_details[:info][:email],
+        editable: auth_details.key?(:editable) ? auth_details[:editable] : true,
         roles: [Role.find_by_name('Assessor')]
                 })
   end

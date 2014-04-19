@@ -66,6 +66,7 @@ describe User do
         expect(user.uid).to eql(auth_details[:uid])
         expect(user.name).to eql(auth_details[:info][:name])
         expect(user.email).to eql(auth_details[:info][:email])
+        expect(user.editable).to be_true
         expect(User.count).to eql(1)
       end
 

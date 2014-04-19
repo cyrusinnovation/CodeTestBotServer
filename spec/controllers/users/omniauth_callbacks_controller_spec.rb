@@ -27,6 +27,7 @@ describe OmniauthCallbacksController do
         expect(User.first.uid).to eq('dev')
         expect(User.first.name).to eq('Development User')
         expect(User.first.email).to eq('dev@localhost')
+        expect(User.first.editable).to be_false
       end
 
       it 'creates a session for the dev user' do

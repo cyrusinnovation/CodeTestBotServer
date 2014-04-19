@@ -51,7 +51,8 @@ class OmniauthCallbacksController < ApplicationController
         credentials: {
             token: SecureRandom.hex(16),
             expires_at: expiry_time
-        }
+        },
+        editable: false
     }
   end
 end

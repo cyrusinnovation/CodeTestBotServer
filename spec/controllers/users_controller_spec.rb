@@ -4,7 +4,7 @@ describe UsersController do
   let(:admin_role) { Role.find_by_name('Administrator') }
   let(:assessor_role) { Role.find_by_name('Assessor') }
   let(:kate) { User.create({name: 'Kate', email: 'kate@example.com'}) }
-  let(:expected_kate) { {email: kate.email, name: kate.name, role_ids: []} }
+  let(:expected_kate) { {email: kate.email, name: kate.name, editable: true, role_ids: []} }
 
   describe '#index' do
     subject(:response) { get :index }
@@ -13,7 +13,7 @@ describe UsersController do
 
     context 'when users exist' do
       before { add_user_to_session('Administrator') }
-      let(:expected) { [{name: 'Bob', email: 'bob@example.com', role_ids: [admin_role.id]},
+      let(:expected) { [{name: 'Bob', email: 'bob@example.com', editable: true, role_ids: [admin_role.id]},
                         expected_kate].to_json }
 
       it { should be_ok }
@@ -167,8 +167,8 @@ describe UsersController do
       bob = User.create({name: 'Bob', email: 'bob@example.com'})
       bob.roles.push(@assessor_role)
 
-      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}], users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id]},
-                                                                                       {email: 'bob@example.com', name: 'Bob', role_ids: [@assessor_role.id]}]}.to_json
+      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}], users: [{email: 'kate@example.com', name: 'Kate', editable: true, role_ids: [@assessor_role.id]},
+                                                                                       {email: 'bob@example.com', name: 'Bob', editable: true, role_ids: [@assessor_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
@@ -180,7 +180,7 @@ describe UsersController do
       bob = User.create({name: 'Bob', email: 'bob@example.com'})
       bob.roles.push(@admin_role)
 
-      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}], users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id]}]}.to_json
+      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}], users: [{email: 'kate@example.com', name: 'Kate', editable: true, role_ids: [@assessor_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
@@ -191,7 +191,7 @@ describe UsersController do
       kate.roles.push(@assessor_role)
       kate.roles.push(@admin_role)
 
-      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}, {id: @admin_role.id, name: @admin_role.name}], users: [{email: 'kate@example.com', name: 'Kate', role_ids: [@assessor_role.id, @admin_role.id]}]}.to_json
+      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}, {id: @admin_role.id, name: @admin_role.name}], users: [{email: 'kate@example.com', name: 'Kate', editable: true, role_ids: [@assessor_role.id, @admin_role.id]}]}.to_json
       get :filter_by_role, {role_name: 'Assessor'}
       expect(response.body).to be_json_eql(expected)
     end
