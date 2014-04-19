@@ -28,7 +28,10 @@ module CodeTestBotServer
     config.middleware.use Rack::Cors do
       allow do
         origins 'localhost:3001'
-        resource '*', :headers => :any, :methods => [:get, :post, :delete, :options]
+        resource '*',
+                 :methods => [:get, :post, :delete, :options],
+                 :headers => :any,
+                 :expose => ['WWW-Authenticate']
       end
     end
   end
