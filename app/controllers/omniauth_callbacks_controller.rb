@@ -52,7 +52,8 @@ class OmniauthCallbacksController < ApplicationController
             token: SecureRandom.hex(16),
             expires_at: expiry_time
         },
-        editable: false
+        editable: false,
+        roles: [Role.find_by_name('Administrator')]
     }
   end
 end
