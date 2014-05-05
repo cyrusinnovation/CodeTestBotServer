@@ -29,7 +29,7 @@ module CodeTestBotServer
       allow do
         origins 'localhost:3001'
         resource '*',
-                 :methods => [:get, :post, :delete, :options],
+                 :methods => [:get, :post, :put, :delete, :options],
                  :headers => :any,
                  :expose => ['WWW-Authenticate']
       end
