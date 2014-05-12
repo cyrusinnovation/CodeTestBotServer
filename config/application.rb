@@ -27,7 +27,7 @@ module CodeTestBotServer
 
     config.middleware.use Rack::Cors do
       allow do
-        origins 'localhost:4200'
+        origins 'codetestbot.herokuapp.com', 'localhost:4200'
         resource '*',
                  :methods => [:get, :post, :put, :delete, :options],
                  :headers => :any,
