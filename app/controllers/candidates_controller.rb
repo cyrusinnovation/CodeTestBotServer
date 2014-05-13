@@ -8,6 +8,12 @@ class CandidatesController < UserAwareController
 
   def index
     authorize! :view_full, Candidate
-    render :json => Candidate.all
+
+    filters = {}
+    if params.include? :email
+      filters[:email] = params[:email]
+    end
+
+    render :json => Candidate.all.where(filters)
   end
 end

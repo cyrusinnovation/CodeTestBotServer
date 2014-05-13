@@ -56,9 +56,22 @@ describe CandidatesController do
     %w(Recruiter Administrator).each do |role|
       context "when user has #{role} role" do
         before { add_user_to_session(role) }
-        subject(:body) { response.body }
-        it { should be_json_eql([{name: 'Bob', email: 'bob@example.com', level_id: level.id}].to_json).at_path('candidates') }
-        it { should be_json_eql([{text: level.text}].to_json).at_path('levels') }
+
+        context 'with no filter' do
+          subject(:body) { response.body }
+          it { should be_json_eql([{name: 'Bob', email: 'bob@example.com', level_id: level.id}].to_json).at_path('candidates') }
+          it { should be_json_eql([{text: level.text}].to_json).at_path('levels') }
+        end
+
+        context 'with email filter matching existing candidates' do
+          subject { get :index, email: candidate.email }
+          its(:body) { should be_json_eql([{name: 'Bob', email: 'bob@example.com', level_id: level.id}].to_json).at_path('candidates') }
+        end
+
+        context 'with email filter not matching any candidate' do
+          subject { get :index, email: 'not.existing@example.com' }
+          its(:body) { should be_json_eql([].to_json).at_path('candidates') }
+        end
       end
     end
   end
