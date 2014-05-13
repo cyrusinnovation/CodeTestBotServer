@@ -15,8 +15,11 @@ class UsersController < UserAwareController
     authorize! :view_users, User
     user_id = params[:id]
     user = User.find(user_id)
-    updated_user = params[:user]
-    user.roles = updated_user[:role_ids].collect{|role_id| Role.find(role_id)}
+    new_role_ids = params[:user][:role_ids]
+    if new_role_ids.size == 0
+      raise HttpStatus::Forbidden.new('Cannot remove all roles from a User.')
+    end
+    user.roles = new_role_ids.collect{|role_id| Role.find(role_id)}
     user.save
     render :json => user
   end

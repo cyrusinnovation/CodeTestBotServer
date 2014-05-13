@@ -37,18 +37,26 @@ describe UsersController do
   end
 
   describe '#update' do
-    let(:params) {{ id: kate.id, user: expected_kate_with_role }}
     subject(:response) {post :update, params}
 
     context 'when an admin user submits an update' do
+      let(:params) {{ id: kate.id, user: expected_kate_with_role }}
       before { add_user_to_session('Administrator') }
       let(:expected) {{roles: [{name: 'Administrator'}], user: expected_kate_with_role}.to_json}
       its(:body) {should be_json_eql(expected)}
     end
 
     context 'when an assessor submits an update' do
+      let(:params) {{ id: kate.id, user: expected_kate_with_role }}
       before { add_user_to_session('Assessor') }
       it {should be_forbidden}
+    end
+
+    context 'when an admin removes all roles from a user' do
+      let(:params) {{ id: kate.id, user: expected_kate }}
+      before { add_user_to_session('Administrator') }
+      let(:expected) {{error: 'Cannot remove all roles from a User.'}.to_json}
+      its(:body) {should be_json_eql(expected)}
     end
 
   end
