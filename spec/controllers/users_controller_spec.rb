@@ -31,6 +31,13 @@ describe UsersController do
       its(:body) { should be_json_eql(expected).at_path('users') }
     end
 
+    context 'when filtering for a non-existent role' do
+      let(:params) {{role_id: 666 }}
+      before { add_user_to_session('Administrator') }
+      let(:expected) {{error: "Couldn't find Role with 'id'=666"}.to_json}
+      its(:body) {should be_json_eql(expected)}
+    end
+
   end
 
   describe '#show' do
