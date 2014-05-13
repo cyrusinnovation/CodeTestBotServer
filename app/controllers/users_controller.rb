@@ -2,7 +2,13 @@ class UsersController < UserAwareController
 
   def index
     authorize! :view_users, User
-    render :json => User.all
+    if params[:role_id] != nil
+      role = Role.find(params[:role_id])
+      users = role.users
+    else
+      users = User.all
+    end
+    render :json => users
   end
 
   def show

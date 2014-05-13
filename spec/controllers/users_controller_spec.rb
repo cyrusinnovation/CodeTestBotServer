@@ -7,11 +7,13 @@ describe UsersController do
   let(:expected_kate_with_role) { {email: kate.email, name: kate.name, editable: true, role_ids: [admin_role.id]} }
 
   describe '#index' do
-    subject(:response) { get :index }
+    let(:params) {{}}
+    subject(:response) { get :index, params }
 
     it_behaves_like 'a secured route'
 
-    context 'when users exist' do
+    context 'when listing all users for an admin' do
+
       before { add_user_to_session('Administrator') }
       let(:expected) { [{name: 'Bob', email: 'bob@example.com', editable: true, role_ids: [admin_role.id]},
                         expected_kate].to_json }
@@ -19,6 +21,16 @@ describe UsersController do
       it { should be_ok }
       its(:body) { should be_json_eql(expected).at_path('users') }
     end
+
+    context 'when filtering for a role' do
+      let(:params) {{role_id: admin_role.id }}
+      before { add_user_to_session('Administrator') }
+      let(:expected) { [{name: 'Bob', email: 'bob@example.com', editable: true, role_ids: [admin_role.id]}].to_json }
+
+      it { should be_ok }
+      its(:body) { should be_json_eql(expected).at_path('users') }
+    end
+
   end
 
   describe '#show' do
