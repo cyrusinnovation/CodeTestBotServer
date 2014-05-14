@@ -5,13 +5,16 @@ describe UsersController do
   let(:assessor_role) { Role.find_by_name('Assessor') }
   let(:kate) { User.create({name: 'Kate', email: 'kate@example.com'}) }
   let(:expected_kate) { {email: kate.email, name: kate.name, editable: true, role_ids: []} }
+  let(:expected_kate_with_role) { {email: kate.email, name: kate.name, editable: true, role_ids: [admin_role.id]} }
 
   describe '#index' do
-    subject(:response) { get :index }
+    let(:params) {{}}
+    subject(:response) { get :index, params }
 
     it_behaves_like 'a secured route'
 
-    context 'when users exist' do
+    context 'when listing all users for an admin' do
+
       before { add_user_to_session('Administrator') }
       let(:expected) { [{name: 'Bob', email: 'bob@example.com', editable: true, role_ids: [admin_role.id]},
                         expected_kate].to_json }
@@ -19,183 +22,80 @@ describe UsersController do
       it { should be_ok }
       its(:body) { should be_json_eql(expected).at_path('users') }
     end
+
+    context 'when filtering for a role' do
+      let(:params) {{role_id: admin_role.id }}
+      before { add_user_to_session('Administrator') }
+      let(:expected) { [{name: 'Bob', email: 'bob@example.com', editable: true, role_ids: [admin_role.id]}].to_json }
+
+      it { should be_ok }
+      its(:body) { should be_json_eql(expected).at_path('users') }
+    end
+
+    context 'when filtering for a role show user with role even if they have other roles' do
+      let(:params) {{role_id: assessor_role.id }}
+      before {
+        add_user_to_session('Administrator')
+        sue =  User.create({name: 'Sue', email: 'sue@example.com'})
+        sue.roles.push(admin_role)
+        sue.roles.push(assessor_role)
+        sue.save
+      }
+
+      let(:expected) { [{name: 'Sue', email: 'sue@example.com', editable: true, role_ids:
+          [assessor_role.id, admin_role.id]}].to_json }
+
+      it { should be_ok }
+      its(:body) { should be_json_eql(expected).at_path('users') }
+    end
+
+    context 'when filtering for a non-existent role' do
+      let(:params) {{role_id: 666 }}
+      before { add_user_to_session('Administrator') }
+      let(:expected) {{error: "Couldn't find Role with 'id'=666"}.to_json}
+      its(:body) {should be_json_eql(expected)}
+    end
+
   end
 
   describe '#show' do
-    let(:params) { {id: kate.id} }
-
-    subject(:response) { get :show, params }
-
-    it_behaves_like 'a secured route'
-
-    context 'when user is an Assessor' do
-      before { add_user_to_session('Assessor') }
-      it { should be_forbidden }
-    end
-
-    context 'when user is an Administrator' do
+    let(:params) {{ id: kate.id }}
+    subject(:response) {get :show, params}
+    context 'when an admin user looks at kate' do
       before { add_user_to_session('Administrator') }
-      let(:expected) { {roles: [], user: expected_kate}.to_json }
-      its(:body) { should be_json_eql(expected) }
+      let(:expected) {{roles: [], user: expected_kate}.to_json}
+      its(:body) {should be_json_eql(expected)}
+    end
+
+    context 'when a recruiter looks at kate' do
+      before { add_user_to_session('Recruiter') }
+      it {should be_forbidden}
     end
   end
 
-  describe :assign_role_to_user do
-    it 'should not allow users with the Assessor role to assign roles' do
-      add_user_to_session('Assessor')
-      role = Role.find_by_name('Assessor')
-      post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}
-      expect(response).to be_forbidden
+  describe '#update' do
+    subject(:response) {post :update, params}
+
+    context 'when an admin user submits an update' do
+      let(:params) {{ id: kate.id, user: expected_kate_with_role }}
+      before { add_user_to_session('Administrator') }
+      let(:expected) {{roles: [{name: 'Administrator'}], user: expected_kate_with_role}.to_json}
+      its(:body) {should be_json_eql(expected)}
     end
 
-    it 'should not allow users with the Recruiter role to assign roles' do
-      add_user_to_session('Recruiter')
-      role = Role.find_by_name('Assessor')
-      post :assign_role_to_user, {role_change: {user_id: @user.id, role_id: role.id}}
-      expect(response).to be_forbidden
+    context 'when an assessor submits an update' do
+      let(:params) {{ id: kate.id, user: expected_kate_with_role }}
+      before { add_user_to_session('Assessor') }
+      it {should be_forbidden}
     end
 
-    it 'should allow users with the administrator role to assign roles' do
-      add_user_to_session('Administrator')
-      user2 = User.create({name: 'Kate', email: 'kate@example.com'})
-      role = Role.find_by_name('Assessor')
-      expect(user2.roles.include? role).to be_false
-      post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
-      expect(response).to be_success
-      user2 = User.find_by_name('Kate')
-      expect(user2.roles.include? role).to be_true
-    end
-
-    it 'should only assign a role once' do
-      add_user_to_session('Administrator')
-      user2 = User.create({name: 'Kate', email: 'kate@example.com'})
-      role = Role.find_by_name('Assessor')
-      expect(user2.roles.include? role).to be_false
-      post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
-      post :assign_role_to_user, {role_change: {user_id: user2.id, role_id: role.id}}
-      user2 = User.find_by_name('Kate')
-      expect(user2.roles.size).to eql(1)
-    end
-
-    it 'should be able to assign multiple roles' do
-      add_user_to_session('Administrator')
-      user3 = User.create({name: 'Kate', email: 'kate@example.com'})
-      assessor_role = Role.find_by_name('Assessor')
-      admin_role = Role.find_by_name('Administrator')
-      post :assign_role_to_user, {role_change: {user_id: user3.id, role_id: assessor_role.id}}
-      post :assign_role_to_user, {role_change: {user_id: user3.id, role_id: admin_role.id}}
-      user3 = User.find_by_name('Kate')
-      expect(user3.roles.size).to eql(2)
-      expect(user3.roles.include? assessor_role).to be_true
-      expect(user3.roles.include? admin_role).to be_true
+    context 'when an admin removes all roles from a user' do
+      let(:params) {{ id: kate.id, user: expected_kate }}
+      before { add_user_to_session('Administrator') }
+      let(:expected) {{error: 'Cannot remove all roles from a User.'}.to_json}
+      its(:body) {should be_json_eql(expected)}
     end
 
   end
-
-  describe :remove_role_from_user do
-    let(:assessor_role) { Role.find_by_name('Assessor') }
-    let(:recruiter_role) { Role.find_by_name('Recruiter') }
-    let(:administrator_role) { Role.find_by_name('Administrator') }
-
-    it 'should not allow users with the Assessor role to remove roles' do
-      add_user_to_session('Assessor')
-      role = Role.find_by_name('Assessor')
-      post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}
-      expect(response).to be_forbidden
-    end
-
-    it 'should not allow users with the Recruiter role to remove roles' do
-      add_user_to_session('Recruiter')
-      role = Role.find_by_name('Recruiter')
-      post :remove_role_from_user, {role_change: {user_id: @user.id, role_id: role.id}}
-      expect(response).to be_forbidden
-    end
-
-    it 'should allow users with the administrator role to remove roles' do
-      add_user_to_session('Administrator')
-      user2 = User.create({name: 'Kate', email: 'kate@example.com', roles: [assessor_role, recruiter_role]})
-      post :remove_role_from_user, {role_change: {user_id: user2.id, role_id: assessor_role.id}}
-      expect(response).to be_success
-      user2 = User.find_by_name('Kate')
-      expect(user2.roles.include? assessor_role).to be_false
-    end
-
-    it 'should do nothing if asked to remove a role the user doesnt have' do
-      add_user_to_session('Administrator')
-      user2 = User.create({name: 'Kate', email: 'kate@example.com', roles: [assessor_role, recruiter_role]})
-      admin_role = Role.find_by_name('Administrator')
-      post :remove_role_from_user, {role_change: {user_id: user2.id, role_id: admin_role.id}}
-      expect(response).to be_success
-      user2 = User.find_by_name('Kate')
-      expect(user2.roles.include? (assessor_role)).to be_true
-      expect(user2.roles.include? (recruiter_role)).to be_true
-      expect(user2.roles.size).to eql(2)
-    end
-
-  end
-
-  describe :filter_by_role do
-
-    before(:each) do
-      @admin_role = Role.find_by_name('Administrator')
-      @assessor_role = Role.find_by_name('Assessor')
-    end
-
-    it 'should throw an error if not given a role to filter by' do
-      add_user_to_session('Administrator')
-      lambda { get :filter_by_role }.should raise_exception
-    end
-
-    it 'should not allow users with the Assessor role to assign roles' do
-      add_user_to_session('Assessor')
-      get :filter_by_role, {role_name: 'Assessor'}
-      expect(response).to be_forbidden
-    end
-
-    it 'should only show users with the Assessor role' do
-      add_user_to_session('Administrator')
-      User.create({name: 'Kate', email: 'kate@example.com'})
-      expected = {users: []}.to_json
-      get :filter_by_role, {role_name: 'Assessor'}
-      expect(response.body).to be_json_eql(expected)
-    end
-
-    it 'should render all Assessors as JSON' do
-      add_user_to_session('Administrator')
-      kate = User.create({name: 'Kate', email: 'kate@example.com'})
-      kate.roles.push(@assessor_role)
-      bob = User.create({name: 'Bob', email: 'bob@example.com'})
-      bob.roles.push(@assessor_role)
-
-      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}], users: [{email: 'kate@example.com', name: 'Kate', editable: true, role_ids: [@assessor_role.id]},
-                                                                                       {email: 'bob@example.com', name: 'Bob', editable: true, role_ids: [@assessor_role.id]}]}.to_json
-      get :filter_by_role, {role_name: 'Assessor'}
-      expect(response.body).to be_json_eql(expected)
-    end
-
-    it 'should render only Assessors as JSON' do
-      add_user_to_session('Administrator')
-      kate = User.create({name: 'Kate', email: 'kate@example.com'})
-      kate.roles.push(@assessor_role)
-      bob = User.create({name: 'Bob', email: 'bob@example.com'})
-      bob.roles.push(@admin_role)
-
-      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}], users: [{email: 'kate@example.com', name: 'Kate', editable: true, role_ids: [@assessor_role.id]}]}.to_json
-      get :filter_by_role, {role_name: 'Assessor'}
-      expect(response.body).to be_json_eql(expected)
-    end
-
-    it 'should render Assessors as JSON even if they have other roles too' do
-      add_user_to_session('Administrator')
-      kate = User.create({name: 'Kate', email: 'kate@example.com'})
-      kate.roles.push(@assessor_role)
-      kate.roles.push(@admin_role)
-
-      expected = {roles: [{id: @assessor_role.id, name: @assessor_role.name}, {id: @admin_role.id, name: @admin_role.name}], users: [{email: 'kate@example.com', name: 'Kate', editable: true, role_ids: [@assessor_role.id, @admin_role.id]}]}.to_json
-      get :filter_by_role, {role_name: 'Assessor'}
-      expect(response.body).to be_json_eql(expected)
-    end
-  end
-
 
 end

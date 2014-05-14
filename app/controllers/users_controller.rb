@@ -2,7 +2,13 @@ class UsersController < UserAwareController
 
   def index
     authorize! :view_users, User
-    render :json => User.all
+    if params[:role_id] != nil
+      role = Role.find(params[:role_id])
+      users = role.users
+    else
+      users = User.all
+    end
+    render :json => users
   end
 
   def show
@@ -11,40 +17,17 @@ class UsersController < UserAwareController
     render :json => User.find(user_id)
   end
 
-  #FIXME
-  # this is totally not the ember way to add and remove roles
-  # the assign_role_to_user and remove_role_from_user methods need to be removed.
-  # I think ember actually wants to send a modified user with roles to the update method in this controller
-  # which should ensure the roles on the saved user match the roles on the updated user.
-
-
-  def assign_role_to_user
-    authorize! :assign_role, User
-    role_change = params[:role_change]
-    user = User.find(role_change[:user_id])
-    role = Role.find(role_change[:role_id])
-    if not user.roles.include? role
-      user.roles.push(role)
-      user.save
+  def update
+    authorize! :view_users, User
+    user_id = params[:id]
+    user = User.find(user_id)
+    new_role_ids = params[:user][:role_ids]
+    if new_role_ids.size == 0
+      raise HttpStatus::Forbidden.new('Cannot remove all roles from a User.')
     end
-  end
-
-  def remove_role_from_user
-    authorize! :remove_role, User
-    role_change = params[:role_change]
-    user = User.find(role_change[:user_id])
-    role = Role.find(role_change[:role_id])
-    user.remove_role!(role)
-  end
-
-  def filter_by_role
-    authorize! :view_roles, User
-    role_name = params[:role_name]
-    if not role_name
-      raise 'You must give the name of the role to filter by'
-    end
-    role = Role.find_by_name(role_name)
-    render :json => role.users
+    user.roles = new_role_ids.collect{|role_id| Role.find(role_id)}
+    user.save
+    render :json => user
   end
 
 end
