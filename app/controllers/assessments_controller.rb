@@ -13,6 +13,10 @@ class AssessmentsController < SecuredController
            :status => :created
   end
 
+  def show
+    render :json => Assessment.find(params[:id])
+  end
+
   def index
     filters = {}
     if params.include? :submission_id
