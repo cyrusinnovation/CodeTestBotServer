@@ -27,7 +27,7 @@ describe SubmissionsController do
         let(:candidate) { Candidate.create({name: 'Bob'}) }
         let(:language) { Language.find_by_name('Java') }
         let!(:submission) { Submission.create({email_text: 'test', language: language, candidate: candidate}) }
-        let(:expected) { [{email_text: 'test', zipfile: '/zipfiles/original/missing.png', language_id: language.id, candidate_id: candidate.id}].to_json }
+        let(:expected) { [{email_text: 'test', zipfile: '/zipfiles/original/missing.png', active: true, language_id: language.id, candidate_id: candidate.id}].to_json }
 
         subject(:body) { response.body }
 
@@ -88,7 +88,7 @@ describe SubmissionsController do
       let!(:submission1) { Submission.create({email_text: 'first'}) }
       let!(:submission2) { Submission.create({email_text: 'second'}) }
       let(:params) { {id: submission2.id} }
-      let(:expected) { {email_text: 'second', zipfile: '/zipfiles/original/missing.png', candidate_id: nil, language_id: nil}.to_json }
+      let(:expected) { {email_text: 'second', zipfile: '/zipfiles/original/missing.png', active: true, candidate_id: nil, language_id: nil}.to_json }
 
       it { should be_ok }
       its(:body) { should be_json_eql(expected).at_path('submission') }
@@ -99,7 +99,7 @@ describe SubmissionsController do
     let(:submission) { Submission.create({email_text: 'original'}) }
     let(:submission_id) { submission.id }
 
-    subject(:response) { put :update, {id: submission_id, submission: {email_text: 'updated'}} }
+    subject(:response) { put :update, {id: submission_id, submission: {email_text: 'updated', active: false}} }
 
     it_behaves_like 'a secured route'
 
@@ -108,7 +108,7 @@ describe SubmissionsController do
         before { add_user_to_session(role) }
 
         context 'when updating an existing submission' do
-          let(:expected) { {email_text: 'updated', zipfile: '/zipfiles/original/missing.png', candidate_id: nil, language_id: nil}.to_json }
+          let(:expected) { {email_text: 'updated', zipfile: '/zipfiles/original/missing.png', active: false, candidate_id: nil, language_id: nil}.to_json }
 
           it { should be_ok }
           its(:body) { should be_json_eql(expected).at_path('submission') }
