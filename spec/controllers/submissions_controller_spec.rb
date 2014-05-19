@@ -69,6 +69,7 @@ describe SubmissionsController do
         end
 
         it 'should send a new submission email' do
+          expect(response).to be_created
           email = ActionMailer::Base.deliveries.last
 
           expect(email.subject).to eq("[CTB] #{level.text} #{language.name} Submission")
