@@ -4,6 +4,8 @@ class Submission < ActiveRecord::Base
   has_many :assessments
   has_many :assessors, through: :assessments
 
+  delegate :level, to: :candidate
+
   has_attached_file :zipfile,
                     :storage => :s3,
                     :s3_credentials => Proc.new { |attachment| attachment.instance.s3_credentials },

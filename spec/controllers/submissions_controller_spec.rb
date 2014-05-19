@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe SubmissionsController do
-  let(:env) { fake_env }
-
   before {
-    allow(env).to receive(:submissions_bucket).and_return('codetestbot-submissions-test')
-    allow(env).to receive(:aws_access_key_id).and_return('fake_key')
-    allow(env).to receive(:aws_secret_access_key).and_return('fake_secret')
+    Figaro.env.stub(:from_address => 'test.from@example.com')
+    Figaro.env.stub(:new_submission_address => 'test.to@example.com')
+    Figaro.env.stub(:submissions_bucket => 'codetestbot-submissions-test')
+    Figaro.env.stub(:aws_access_key_id => 'fake_key')
+    Figaro.env.stub(:aws_secret_access_key => 'fake_secret')
   }
 
   describe '#index' do
@@ -43,7 +43,8 @@ describe SubmissionsController do
     let(:file) { Tempfile.new('codetestbot-submission') }
     let(:email_text) { 'a new code test.' }
     let(:language) { Language.find_by_name('Java') }
-    let(:candidate) { Candidate.create({name: 'Bob'}) }
+    let(:level) { Level.find_by_text('Junior') }
+    let(:candidate) { Candidate.create({name: 'Bob', level: level}) }
     let(:params) { {submission: {email_text: email_text, zipfile: 'header,====', candidate_id: candidate.id, language_id: language.id}} }
 
     before {
@@ -65,6 +66,12 @@ describe SubmissionsController do
           expect(Submission.last.email_text).to eq email_text
           expect(Submission.last.zipfile.url).to include File.basename(file)
           expect(Submission.last.language.name).to eql(language.name)
+        end
+
+        it 'should send a new submission email' do
+          email = ActionMailer::Base.deliveries.last
+
+          expect(email.subject).to eq("[CTB] #{level.text} #{language.name} Submission")
         end
       end
     end

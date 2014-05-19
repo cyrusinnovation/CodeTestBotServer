@@ -10,7 +10,9 @@ class SubmissionsController < UserAwareController
       language = Language.find(submission[:language_id])
     end
 
-    render :json => Submission.create(email_text: submission['email_text'], zipfile: file, candidate: candidate, language: language),
+    created_submission = Submission.create!(email_text: submission['email_text'], zipfile: file, candidate: candidate, language: language)
+    SubmissionMailer.new_submission(created_submission).deliver
+    render :json => created_submission,
            :status => :created
   end
 
