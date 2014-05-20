@@ -11,7 +11,7 @@ describe AssessmentMailer do
   before(:each) do
     Figaro.env.stub(:new_assessment_address => "#{new_assessment_address1}, #{new_assessment_address2}")
     Figaro.env.stub(:from_address => from_address)
-    Figaro.env.stub(:base_uri => 'http://example.com')
+    Figaro.env.stub(:app_uri => 'http://example.com')
   end
 
   describe '#new_assessment' do

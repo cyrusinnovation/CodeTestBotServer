@@ -10,7 +10,7 @@ describe SubmissionMailer do
   before(:each) do
     Figaro.env.stub(:new_submission_address => new_submission_address)
     Figaro.env.stub(:from_address => from_address)
-    Figaro.env.stub(:base_uri => 'http://example.com')
+    Figaro.env.stub(:app_uri => 'http://example.com')
   end
 
   describe '#new_submission' do
