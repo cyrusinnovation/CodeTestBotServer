@@ -1,8 +1,17 @@
 require 'spec_helper'
 
 describe AssessmentsController do
+  let(:new_assessment_address1) { 'test.assessment1@example.com' }
+  let(:new_assessment_address2) { 'test.assessment2@example.com' }
+
+  before(:each) do
+    Figaro.env.stub(:new_assessment_address => "#{new_assessment_address1}, #{new_assessment_address2}")
+    Figaro.env.stub(:from_address => 'test.from@example.com')
+  end
+
   describe '#create' do
-    let(:submission) { Submission.create({email_text: 'A submission'}) }
+    let(:candidate) { Candidate.create({name: 'Test Candidate'})}
+    let(:submission) { Submission.create({email_text: 'A submission', candidate: candidate}) }
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!'}} }
 
@@ -23,6 +32,16 @@ describe AssessmentsController do
         expect(Assessment.first.assessor).to eql(assessor)
         expect(Assessment.first.score).to eql(5)
         expect(Assessment.first.notes).to eql('Fantastic!')
+      end
+
+      it 'should send a new assessment email' do
+        expect(response).to be_created
+        email = ActionMailer::Base.deliveries.last
+
+        expect(email.to).to have(2).elements
+        expect(email.to).to include(new_assessment_address1)
+        expect(email.to).to include(new_assessment_address2)
+        expect(email.subject).to eq("[CTB] Assessment for #{candidate.name}")
       end
     end
   end

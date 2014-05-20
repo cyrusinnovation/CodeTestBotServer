@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>New Assessment</h1>
+<p>
+  <%= @assessor.name %> (<a href="mailto:<%= @assessor.email %>"><%= @assessor.email %></a>) submitted an assessment for candidate <%= @candidate.name %> (<a href="mailto:<%= @candidate.email %>"><%= @candidate.email %></a>).
+</p>
+<p>
+  To view the assessment, follow this link: <a href="<%= @url %>"><%= @url %></a>.
+</p>
+</body>
+</html>
