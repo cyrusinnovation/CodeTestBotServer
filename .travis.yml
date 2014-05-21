@@ -12,3 +12,5 @@ before_script:
   - cp config/database.yml.travis config/database.yml
   - psql -c 'create database travis_ci_test;' -U postgres
   - bundle exec rake db:migrate
+notifications:
+  slack: cyrusinnovation:t1h6NsX1mSI72ryir6kOvLiv
