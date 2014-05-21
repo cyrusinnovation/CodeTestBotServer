@@ -3,19 +3,12 @@ require 'net/http'
 class SubmissionsController < UserAwareController
   def create
     authorize! :create, Submission
-    submission = params[:submission]
-    file = Base64FileDecoder.decode_to_file submission['zipfile']
-    candidate = Candidate.find(submission[:candidate_id])
+    submission = Submission.create_from_json(params[:submission])
 
-    language = nil
-    if submission.include? :language_id
-      language = Language.find(submission[:language_id])
-    end
+    SubmissionMailer.new_submission(submission).deliver
+    post_to_webhook(submission)
 
-    created_submission = Submission.create!(email_text: submission['email_text'], zipfile: file, candidate: candidate, language: language)
-    SubmissionMailer.new_submission(created_submission).deliver
-    post_to_webhook(created_submission)
-    render :json => created_submission,
+    render :json => submission,
            :status => :created
   end
 

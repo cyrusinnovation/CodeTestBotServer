@@ -58,4 +58,28 @@ describe Submission do
     expect(submission.assessments.first).to eql(assessment)
     expect(submission.assessors.first).to eql(assessor)
   end
+
+  describe '.create_from_json' do
+    let(:file) { Tempfile.new('codetestbot-submission') }
+    let(:email_text) { 'a new code test.' }
+    let(:language) { Language.find_by_name('Java') }
+    let(:level) { Level.find_by_text('Junior') }
+    let(:candidate) { Candidate.create({name: 'Bob', level: level}) }
+    let(:params) { {submission: {email_text: email_text, zipfile: 'header,====', candidate_id: candidate.id, language_id: language.id}} }
+
+    before {
+      Base64FileDecoder.stub(:decode_to_file => file)
+      FakeWeb.register_uri(:put, "https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/#{File.basename(file)}", :body => '')
+    }
+
+    subject(:creation) { Submission.create_from_json(params[:submission]) }
+
+    it 'creates a new submission' do
+      expect { creation }.to change(Submission, :count).from(0).to(1)
+    end
+
+    its(:email_text) { should eq email_text }
+    its('zipfile.url') { should include File.basename(file) }
+    its('language.name') { should eq language.name }
+  end
 end

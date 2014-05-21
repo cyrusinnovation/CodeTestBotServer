@@ -45,12 +45,12 @@ describe SubmissionsController do
     let(:language) { Language.find_by_name('Java') }
     let(:level) { Level.find_by_text('Junior') }
     let(:candidate) { Candidate.create({name: 'Bob', level: level}) }
-    let(:params) { {submission: {email_text: email_text, zipfile: 'header,====', candidate_id: candidate.id, language_id: language.id}} }
+    let(:params) { {submission: {email_text: email_text, zipfile: 'header,====', candidate_id: candidate.id.to_s, language_id: language.id.to_s}}.with_indifferent_access }
+    let(:submission) { Submission.new({ candidate: candidate, language: language }) }
 
     before {
-      allow(Base64FileDecoder).to receive(:decode_to_file).and_return(file)
       SlackWebhook.stub(:post)
-      FakeWeb.register_uri(:put, "https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/#{File.basename(file)}", :body => '')
+      Submission.stub(:create_from_json => submission)
     }
 
     subject(:response) { post :create, params }
@@ -63,10 +63,7 @@ describe SubmissionsController do
 
         it 'should create a submission' do
           expect(response).to be_created
-          expect(Submission.count).to eql(1)
-          expect(Submission.last.email_text).to eq email_text
-          expect(Submission.last.zipfile.url).to include File.basename(file)
-          expect(Submission.last.language.name).to eql(language.name)
+          expect(Submission).to have_received(:create_from_json).with(params[:submission])
         end
 
         it 'should send a new submission email' do

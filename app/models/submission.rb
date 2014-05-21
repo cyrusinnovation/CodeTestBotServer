@@ -18,4 +18,16 @@ class Submission < ActiveRecord::Base
         :secret_access_key => Figaro.env.aws_secret_access_key
     }
   end
+
+  def self.create_from_json(submission)
+    file = Base64FileDecoder.decode_to_file submission.fetch(:zipfile)
+    candidate = Candidate.find(submission.fetch(:candidate_id))
+
+    language = nil
+    if submission.include? :language_id
+      language = Language.find(submission.fetch(:language_id))
+    end
+
+    create!(email_text: submission.fetch(:email_text), zipfile: file, candidate: candidate, language: language)
+  end
 end
