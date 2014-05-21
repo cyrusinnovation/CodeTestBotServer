@@ -49,6 +49,7 @@ describe SubmissionsController do
 
     before {
       allow(Base64FileDecoder).to receive(:decode_to_file).and_return(file)
+      SlackWebhook.stub(:post)
       FakeWeb.register_uri(:put, "https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/#{File.basename(file)}", :body => '')
     }
 
