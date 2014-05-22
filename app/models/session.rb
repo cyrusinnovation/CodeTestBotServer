@@ -6,8 +6,9 @@ class Session < ActiveRecord::Base
     Time.now.utc >= token_expiry
   end
   def reset_token_expiry!
-    if token_expiry < (Time.now.utc + 15.minutes)
-      self.token_expiry = Time.now.utc + 15.minutes
+    an_hour_from_now = Time.now.utc + 1.hour
+    if token_expiry < an_hour_from_now
+      self.token_expiry = an_hour_from_now
     end
   end
 end

@@ -52,7 +52,7 @@ describe SessionsController do
 
     context 'when session exists' do
       let(:token) { '123456789' }
-      let(:expiry) { Time.now.utc + 20.minutes }
+      let(:expiry) { Time.now.utc + 90.minutes }
       let!(:authorization) { valid_token(token, expiry) }
       it { should be_ok }
       it 'should return session as JSON' do
