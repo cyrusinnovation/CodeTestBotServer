@@ -13,7 +13,7 @@ module Notifications
         submission_url = "#{Figaro.env.app_uri}/submissions/#{submission.id}"
         message = "New Code Test Submission: <#{submission_url}|Click to view>"
         {
-          username: 'code-test-bot',
+          username: 'Code Test Bot',
           icon_emoji: ':scream:',
           attachments: [
             {

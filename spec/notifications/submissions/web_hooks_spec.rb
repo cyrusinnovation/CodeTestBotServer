@@ -18,7 +18,7 @@ describe Notifications::Submissions::WebHooks do
     describe 'POST request payload' do
       subject(:payload) { JSON.parse(fire_hook.body) }
 
-      its(['username']) { should eq('code-test-bot') }
+      its(['username']) { should eq('Code Test Bot') }
       its(['icon_emoji']) { should eq(':scream:') }
 
       describe 'attachment' do
