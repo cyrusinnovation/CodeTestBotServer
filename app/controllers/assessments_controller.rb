@@ -1,16 +1,8 @@
 class AssessmentsController < SecuredController
   def create
     assessment = params[:assessment]
-    submission = Submission.find(assessment[:submission_id])
-    assessor = Assessor.find(assessment[:assessor_id])
-
-    created_assessment = Assessment.create({
-                                              submission: submission,
-                                              assessor: assessor,
-                                              score: assessment[:score],
-                                              notes: assessment[:notes]
-                                          })
-    AssessmentMailer.new_assessment(created_assessment).deliver
+    created_assessment = Assessment.create_from_json(assessment)
+    Notifications::Assessments.new_assessment(created_assessment)
     render :json => created_assessment,
            :status => :created
   end

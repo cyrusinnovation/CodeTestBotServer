@@ -10,10 +10,15 @@ describe AssessmentsController do
   end
 
   describe '#create' do
-    let(:candidate) { Candidate.create({name: 'Test Candidate'})}
-    let(:submission) { Submission.create({email_text: 'A submission', candidate: candidate}) }
-    let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
+    let(:submission) { Submission.new({email_text: 'A submission'}) }
+    let(:assessor) { Assessor.new({name: 'Bob', email: 'bob@example.com'}) }
+    let(:assessment) { Assessment.new({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!' }) }
     let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!'}} }
+
+    before { 
+      Assessment.stub(:create_from_json => assessment) 
+      Notifications::Assessments.stub(:new_assessment)
+    }
 
     subject(:response) { post :create, assessment_data }
 
@@ -27,21 +32,14 @@ describe AssessmentsController do
 
       it 'should create an assessment' do
         response
-        expect(Assessment.count).to eql(1)
-        expect(Assessment.first.submission).to eql(submission)
-        expect(Assessment.first.assessor).to eql(assessor)
-        expect(Assessment.first.score).to eql(5)
-        expect(Assessment.first.notes).to eql('Fantastic!')
+
+        expect(Assessment).to have_received(:create_from_json)
       end
 
       it 'should send a new assessment email' do
-        expect(response).to be_created
-        email = ActionMailer::Base.deliveries.last
+        response
 
-        expect(email.to).to have(2).elements
-        expect(email.to).to include(new_assessment_address1)
-        expect(email.to).to include(new_assessment_address2)
-        expect(email.subject).to eq("[CTB] Assessment for #{candidate.name}")
+        expect(Notifications::Assessments).to have_received(:new_assessment)
       end
     end
   end
