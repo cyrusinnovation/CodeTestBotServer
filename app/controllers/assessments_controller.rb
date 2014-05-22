@@ -1,4 +1,4 @@
-class AssessmentsController < SecuredController
+class AssessmentsController < UserAwareController
   def create
     assessment = params[:assessment]
     submission = Submission.find(assessment[:submission_id])
@@ -34,8 +34,11 @@ class AssessmentsController < SecuredController
 
 
   def update
-    updated_assessment = params[:assessment]
     assessment = Assessment.find(params[:id])
+    if current_user.id != assessment.assessor_id
+      raise HttpStatus::Forbidden.new('You can only edit your own assessments')
+    end
+    updated_assessment = params[:assessment]
     assessment.notes = updated_assessment[:notes]
     assessment.score = updated_assessment[:score]
     assessment.save
