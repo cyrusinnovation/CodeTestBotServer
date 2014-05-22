@@ -49,7 +49,7 @@ describe SubmissionsController do
     let(:submission) { Submission.new({ candidate: candidate, language: language }) }
 
     before {
-      SlackWebhook.stub(:post)
+      Notifications::Submissions.stub(:new_submission)
       Submission.stub(:create_from_json => submission)
     }
 
@@ -66,11 +66,9 @@ describe SubmissionsController do
           expect(Submission).to have_received(:create_from_json).with(params[:submission])
         end
 
-        it 'should send a new submission email' do
+        it 'should send notifications' do
           expect(response).to be_created
-          email = ActionMailer::Base.deliveries.last
-
-          expect(email.subject).to eq("[CTB] #{level.text} #{language.name} Submission")
+          expect(Notifications::Submissions).to have_received(:new_submission).with(submission)
         end
       end
     end

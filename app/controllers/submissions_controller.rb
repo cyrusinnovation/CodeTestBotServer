@@ -5,33 +5,10 @@ class SubmissionsController < UserAwareController
     authorize! :create, Submission
     submission = Submission.create_from_json(params[:submission])
 
-    SubmissionMailer.new_submission(submission).deliver
-    post_to_webhook(submission)
+    Notifications::Submissions.new_submission(submission)
 
     render :json => submission,
            :status => :created
-  end
-
-  def post_to_webhook(submission)
-    url = "#{Figaro.env.app_uri}/submissions/#{submission.id}"
-    msg = "New Code Test Submission: <#{url}|Click to view>"
-    payload = {
-      username: 'code-test-bot',
-      icon_emoji: ':scream:',
-      attachments: [
-        {
-          fallback: msg,
-          pretext: msg,
-          color: '#0000D0',
-          fields: [
-            { title: 'Candidate Level', value: submission.level.text, short: false },
-            { title: 'Language', value: submission.language.name, short: false }
-          ]
-        }
-      ]
-    }
-
-    SlackWebhook.post(payload)
   end
 
   def index
