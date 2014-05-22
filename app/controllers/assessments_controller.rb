@@ -21,4 +21,14 @@ class AssessmentsController < SecuredController
 
     render :json => Assessment.all.where(filters)
   end
+
+
+  def update
+    updated_assessment = params[:assessment]
+    assessment = Assessment.find(params[:id])
+    assessment.notes = updated_assessment[:notes]
+    assessment.score = updated_assessment[:score]
+    assessment.save
+    render :json => assessment
+  end
 end
