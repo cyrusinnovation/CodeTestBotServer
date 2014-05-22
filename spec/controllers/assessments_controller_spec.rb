@@ -93,6 +93,7 @@ describe AssessmentsController do
     let(:candidate) { Candidate.create({name: 'Test Candidate'})}
     let(:submission) { Submission.create({email_text: 'A submission', candidate: candidate}) }
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
+    let(:another_assessor) { Assessor.create({name: 'Kate', email: 'kate@example.com'}) }
     let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!'}) }
     let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!'}} }
 
@@ -100,8 +101,8 @@ describe AssessmentsController do
 
     it_behaves_like 'a secured route'
 
-    context 'with an active session' do
-      before { add_user_to_session('Assessor') }
+    context 'with the assessor signed in who created the assessment' do
+      before { add_existing_user_to_session('Assessor', assessor.id) }
 
       its(:body) { should be_json_eql(assessment_data[:assessment].to_json).at_path('assessment') }
 
@@ -114,5 +115,12 @@ describe AssessmentsController do
         expect(Assessment.first.notes).to eql('Actually just good, not amazing!')
       end
     end
+
+    context 'with another assessor signed in' do
+      before { add_existing_user_to_session('Assessor', another_assessor.id) }
+      it {should be_forbidden}
+    end
+
+
   end
 end
