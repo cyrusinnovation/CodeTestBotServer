@@ -2,7 +2,10 @@ module Policies
   class SubmissionClose
     def self.apply(submission)
       limit = 3
-      submission.close if submission.assessments.length >= limit
+      if submission.assessments.length >= limit
+        submission.close
+        Notifications::Submissions.closed_by_assessments(submission)
+      end
     end
   end
 end

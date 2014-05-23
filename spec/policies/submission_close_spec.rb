@@ -2,7 +2,10 @@ require 'spec_helper'
 
 describe Policies::SubmissionClose do
   let(:submission) { Submission.new }
-  before { submission.stub(:close) }
+  before {
+    submission.stub(:close)
+    Notifications::Submissions.stub(:closed_by_assessments)
+  }
 
   context 'when submission has 3 assessments' do
     before { submission.assessments.stub(:length => 3) }
@@ -11,6 +14,12 @@ describe Policies::SubmissionClose do
       Policies::SubmissionClose.apply(submission)
 
       expect(submission).to have_received(:close)
+    end
+
+    it 'should trigger closed notification' do
+      Policies::SubmissionClose.apply(submission)
+
+      expect(Notifications::Submissions).to have_received(:closed_by_assessments).with(submission)
     end
   end
 
