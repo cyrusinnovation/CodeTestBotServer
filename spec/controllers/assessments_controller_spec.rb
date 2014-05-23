@@ -87,4 +87,39 @@ describe AssessmentsController do
       end
     end
   end
+
+
+  describe '#update' do
+    let(:submission) { Submission.create({email_text: 'A submission', candidate_name: 'Test Candidate'}) }
+    let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
+    let(:another_assessor) { Assessor.create({name: 'Kate', email: 'kate@example.com'}) }
+    let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!'}) }
+    let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!'}} }
+
+    subject(:response) { post :update, assessment_data }
+
+    it_behaves_like 'a secured route'
+
+    context 'with the assessor signed in who created the assessment' do
+      before { add_existing_user_to_session('Assessor', assessor.id) }
+
+      its(:body) { should be_json_eql(assessment_data[:assessment].to_json).at_path('assessment') }
+
+      it 'should have updated the asessment' do
+        response
+        expect(Assessment.count).to eql(1)
+        expect(Assessment.first.submission).to eql(submission)
+        expect(Assessment.first.assessor).to eql(assessor)
+        expect(Assessment.first.score).to eql(4)
+        expect(Assessment.first.notes).to eql('Actually just good, not amazing!')
+      end
+    end
+
+    context 'with another assessor signed in' do
+      before { add_existing_user_to_session('Assessor', another_assessor.id) }
+      it {should be_forbidden}
+    end
+
+
+  end
 end
