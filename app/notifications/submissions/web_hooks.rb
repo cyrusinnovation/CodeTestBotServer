@@ -4,7 +4,9 @@ module Notifications
   class Submissions
     class WebHooks < SlackWebHook
       def self.new_submission(submission)
-        post(URI(Figaro.env.slack_webhook), make_payload(submission))
+        if Figaro.env.slack_webhook?
+          post(URI(Figaro.env.slack_webhook), make_payload(submission))
+        end
       end
 
       private
