@@ -41,6 +41,13 @@ describe AssessmentsController do
 
         expect(Notifications::Assessments).to have_received(:new_assessment)
       end
+
+      context 'when assessment create raises ExistingAssessmentError' do
+        before { AssessmentCreator.stub(:create_assessment).and_raise(Assessment::ExistingAssessmentError) }
+
+        it { should be_forbidden }
+        its(:body) { should be_json_eql(['You can only create one assessment per submission.']).at_path('errors') }
+      end
     end
   end
 

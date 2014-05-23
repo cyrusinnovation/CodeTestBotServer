@@ -18,6 +18,7 @@ describe Assessment do
     let(:submission) { Submission.create({email_text: 'A submission' }) }
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!'}} }
+    before { Submission.stub(:find => submission) }
 
     subject(:creation) { Assessment.create_from_json(assessment_data[:assessment]) }
 
@@ -29,5 +30,13 @@ describe Assessment do
     its(:assessor) { should eql(assessor) }
     its(:score) { should eq(5) }
     its(:notes) { should eq('Fantastic!') }
+
+    context 'when user already has an assessment' do
+      before { submission.stub(:has_assessment_by_assessor).with(assessor).and_return(true) }
+
+      it 'should raise existing assessment error' do
+        expect { creation }.to raise_error(Assessment::ExistingAssessmentError)
+      end
+    end
   end
 end

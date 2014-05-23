@@ -17,6 +17,10 @@ class Submission < ActiveRecord::Base
     }
   end
 
+  def has_assessment_by_assessor(assessor)
+    assessments.any? {|a| a.assessor == assessor}
+  end
+
   def close
     update_attribute(:active, false)
   end

@@ -22,5 +22,6 @@ describe AssessmentCreator do
     it 'should apply the SubmissionClose policy' do
       expect(Policies::SubmissionClose).to have_received(:apply).with(created_assessment.submission)
     end
+
   end
 end

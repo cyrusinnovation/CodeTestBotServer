@@ -1,8 +1,14 @@
 class AssessmentsController < UserAwareController
   def create
-    created_assessment = AssessmentCreator.create_assessment(params[:assessment])
-    render :json => created_assessment,
-           :status => :created
+    begin
+      created_assessment = AssessmentCreator.create_assessment(params[:assessment])
+      render :json => created_assessment,
+             :status => :created
+    rescue Assessment::ExistingAssessmentError
+      render :json => { errors: ['You can only create one assessment per submission.'] },
+             :status => :forbidden
+    end
+
   end
 
   def show
