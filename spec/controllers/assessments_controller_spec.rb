@@ -90,8 +90,7 @@ describe AssessmentsController do
 
 
   describe '#update' do
-    let(:candidate) { Candidate.create({name: 'Test Candidate'})}
-    let(:submission) { Submission.create({email_text: 'A submission', candidate: candidate}) }
+    let(:submission) { Submission.create({email_text: 'A submission', candidate_name: 'Test Candidate'}) }
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let(:another_assessor) { Assessor.create({name: 'Kate', email: 'kate@example.com'}) }
     let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!'}) }
