@@ -2,12 +2,13 @@ require 'spec_helper'
 
 describe AssessmentCreator do
   describe '.create_assessment' do
-    let(:assessment) { double(:submission => double(:close => nil, :assessments => [])) }
+    let(:assessment) { double(:submission => double()) }
     let(:assessment_json) { double() }
 
     before {
       Assessment.stub(:create_from_json).with(assessment_json).and_return(assessment)
       Notifications::Assessments.stub(:new_assessment)
+      Policies::SubmissionClose.stub(:apply)
     }
 
     subject(:created_assessment) { AssessmentCreator.create_assessment(assessment_json) }
@@ -18,12 +19,8 @@ describe AssessmentCreator do
       expect(Notifications::Assessments).to have_received(:new_assessment).with(created_assessment)
     end
 
-    it 'should check # of assessment' do
-      assessment.submission.assessments.stub(:length => 3)
-
-      AssessmentCreator.create_assessment(assessment_json)
-
-      expect(assessment.submission).to have_received(:close)
+    it 'should apply the SubmissionClose policy' do
+      expect(Policies::SubmissionClose).to have_received(:apply).with(created_assessment.submission)
     end
   end
 end
