@@ -6,7 +6,7 @@
 <body>
 <h1>New Assessment</h1>
 <p>
-  <%= @assessor.name %> (<a href="mailto:<%= @assessor.email %>"><%= @assessor.email %></a>) submitted an assessment for candidate <%= @candidate.name %> (<a href="mailto:<%= @candidate.email %>"><%= @candidate.email %></a>).
+  <%= @assessor.name %> (<a href="mailto:<%= @assessor.email %>"><%= @assessor.email %></a>) submitted an assessment for candidate <%= @candidate_name %> (<a href="mailto:<%= @candidate_email %>"><%= @candidate_email %></a>).
 </p>
 <p>
   To view the assessment, follow this link: <a href="<%= @url %>"><%= @url %></a>.

@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe Notifications::Submissions::WebHooks do
   describe '.new_submission' do
-    let(:candidate) { Candidate.new({ level: Level.new(text: 'Junior') }) }
-    let(:submission) { Submission.new({ id: 1, candidate: candidate, language: Language.new(name: 'Java') }) }
+    let(:submission) { Submission.new({ id: 1, level: Level.new(text: 'Junior'), language: Language.new(name: 'Java') }) }
     before {
       Figaro.env.stub(:app_uri => 'https://example.com')
       Figaro.env.stub(:slack_webhook => 'https://fake.slack.com/webhook')

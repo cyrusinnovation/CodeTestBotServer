@@ -16,7 +16,7 @@ describe Submission do
 
   it { should respond_to(:zipfile) }
   it { should respond_to(:email_text)}
-  it { should respond_to(:candidate)}
+  it { should respond_to(:level)}
   
   it 'has zipfile attachments that can be added and removed' do
     FakeWeb.register_uri(:put, 'https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/test-codetest.zip', :body => '')
@@ -33,18 +33,18 @@ describe Submission do
     expect(submission.zipfile.url()).to eq "/zipfiles/original/missing.png" 
   end
 
-  it 'belongs to a candidate' do
-    candidate = Candidate.create(name: 'Bob')
-    submission = Submission.create(candidate: candidate)
-
-    expect(Submission.find(submission.id).candidate_id).to eql(candidate.id)
-  end
-
   it 'has a language' do
     java = Language.find_by_name('Java')
     Submission.create(language: java)
 
     expect(Submission.first.language.name).to eql(java.name)
+  end
+
+  it 'has a level' do
+    level = Level.find_by_text('Junior')
+    Submission.create(level: level)
+
+    expect(Submission.first.level).to eql(level)
   end
 
   it 'has a list of assessments and assessors through assessments' do
@@ -64,8 +64,14 @@ describe Submission do
     let(:email_text) { 'a new code test.' }
     let(:language) { Language.find_by_name('Java') }
     let(:level) { Level.find_by_text('Junior') }
-    let(:candidate) { Candidate.create({name: 'Bob', level: level}) }
-    let(:params) { {submission: {email_text: email_text, zipfile: 'header,====', candidate_id: candidate.id, language_id: language.id}} }
+    let(:params) { {submission: {
+      email_text: email_text, 
+      zipfile: 'header,====', 
+      candidate_name: 'Bob',
+      candidate_email: 'bob@example.com',
+      level_id: level.id, 
+      language_id: language.id
+    }}}
 
     before {
       Base64FileDecoder.stub(:decode_to_file => file)
@@ -80,6 +86,9 @@ describe Submission do
 
     its(:email_text) { should eq email_text }
     its('zipfile.url') { should include File.basename(file) }
+    its(:candidate_name) { should eq 'Bob' }
+    its(:candidate_email) { should eq 'bob@example.com' }
+    its('level.text') { should eq level.text }
     its('language.name') { should eq language.name }
   end
 

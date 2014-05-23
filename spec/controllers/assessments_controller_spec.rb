@@ -51,8 +51,8 @@ describe AssessmentsController do
     let!(:assessor2) { Assessor.create({name: 'Alice', email: 'alice@example.com'}) }
     let!(:assessment1) { Assessment.create({submission: submission1, assessor: assessor1, score: 1, notes: 'Terrible!'}) }
     let!(:assessment2) { Assessment.create({submission: submission2, assessor: assessor2, score: 5, notes: 'Amazing!'}) }
-    let(:submission1json) { {email_text: 'first', zipfile: '/zipfiles/original/missing.png', active: true, candidate_id: nil, language_id: nil} }
-    let(:submission2json) { {email_text: 'second', zipfile: '/zipfiles/original/missing.png', active: true, candidate_id: nil, language_id: nil} }
+    let(:submission1json) { {email_text: 'first', zipfile: '/zipfiles/original/missing.png', active: true, candidate_name: nil, candidate_email: nil, level_id: nil, language_id: nil} }
+    let(:submission2json) { {email_text: 'second', zipfile: '/zipfiles/original/missing.png', active: true, candidate_name: nil, candidate_email: nil, level_id: nil, language_id: nil} }
     let(:assessor1json) { {email: 'bob@example.com', name: 'Bob'} }
     let(:assessor2json) { {email: 'alice@example.com', name: 'Alice'} }
     let(:assessment1json) { {submission_id: submission1.id, assessor_id: assessor1.id, score: 1, notes: 'Terrible!'} }

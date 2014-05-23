@@ -15,8 +15,7 @@ describe Assessment do
   end
 
   describe '.create_from_json' do
-    let(:candidate) { Candidate.create({name: 'Test Candidate'})}
-    let(:submission) { Submission.create({email_text: 'A submission', candidate: candidate}) }
+    let(:submission) { Submission.create({email_text: 'A submission' }) }
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!'}} }
 

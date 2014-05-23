@@ -11,7 +11,6 @@ class Ability
 
   def recruiter
     assessor
-    can :manage, Candidate
     can :manage, Submission
   end
 

@@ -18,8 +18,7 @@ describe SubmissionMailer do
   describe '#new_submission' do
     let(:level) { Level.new({ text: 'Junior' }) }
     let(:language) { Language.new({ name: 'Java' }) }
-    let(:candidate) { Candidate.new({ level: level }) }
-    let(:submission) { Submission.new({ id: 2, candidate: candidate, language: language }) }
+    let(:submission) { Submission.new({ id: 2, level: level, language: language }) }
     subject(:mail) { SubmissionMailer.new_submission(submission) }
 
     its(:to) { should include new_submission_address }
@@ -33,13 +32,12 @@ describe SubmissionMailer do
   end
 
   describe '#closed_by_assessments' do
-    let(:candidate) { Candidate.new({ name: 'Bob' }) }
-    let(:submission) { Submission.new({ id: 2, candidate: candidate }) }
+    let(:submission) { Submission.new({ id: 2, candidate_name: 'Bob' }) }
     subject(:mail) { SubmissionMailer.closed_by_assessments(submission) }
 
     its(:to) { should include new_assessment_address }
     its(:from) { should include from_address }
-    its(:subject) { should eq("[CTB] Closed Submission for #{candidate.name}") }
+    its(:subject) { should eq("[CTB] Closed Submission for #{submission.candidate_name}") }
     it 'body should match fixture' do
       expected = read_mailer_fixture(SubmissionMailer, 'closed_by_assessments')
       expect(mail.body.to_s).to eq(expected)

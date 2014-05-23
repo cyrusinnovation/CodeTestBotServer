@@ -11,13 +11,13 @@ class SubmissionMailer < ActionMailer::Base
     @limit = 3
     mail(to: Figaro.env.new_assessment_address,
          from: Figaro.env.from_address,
-         subject: "[CTB] Closed Submission for #{@candidate.name}")
+         subject: "[CTB] Closed Submission for #{@candidate_name}")
   end
 
   private
 
   def extract(submission)
-    @candidate = submission.candidate
+    @candidate_name = submission.candidate_name
     @level = submission.level
     @language = submission.language
     @url = "#{Figaro.env.app_uri}/submissions/#{submission.id}"

@@ -1,10 +1,8 @@
 class Submission < ActiveRecord::Base
-  belongs_to :candidate
   belongs_to :language
+  belongs_to :level
   has_many :assessments
   has_many :assessors, through: :assessments
-
-  delegate :level, to: :candidate
 
   has_attached_file :zipfile,
                     :storage => :s3,
@@ -25,13 +23,19 @@ class Submission < ActiveRecord::Base
 
   def self.create_from_json(submission)
     file = Base64FileDecoder.decode_to_file submission.fetch(:zipfile)
-    candidate = Candidate.find(submission.fetch(:candidate_id))
+    level = Level.find(submission.fetch(:level_id))
 
     language = nil
     if submission.include? :language_id
       language = Language.find(submission.fetch(:language_id))
     end
 
-    create!(email_text: submission.fetch(:email_text), zipfile: file, candidate: candidate, language: language)
+    create!(
+      candidate_name: submission.fetch(:candidate_name),
+      candidate_email: submission.fetch(:candidate_email),
+      email_text: submission.fetch(:email_text), 
+      zipfile: file, 
+      level: level, 
+      language: language)
   end
 end
