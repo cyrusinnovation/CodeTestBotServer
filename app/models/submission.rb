@@ -19,6 +19,10 @@ class Submission < ActiveRecord::Base
     }
   end
 
+  def close
+    update_attribute(:active, false)
+  end
+
   def self.create_from_json(submission)
     file = Base64FileDecoder.decode_to_file submission.fetch(:zipfile)
     candidate = Candidate.find(submission.fetch(:candidate_id))

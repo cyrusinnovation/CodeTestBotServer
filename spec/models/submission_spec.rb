@@ -82,4 +82,14 @@ describe Submission do
     its('zipfile.url') { should include File.basename(file) }
     its('language.name') { should eq language.name }
   end
+
+  describe '#close' do
+    let(:submission) { Submission.create() }
+
+    it 'sets the submission to inactive' do
+      submission.close
+
+      expect(Submission.find(submission.id).active).to be_false()
+    end
+  end
 end
