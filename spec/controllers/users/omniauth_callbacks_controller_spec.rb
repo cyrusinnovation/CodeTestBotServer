@@ -1,4 +1,4 @@
-require 'rspec'
+require 'spec_helper'
 
 describe OmniauthCallbacksController do
   before { @original_env = Rails.env }
@@ -28,7 +28,7 @@ describe OmniauthCallbacksController do
         expect(User.first.name).to eq('Development User')
         expect(User.first.email).to eq('dev@localhost')
         expect(User.first.editable).to be_false
-        expect(User.first.roles).to include(Role.find_by_name('Administrator'))
+        expect(User.first.role).to eql(Role.find_by_name('Administrator'))
       end
 
       it 'creates a session for the dev user' do

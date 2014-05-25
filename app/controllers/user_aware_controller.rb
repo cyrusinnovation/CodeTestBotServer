@@ -8,8 +8,8 @@ class UserAwareController < SecuredController
       dev_user = User.create({ name: 'Development User', email: 'dev@localhost', uid: 'dev' })
     end
     admin_role = Role.find_by_name("Administrator")
-    if not dev_user.roles.include? admin_role
-      dev_user.roles.push(admin_role)
+    if not dev_user.role == admin_role
+      dev_user.role = admin_role
     end
     return dev_user
   end

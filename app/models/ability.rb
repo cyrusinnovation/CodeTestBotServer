@@ -2,7 +2,7 @@ class Ability
   include CanCan::Ability  
   
   def initialize(user)
-    user.roles.each { |role| send(role.name.downcase) }
+    send(user.role.name.downcase)
   end
 
   def assessor

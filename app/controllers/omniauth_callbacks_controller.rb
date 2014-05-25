@@ -53,7 +53,7 @@ class OmniauthCallbacksController < ApplicationController
             expires_at: expiry_time
         },
         editable: false,
-        roles: [Role.find_by_name('Administrator')]
+        role: Role.find_by_name('Administrator')
     }
   end
 end
