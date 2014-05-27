@@ -45,20 +45,49 @@ describe SessionsController do
   end
 
   describe '#show' do
+    let(:env) { fake_env }
     subject(:response) { get :show, :id => 'current' }
     let!(:user) { User.create({ name: 'Bob', email: 'bob@example.com' }) }
+    let(:fake_user)  { User.create({ name: 'Development User', email: 'dev@localhost', uid: 'dev' }) }
+
 
     it_behaves_like 'a secured route'
 
-    context 'when session exists' do
+    context 'when auth headers exist and USE_DEV_TOKEN is not set' do
       let(:token) { '123456789' }
       let(:expiry) { Time.now.utc + 20.minutes }
       let!(:authorization) { valid_token(token, expiry) }
       it { should be_ok }
-      it 'should return session as JSON' do
+      it 'should return current user session as JSON' do
         expected_session_json = { token: token, token_expiry: expiry, user_id: user.id }.to_json
         expect(response.body).to be_json_eql(expected_session_json).at_path('session')
       end
+    end
+
+    context 'when auth headers exist and USE_DEV_TOKEN is set' do
+      let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return 'true' }
+      let(:token) { '123456789' }
+      let(:expiry) { Time.now.utc + 20.minutes }
+      let!(:authorization) { valid_token(token, expiry) }
+      it { should be_ok }
+      it 'should return the real user not the fake user if there is a a real user' do
+        expected_session_json = { token: token, token_expiry: expiry, user_id: user.id }.to_json
+        expect(response.body).to be_json_eql(expected_session_json).at_path('session')
+      end
+    end
+
+    context 'when USE_DEV_TOKEN is set to true and there are no other auth headers' do
+      let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return 'true' }
+      it { should be_ok }
+      it 'should return fake user id in the session as JSON' do
+        expected_session_json = fake_user.id
+        expect(response.body).to be_json_eql(expected_session_json).at_path('session/user_id')
+      end
+    end
+
+    context 'when USE_DEV_TOKEN is set to false and there are no other auth headers' do
+      let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return 'false' }
+      it { should be_unauthorized }
     end
 
     def valid_token(token, expiry)
