@@ -38,5 +38,11 @@ describe Assessment do
         expect { creation }.to raise_error(Assessment::ExistingAssessmentError)
       end
     end
+
+    describe 'the referenced submission' do
+      subject { creation.submission }
+
+      its(:assessments) { should have(1).assessment }
+    end
   end
 end

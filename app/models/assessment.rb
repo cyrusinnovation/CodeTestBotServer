@@ -13,11 +13,15 @@ class Assessment < ActiveRecord::Base
       raise ExistingAssessmentError
     end
 
-    Assessment.create({
+    created = Assessment.create({
       submission: submission,
       assessor: assessor,
       score: assessment[:score],
       notes: assessment[:notes]
     })
+
+    submission.assessments << created
+
+    created
   end
 end
