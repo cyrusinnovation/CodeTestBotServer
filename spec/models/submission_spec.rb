@@ -18,21 +18,6 @@ describe Submission do
   it { should respond_to(:email_text)}
   it { should respond_to(:level)}
   
-  it 'has zipfile attachments that can be added and removed' do
-    FakeWeb.register_uri(:put, 'https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/test-codetest.zip', :body => '')
-    FakeWeb.register_uri(:head, 'https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/test-codetest.zip', :body => '')
-
-    submission = Submission.new
-    expect(submission.zipfile.url()).to eq "/zipfiles/original/missing.png"
-    
-    test_zipfile_attachment = File.new(Rails.root.to_s + "/spec/fixtures/files/test-codetest.zip")
-    submission.update_attributes(:zipfile => test_zipfile_attachment)
-    expect(submission.zipfile.url()).to include "test-codetest.zip"
-
-    submission.zipfile.clear
-    expect(submission.zipfile.url()).to eq "/zipfiles/original/missing.png" 
-  end
-
   it 'has a language' do
     java = Language.find_by_name('Java')
     Submission.create(language: java)
@@ -62,21 +47,17 @@ describe Submission do
   describe '.create_from_json' do
     let(:file) { Tempfile.new('codetestbot-submission') }
     let(:email_text) { 'a new code test.' }
+    let(:file_url) { '/url/to/file' }
     let(:language) { Language.find_by_name('Java') }
     let(:level) { Level.find_by_text('Junior') }
     let(:params) { {submission: {
       email_text: email_text, 
-      zipfile: 'header,====', 
+      zipfile: file_url,
       candidate_name: 'Bob',
       candidate_email: 'bob@example.com',
       level_id: level.id, 
       language_id: language.id
     }}}
-
-    before {
-      Base64FileDecoder.stub(:decode_to_file => file)
-      FakeWeb.register_uri(:put, "https://codetestbot-submissions-test.s3.amazonaws.com/tmp/test/uploads/#{File.basename(file)}", :body => '')
-    }
 
     subject(:creation) { Submission.create_from_json(params[:submission]) }
 
@@ -85,7 +66,7 @@ describe Submission do
     end
 
     its(:email_text) { should eq email_text }
-    its('zipfile.url') { should include File.basename(file) }
+    its(:zipfile) { should eq file_url }
     its(:candidate_name) { should eq 'Bob' }
     its(:candidate_email) { should eq 'bob@example.com' }
     its('level.text') { should eq level.text }

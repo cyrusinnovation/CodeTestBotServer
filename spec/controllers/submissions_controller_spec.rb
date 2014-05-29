@@ -27,7 +27,7 @@ describe SubmissionsController do
         let(:language) { Language.find_by_name('Java') }
         let(:level) { Level.find_by_text('Junior') }
         let!(:submission) { Submission.create({email_text: 'test', language: language, candidate_name: 'Bob', candidate_email: 'bob@example.com', level: level}) }
-        let(:expected) { [{email_text: 'test', zipfile: '/zipfiles/original/missing.png', active: true, language_id: language.id, level_id: level.id, candidate_name: 'Bob', candidate_email: 'bob@example.com'}].to_json }
+        let(:expected) { [{email_text: 'test', zipfile: nil, active: true, language_id: language.id, level_id: level.id, candidate_name: 'Bob', candidate_email: 'bob@example.com'}].to_json }
 
         subject(:body) { response.body }
 
@@ -48,8 +48,7 @@ describe SubmissionsController do
     let(:submission) { Submission.new({ language: language }) }
 
     before {
-      Notifications::Submissions.stub(:new_submission)
-      Submission.stub(:create_from_json => submission)
+      SubmissionCreator.stub(:create_submission => submission)
     }
 
     subject(:response) { post :create, params }
@@ -62,12 +61,7 @@ describe SubmissionsController do
 
         it 'should create a submission' do
           expect(response).to be_created
-          expect(Submission).to have_received(:create_from_json).with(params[:submission])
-        end
-
-        it 'should send notifications' do
-          expect(response).to be_created
-          expect(Notifications::Submissions).to have_received(:new_submission).with(submission)
+          expect(SubmissionCreator).to have_received(:create_submission).with(params[:submission])
         end
       end
     end
@@ -91,7 +85,7 @@ describe SubmissionsController do
       let!(:submission1) { Submission.create({email_text: 'first'}) }
       let!(:submission2) { Submission.create({email_text: 'second'}) }
       let(:params) { {id: submission2.id} }
-      let(:expected) { {email_text: 'second', zipfile: '/zipfiles/original/missing.png', active: true, language_id: nil, candidate_name: nil, candidate_email: nil, level_id: nil}.to_json }
+      let(:expected) { {email_text: 'second', zipfile: nil, active: true, language_id: nil, candidate_name: nil, candidate_email: nil, level_id: nil}.to_json }
 
       it { should be_ok }
       its(:body) { should be_json_eql(expected).at_path('submission') }
@@ -111,7 +105,7 @@ describe SubmissionsController do
         before { add_user_to_session(role) }
 
         context 'when updating an existing submission' do
-          let(:expected) { {email_text: 'updated', zipfile: '/zipfiles/original/missing.png', active: false, language_id: nil, candidate_name: nil, candidate_email: nil, level_id: nil}.to_json }
+          let(:expected) { {email_text: 'updated', zipfile: nil, active: false, language_id: nil, candidate_name: nil, candidate_email: nil, level_id: nil}.to_json }
 
           it { should be_ok }
           its(:body) { should be_json_eql(expected).at_path('submission') }

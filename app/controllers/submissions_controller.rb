@@ -3,10 +3,7 @@ require 'net/http'
 class SubmissionsController < UserAwareController
   def create
     authorize! :create, Submission
-    submission = Submission.create_from_json(params[:submission])
-
-    Notifications::Submissions.new_submission(submission)
-
+    submission = SubmissionCreator.create_submission(params[:submission])
     render :json => submission,
            :status => :created
   end

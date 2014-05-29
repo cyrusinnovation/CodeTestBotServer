@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140525034824) do
+ActiveRecord::Schema.define(version: 20140529010409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,15 +55,12 @@ ActiveRecord::Schema.define(version: 20140525034824) do
     t.text     "email_text"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "zipfile_file_name"
-    t.string   "zipfile_content_type"
-    t.integer  "zipfile_file_size"
-    t.datetime "zipfile_updated_at"
     t.integer  "language_id"
-    t.boolean  "active",               default: true
+    t.boolean  "active",          default: true
     t.string   "candidate_name"
     t.string   "candidate_email"
     t.integer  "level_id"
+    t.string   "zipfile"
   end
 
   create_table "users", force: true do |t|
