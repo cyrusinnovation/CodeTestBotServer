@@ -18,10 +18,5 @@ describe AssessmentCreator do
     it 'should send notifications' do
       expect(Notifications::Assessments).to have_received(:new_assessment).with(created_assessment)
     end
-
-    it 'should apply the SubmissionClose policy' do
-      expect(Policies::SubmissionClose).to have_received(:apply).with(created_assessment.submission)
-    end
-
   end
 end
