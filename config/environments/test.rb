@@ -33,9 +33,4 @@ CodeTestBotServer::Application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
-
-  # Add this to the very bottom of the file
-  Paperclip::Attachment.default_options.merge!({
-    :path => "tmp/test/uploads/:filename"
-  })
 end

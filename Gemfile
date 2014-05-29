@@ -22,10 +22,6 @@ gem 'rack-cors'
 # OpenID/Google Apps Auth
 gem 'omniauth-google-oauth2'
 
-# Paperclip and AWS sdk for uploading zip files to S3
-gem 'paperclip',  '~> 3.5.1'
-gem 'aws-sdk',    '~> 1.8.5'
-
 # Utilities
 gem 'cancan', '~> 1.6.10'
 gem 'figaro', github: 'laserlemon/figaro'
