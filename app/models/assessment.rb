@@ -24,4 +24,8 @@ class Assessment < ActiveRecord::Base
 
     created
   end
+
+  def age
+    Time.now.utc - created_at
+  end
 end

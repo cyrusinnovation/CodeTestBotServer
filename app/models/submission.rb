@@ -4,6 +4,10 @@ class Submission < ActiveRecord::Base
   has_many :assessments
   has_many :assessors, through: :assessments
 
+  def self.all_active
+    where(active: true)
+  end
+
   def has_assessment_by_assessor(assessor)
     assessments.any? {|a| a.assessor == assessor}
   end

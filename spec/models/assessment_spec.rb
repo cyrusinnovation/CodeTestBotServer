@@ -45,4 +45,18 @@ describe Assessment do
       its(:assessments) { should have(1).assessment }
     end
   end
+
+  describe '#age' do
+    it 'returns the length of time since it was created' do
+      time = Time.now.utc
+      Timecop.freeze(time) do
+        an_hour_ago = time - 1.hour
+        assessment = Timecop.freeze(an_hour_ago) do
+          Assessment.create!
+        end
+
+        expect(assessment.age).to eq 1.hour
+      end
+    end
+  end
 end

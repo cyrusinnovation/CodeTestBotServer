@@ -89,4 +89,14 @@ describe Submission do
       expect { submission.attach_file(url) }.to change(submission, :zipfile).from(nil).to(url)
     end
   end
+
+  describe '.all_active' do
+    let(:active) { Submission.create!({ active: true }) }
+    let(:inactive) { Submission.create!({ active: false }) }
+
+    subject { Submission.all_active }
+
+    it { should include active }
+    it { should_not include inactive }
+  end
 end
