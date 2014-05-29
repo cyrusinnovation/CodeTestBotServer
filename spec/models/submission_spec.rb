@@ -47,12 +47,10 @@ describe Submission do
   describe '.create_from_json' do
     let(:file) { Tempfile.new('codetestbot-submission') }
     let(:email_text) { 'a new code test.' }
-    let(:file_url) { '/url/to/file' }
     let(:language) { Language.find_by_name('Java') }
     let(:level) { Level.find_by_text('Junior') }
     let(:params) { {submission: {
       email_text: email_text, 
-      zipfile: file_url,
       candidate_name: 'Bob',
       candidate_email: 'bob@example.com',
       level_id: level.id, 
@@ -66,7 +64,7 @@ describe Submission do
     end
 
     its(:email_text) { should eq email_text }
-    its(:zipfile) { should eq file_url }
+    its(:zipfile) { should be_nil }
     its(:candidate_name) { should eq 'Bob' }
     its(:candidate_email) { should eq 'bob@example.com' }
     its('level.text') { should eq level.text }
@@ -80,6 +78,15 @@ describe Submission do
       submission.close
 
       expect(Submission.find(submission.id).active).to be_false()
+    end
+  end
+
+  describe '#attach_file' do
+    let(:submission) { Submission.create() }
+
+    it 'sets the zipfile attribute' do
+      url = 'http://example.com'
+      expect { submission.attach_file(url) }.to change(submission, :zipfile).from(nil).to(url)
     end
   end
 end

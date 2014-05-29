@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe S3Uploader do
   let(:file) { Tempfile.new('codetestbot-submission') }
-  let(:expected) { "https://codetestbot-submissions-test.s3.amazonaws.com/#{File.basename(file)}.zip" }
+  let(:path) { 'submissions/test.zip' }
+  let(:expected) { "https://codetestbot-submissions-test.s3.amazonaws.com/#{path}" }
   before {
     Figaro.env.stub(:submissions_bucket => 'codetestbot-submissions-test')
     Figaro.env.stub(:aws_access_key_id => 'access_key')
@@ -11,7 +12,7 @@ describe S3Uploader do
   }
 
   it 'PUTs a file to S3 with the public-read acl' do
-    S3Uploader.upload(file)
+    S3Uploader.upload(path, file)
 
     expect(FakeWeb.last_request.method).to eq('PUT')
     expect(FakeWeb.last_request.uri).to eq(URI(expected))
@@ -19,7 +20,7 @@ describe S3Uploader do
   end
 
   it 'returns the URI to the file' do
-    expect(S3Uploader.upload(file).to_s).to eq(expected)
+    expect(S3Uploader.upload(path, file).to_s).to eq(expected)
   end
 end
 
