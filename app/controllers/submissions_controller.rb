@@ -10,7 +10,7 @@ class SubmissionsController < UserAwareController
 
   def index
     authorize! :index, Submission
-    render :json => Submission.all
+    render :json => Submission.all.order(updated_at: :desc)
   end
 
   def show

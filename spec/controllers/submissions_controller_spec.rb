@@ -23,7 +23,7 @@ describe SubmissionsController do
         its(:body) { should have_json_size(0).at_path('submissions') }
       end
 
-      context 'when there are submissions' do
+      context 'when there is a submission' do
         let(:language) { Language.find_by_name('Java') }
         let(:level) { Level.find_by_text('Junior') }
         let!(:submission) { Submission.create({email_text: 'test', language: language, candidate_name: 'Bob', candidate_email: 'bob@example.com', level: level}) }
@@ -36,6 +36,20 @@ describe SubmissionsController do
         it { should be_json_eql([{name: language.name}].to_json).at_path('languages') }
         it { should be_json_eql([{text: level.text}].to_json).at_path('levels') }
       end
+
+      context 'when there are multiple submissions they should be ordered by latest first' do
+        let(:language) { Language.find_by_name('Java') }
+        let(:level) { Level.find_by_text('Junior') }
+        let!(:submission) { Submission.create({email_text: 'test1', language: language, candidate_name: 'Submission One', candidate_email: 'bob@example.com', level: level}) }
+        let!(:submission2) { Submission.create({email_text: 'test2', language: language, candidate_name: 'Submission Two', candidate_email: 'bob@example.com', level: level}) }
+        let(:expected) { [{email_text: 'test2', zipfile: nil, active: true, language_id: language.id, level_id: level.id, candidate_name: 'Submission Two', candidate_email: 'bob@example.com'},
+                          {email_text: 'test1', zipfile: nil, active: true, language_id: language.id, level_id: level.id, candidate_name: 'Submission One', candidate_email: 'bob@example.com'}].to_json }
+
+        subject(:body) { response.body }
+
+        it { should be_json_eql(expected).at_path('submissions') }
+      end
+
     end
   end
 
