@@ -32,11 +32,23 @@ describe Session do
     it 'is not expired if the expiry is 0' do
       expect(session_with_expiry(0).expired?).to be_false
     end
+  end
 
-    private
+  describe :reset_token_expiry! do
+    it 'resets the expiry' do
+      expiry = Time.now.utc
+      session = session_with_expiry(expiry)
+      expect(session.expired?).to be_true
 
-    def session_with_expiry(expiry)
-      Session.new({token_expiry: expiry})
+      session.reset_token_expiry!
+      expect(session.expired?).to be_false
+
     end
+  end
+
+  private
+
+  def session_with_expiry(expiry)
+    Session.new({token_expiry: expiry})
   end
 end

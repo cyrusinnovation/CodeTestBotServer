@@ -67,7 +67,7 @@ describe SessionsController do
     context 'when auth headers exist and USE_DEV_TOKEN is set' do
       let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return 'true' }
       let(:token) { '123456789' }
-      let(:expiry) { Time.now.utc + 20.minutes }
+      let(:expiry) { Time.now.utc + 90.minutes }
       let!(:authorization) { valid_token(token, expiry) }
       it { should be_ok }
       it 'should return the real user not the fake user if there is a a real user' do

@@ -45,6 +45,9 @@ class SecuredController < ApplicationController
       if @session == nil || @session.expired?
         response.headers['WWW-Authenticate'] = 'Bearer error="invalid_token", error_description="Access Token Expired"'
         return render :nothing => true, :status => :unauthorized
+      else
+        @session.reset_token_expiry!
+        @session.save!
       end
     end
   end
