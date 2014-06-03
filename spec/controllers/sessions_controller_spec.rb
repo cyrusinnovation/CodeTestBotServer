@@ -55,7 +55,7 @@ describe SessionsController do
 
     context 'when auth headers exist and USE_DEV_TOKEN is not set' do
       let(:token) { '123456789' }
-      let(:expiry) { Time.now.utc + 20.minutes }
+      let(:expiry) { Time.now.utc + 90.minutes }
       let!(:authorization) { valid_token(token, expiry) }
       it { should be_ok }
       it 'should return current user session as JSON' do
