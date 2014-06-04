@@ -17,7 +17,8 @@ class Assessment < ActiveRecord::Base
       submission: submission,
       assessor: assessor,
       score: assessment[:score],
-      notes: assessment[:notes]
+      notes: assessment[:notes],
+      published: assessment[:published]
     })
 
     submission.assessments << created
