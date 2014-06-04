@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe SubmissionCreator do
     let(:file_url) { '/some/url' }
-    let(:submission_json) { { zipfile: 'header,====' } }
+    let(:submission_json) { { zipfile: 'header,====', file_name: 'filename.zip' } }
     let(:submission) { Submission.new({ id: 5}) }
 
     before {
@@ -18,7 +18,7 @@ describe SubmissionCreator do
     
     it 'uploads the file' do
       SubmissionCreator.create_submission(submission_json)
-      expect(SubmissionFileUploader).to have_received(:upload).with(submission, submission_json[:zipfile])
+      expect(SubmissionFileUploader).to have_received(:upload).with(submission, submission_json[:zipfile], 'filename.zip')
     end
 
     it 'attaches the uploaded file to the submission' do
