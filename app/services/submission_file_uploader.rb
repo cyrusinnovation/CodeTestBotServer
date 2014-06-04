@@ -5,8 +5,9 @@ class SubmissionFileUploader
     file_name = file_name.downcase
     bits = file_name.split('.')
     extension = bits[-1]
-    if extension == 'gz'
-      return 'tar.gz'
+    bit_before_extension = bits[-2]
+    if bit_before_extension == 'tar'
+      return "#{bit_before_extension}.#{extension}"
     else
       return extension
     end
