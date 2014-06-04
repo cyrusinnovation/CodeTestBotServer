@@ -54,16 +54,20 @@ describe AssessmentsController do
   describe '#index' do
     let!(:submission1) { Submission.create({email_text: 'first'}) }
     let!(:submission2) { Submission.create({email_text: 'second'}) }
+    let!(:submission3) { Submission.create({email_text: 'third'}) }
     let!(:assessor1) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let!(:assessor2) { Assessor.create({name: 'Alice', email: 'alice@example.com'}) }
     let!(:assessment1) { Assessment.create({submission: submission1, assessor: assessor1, score: 1, notes: 'Terrible!'}) }
     let!(:assessment2) { Assessment.create({submission: submission2, assessor: assessor2, score: 5, notes: 'Amazing!'}) }
+    let!(:assessment3) { Assessment.create({submission: submission3, assessor: assessor2, score: 5, notes: 'Commentary!', published: false}) }
     let(:submission1json) { {email_text: 'first', zipfile: nil, average_score: nil, active: true, candidate_name: nil, candidate_email: nil, level_id: nil, language_id: nil} }
     let(:submission2json) { {email_text: 'second', zipfile: nil, average_score: nil, active: true, candidate_name: nil, candidate_email: nil, level_id: nil, language_id: nil} }
+    let(:submission3json) { {email_text: 'third', zipfile: nil, average_score: nil, active: true, candidate_name: nil, candidate_email: nil, level_id: nil, language_id: nil} }
     let(:assessor1json) { {email: 'bob@example.com', name: 'Bob'} }
     let(:assessor2json) { {email: 'alice@example.com', name: 'Alice'} }
     let(:assessment1json) { {submission_id: submission1.id, assessor_id: assessor1.id, score: 1, notes: 'Terrible!'} }
     let(:assessment2json) { {submission_id: submission2.id, assessor_id: assessor2.id, score: 5, notes: 'Amazing!'} }
+    let(:assessment3json) { {submission_id: submission3.id, assessor_id: assessor2.id, score: 5, notes: 'Commentary!'} }
 
     subject(:response) { get :index }
 
@@ -91,6 +95,14 @@ describe AssessmentsController do
 
         it { should be_ok }
         its(:body) { should be_json_eql([assessment2json].to_json).at_path('assessments') }
+      end
+
+      context 'with include_unpublished true' do
+        subject { get :index, include_unpublished: true }
+
+        it { should be_ok }
+        its(:body) { should be_json_eql([assessment1json, assessment2json, assessment3json].to_json).at_path('assessments') }
+        its(:body) { should be_json_eql([submission1json, submission2json, submission3json].to_json).at_path('submissions') }
       end
     end
   end
