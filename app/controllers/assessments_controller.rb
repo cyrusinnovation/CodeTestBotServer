@@ -42,6 +42,7 @@ class AssessmentsController < UserAwareController
     updated_assessment = params[:assessment]
     assessment.notes = updated_assessment[:notes]
     assessment.score = updated_assessment[:score]
+    assessment.published = updated_assessment[:published]
     assessment.save
     render :json => assessment
   end

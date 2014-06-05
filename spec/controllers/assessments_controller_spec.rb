@@ -112,7 +112,7 @@ describe AssessmentsController do
     let(:submission) { Submission.create({email_text: 'A submission', candidate_name: 'Test Candidate'}) }
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let(:another_assessor) { Assessor.create({name: 'Kate', email: 'kate@example.com'}) }
-    let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!'}) }
+    let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!', published: false}) }
     let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!', published: true}} }
 
     subject(:response) { post :update, assessment_data }
@@ -131,6 +131,7 @@ describe AssessmentsController do
         expect(Assessment.first.assessor).to eql(assessor)
         expect(Assessment.first.score).to eql(4)
         expect(Assessment.first.notes).to eql('Actually just good, not amazing!')
+        expect(Assessment.first.published).to be_true
       end
     end
 
