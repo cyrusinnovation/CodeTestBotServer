@@ -1,5 +1,3 @@
-require 'net/http'
-
 class SubmissionsController < UserAwareController
   def create
     authorize! :create, Submission

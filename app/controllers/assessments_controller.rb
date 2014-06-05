@@ -25,6 +25,11 @@ class AssessmentsController < UserAwareController
       filters[:assessor_id] = params[:assessor_id]
     end
 
+    include_unpublished = params[:include_unpublished] 
+    unless include_unpublished
+      filters[:published] = true
+    end
+
     render :json => Assessment.all.where(filters)
   end
 
@@ -37,6 +42,7 @@ class AssessmentsController < UserAwareController
     updated_assessment = params[:assessment]
     assessment.notes = updated_assessment[:notes]
     assessment.score = updated_assessment[:score]
+    assessment.published = updated_assessment[:published]
     assessment.save
     render :json => assessment
   end
