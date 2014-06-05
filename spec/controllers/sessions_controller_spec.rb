@@ -72,7 +72,7 @@ describe SessionsController do
     context 'when auth headers exist and USE_DEV_TOKEN is set' do
       let!(:use_dev_token) { allow(env).to receive(:use_dev_token).and_return 'true' }
       let(:token) { '123456789' }
-      let(:expiry) { Time.now.utc + 90.minutes }
+      let(:expiry) { time + 90.minutes }
       let!(:authorization) { valid_token(token, expiry) }
       it { should be_ok }
       it 'should return the real user not the fake user if there is a a real user' do
@@ -98,8 +98,8 @@ describe SessionsController do
 
     context 'when auth headers exist and session expiry is less than an hour' do
       let(:token) { '123456789' }
-      let(:an_hour_from_now) { Time.now.utc + 1.hour }
-      let(:expiry) { Time.now.utc + 5.minutes }
+      let(:an_hour_from_now) { time + 1.hour }
+      let(:expiry) { time + 5.minutes }
       let!(:authorization) { valid_token(token, expiry) }
       it { should be_ok }
       it 'should reset the session expiry for an hours time' do
@@ -110,7 +110,7 @@ describe SessionsController do
 
     context 'when auth headers exist and session expiry is more than an hour' do
       let(:token) { '123456789' }
-      let(:expiry) { Time.now.utc + 75.minutes }
+      let(:expiry) { time + 75.minutes }
       let!(:authorization) { valid_token(token, expiry) }
       it { should be_ok }
       it 'should leave the session expiry time unchanged' do
