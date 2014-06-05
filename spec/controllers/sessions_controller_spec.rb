@@ -46,21 +46,21 @@ describe SessionsController do
 
   describe '#show' do
     let(:env) { fake_env }
+    let(:time) { Time.now.utc }
+    let!(:user) { User.create({ name: 'Bob', email: 'bob@example.com' }) }
+    let(:fake_user)  { User.create({ name: 'Development User', email: 'dev@localhost', uid: 'dev' }) }
+
     subject(:response) {
       Timecop.freeze(time) do
         get :show, :id => 'current'
       end
     }
 
-    let!(:user) { User.create({ name: 'Bob', email: 'bob@example.com' }) }
-    let(:fake_user)  { User.create({ name: 'Development User', email: 'dev@localhost', uid: 'dev' }) }
-    let(:time) { Time.now.utc }
-
     it_behaves_like 'a secured route'
 
     context 'when auth headers exist and USE_DEV_TOKEN is not set' do
       let(:token) { '123456789' }
-      let(:expiry) { Time.now.utc + 90.minutes }
+      let(:expiry) { time + 90.minutes }
       let!(:authorization) { valid_token(token, expiry) }
       it { should be_ok }
       it 'should return current user session as JSON' do
