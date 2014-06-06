@@ -13,4 +13,5 @@ before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
   - bundle exec rake db:migrate
 notifications:
-  slack: cyrusinnovation:t1h6NsX1mSI72ryir6kOvLiv
+  slack:
+    secure: "T0N+dvt//TnK8NyeSeHoEIOjMdqNVSQI+sSmF4E1PHsOzizBIsaDPbGpPgKVZyEwHTxxFHASsgWkW+etp4h1Q9TP2BbN0Yqqf3bvD8E2CC57/JMxAovQJ6JizctcVME3ivxla7i9Xt+Ik1AHfZ1uOwgkR3PoaZx9LxN7qtkDPsM="
