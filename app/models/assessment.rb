@@ -26,6 +26,15 @@ class Assessment < ActiveRecord::Base
     created
   end
 
+  def update_from_json(assessment_json)
+    update!({
+      score: assessment_json[:score],
+      notes: assessment_json[:notes],
+      published: assessment_json[:published]
+    })
+    self
+  end
+
   def age
     Time.now.utc - created_at
   end

@@ -47,6 +47,22 @@ describe Assessment do
     end
   end
 
+  describe '#update_from_json' do
+    let(:submission) { Submission.create({email_text: 'A submission' }) }
+    let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
+    let(:assessment) { Assessment.create!({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!', published: false}) }
+    let(:assessment_data) { {assessment: {id: assessment.id, submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Not as good as I thought.', published: true}} }
+    before { Submission.stub(:find => submission) }
+
+    subject(:update) { assessment.update_from_json(assessment_data[:assessment]) }
+
+    its(:submission) { should eql(submission) }
+    its(:assessor) { should eql(assessor) }
+    its(:score) { should eq(4) }
+    its(:notes) { should eq('Not as good as I thought.') }
+    its(:published) { should be_true }
+  end
+
   describe '#age' do
     it 'returns the length of time since it was created' do
       time = Time.now.utc

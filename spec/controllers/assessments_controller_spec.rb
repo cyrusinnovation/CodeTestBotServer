@@ -13,11 +13,10 @@ describe AssessmentsController do
     let(:submission) { Submission.new({email_text: 'A submission'}) }
     let(:assessor) { Assessor.new({name: 'Bob', email: 'bob@example.com'}) }
     let(:assessment) { Assessment.new({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!' }) }
-    let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!', published: true}} }
+    let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!', published: true}.to_json} }
 
     before { 
-      Assessment.stub(:create_from_json => assessment) 
-      Notifications::Assessments.stub(:new_assessment)
+      AssessmentCreator.stub(:create_assessment).with(assessment_data[:assessment]).and_return(assessment)
     }
 
     subject(:response) { post :create, assessment_data }
@@ -28,18 +27,12 @@ describe AssessmentsController do
       before { add_user_to_session('Assessor') }
 
       it { should be_created }
-      its(:body) { should be_json_eql(assessment_data[:assessment].to_json).at_path('assessment') }
+      its(:body) { should be_json_eql(assessment_data[:assessment]).at_path('assessment') }
 
-      it 'should create an assessment' do
+      it 'should call create assessment service' do
         response
 
-        expect(Assessment).to have_received(:create_from_json)
-      end
-
-      it 'should send a new assessment email' do
-        response
-
-        expect(Notifications::Assessments).to have_received(:new_assessment)
+        expect(AssessmentCreator).to have_received(:create_assessment).with(assessment_data[:assessment])
       end
 
       context 'when assessment create raises ExistingAssessmentError' do
@@ -113,25 +106,24 @@ describe AssessmentsController do
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let(:another_assessor) { Assessor.create({name: 'Kate', email: 'kate@example.com'}) }
     let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!', published: false}) }
-    let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!', published: true}} }
+    let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!', published: true}.to_json}.with_indifferent_access }
 
     subject(:response) { post :update, assessment_data }
 
     it_behaves_like 'a secured route'
 
     context 'with the assessor signed in who created the assessment' do
-      before { add_existing_user_to_session('Assessor', assessor.id) }
+      before {
+        add_existing_user_to_session('Assessor', assessor.id)
+        AssessmentCreator.stub(:update_assessment).with(assessment, assessment_data[:assessment]).and_return(Assessment.new({submission: submission, assessor: assessor, score: 4, notes: 'Actually just good, not amazing!', published: true}))
+      }
 
-      its(:body) { should be_json_eql(assessment_data[:assessment].to_json).at_path('assessment') }
+      its(:body) { should be_json_eql(assessment_data[:assessment]).at_path('assessment') }
 
-      it 'should have updated the asessment' do
+      it 'should call the update assessment service' do
         response
-        expect(Assessment.count).to eql(1)
-        expect(Assessment.first.submission).to eql(submission)
-        expect(Assessment.first.assessor).to eql(assessor)
-        expect(Assessment.first.score).to eql(4)
-        expect(Assessment.first.notes).to eql('Actually just good, not amazing!')
-        expect(Assessment.first.published).to be_true
+
+        expect(AssessmentCreator).to have_received(:update_assessment).with(assessment, assessment_data[:assessment])
       end
     end
 
@@ -139,7 +131,5 @@ describe AssessmentsController do
       before { add_existing_user_to_session('Assessor', another_assessor.id) }
       it {should be_forbidden}
     end
-
-
   end
 end

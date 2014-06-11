@@ -39,11 +39,5 @@ class AssessmentsController < UserAwareController
     if current_user.id != assessment.assessor_id
       raise HttpStatus::Forbidden.new('You can only edit your own assessments')
     end
-    updated_assessment = params[:assessment]
-    assessment.notes = updated_assessment[:notes]
-    assessment.score = updated_assessment[:score]
-    assessment.published = updated_assessment[:published]
-    assessment.save
-    render :json => assessment
-  end
+    render :json => AssessmentCreator.update_assessment(assessment, params[:assessment]) end
 end
