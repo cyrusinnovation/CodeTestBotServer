@@ -22,7 +22,7 @@ class SubmissionsController < UserAwareController
     authorize! :update, Submission
     submission = params[:submission]
 
-    render :json => Submission.update(params[:id], {email_text: submission[:email_text], active: submission[:active], average_score: submission[:average_score]})
+    render :json => Submission.update(params[:id], {active: submission[:active], average_score: submission[:average_score]})
   end
 
   def destroy
