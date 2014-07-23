@@ -34,6 +34,14 @@ bundle exec rake db:create db:migrate RAILS_ENV=test
 
 Note that `db:seed` is not called for the test environment, since rspec calls it prior to running each test.
 
+Before you can successfully use CodeTestBot in conjunction with the client application (CodeTestBotApp), you'll need to set the yaml file expected by Figaro to configure your local environment. Rename config/application.yml.example to config/application.yml. If necessary, add a line to use the development token. Your settings should look like below:
+
+```
+development:
+  BASE_URI: http://localhost:3000
+  USE_DEV_TOKEN: "true"
+```
+
 ##### Running Tests
 Once the test DB is setup, you should be able to run the tests with RSpec.
 ```sh

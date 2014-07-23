@@ -2,3 +2,4 @@
 
 development:
   BASE_URI: http://localhost:3000
+  USE_DEV_TOKEN: "true"
