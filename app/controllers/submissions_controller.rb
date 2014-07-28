@@ -11,6 +11,11 @@ class SubmissionsController < UserAwareController
     render :json => Submission.all.order(updated_at: :desc)
   end
 
+  def analytics
+    authorize! :index, Submission
+    render :json => Submission.all.order(updated_at: :desc)    
+  end
+
   def show
     authorize! :show, Submission
     render :json => Submission.find(params[:id])

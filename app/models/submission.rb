@@ -20,6 +20,16 @@ class Submission < ActiveRecord::Base
     update_attribute(:zipfile, file_url)
   end
 
+  def recalculate_average_score
+    score = nil
+    if (assessments.length > 0)
+      score = assessments.reduce(0) {|sum,assess| sum + assess.score} / assessments.length.to_f
+      score = score.round(1)
+    end
+
+    update_attribute(:average_score, score)
+  end
+
   def self.create_from_json(submission)
     level = Level.find(submission.fetch(:level_id))
 

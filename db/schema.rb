@@ -26,12 +26,6 @@ ActiveRecord::Schema.define(version: 20140605175235) do
     t.boolean  "published",     default: true
   end
 
-  create_table "configurations", force: true do |t|
-    t.string   "welcome_text"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "languages", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
