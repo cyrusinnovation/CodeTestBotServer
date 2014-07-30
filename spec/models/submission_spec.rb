@@ -32,6 +32,7 @@ describe Submission do
     expect(Submission.first.level).to eql(level)
   end
 
+
   it 'has a list of assessments and assessors through assessments' do
     java = Language.find_by_name('Java')
     submission = Submission.create(language: java)
@@ -42,6 +43,25 @@ describe Submission do
     expect(submission.assessors.size).to eql(1)
     expect(submission.assessments.first).to eql(assessment)
     expect(submission.assessors.first).to eql(assessor)
+  end
+
+  it 'correctly recalculates the average to 1 decimal' do
+    java = Language.find_by_name('Java')
+    submission = Submission.create(language: java)
+
+    assessor_alice = Assessor.create({name: 'Alice'})
+    assessment_alice = Assessment.create({submission: submission, assessor: assessor_alice, score: 4})
+
+    assessor_bob = Assessor.create({name: 'Bob'})
+    assessment_bob = Assessment.create({submission: submission, assessor: assessor_bob, score: 3})
+
+    assessor_christine = Assessor.create({name: 'Christine'})
+    assessment_christine = Assessment.create({submission: submission, assessor: assessor_christine, score: 3})
+
+    expected_score = ((assessment_alice.score + assessment_bob.score + assessment_christine.score) / 3.0).round(1)
+
+    submission.recalculate_average_score
+    expect(Submission.find(submission.id).average_score).to eql(expected_score)
   end
 
   describe '.create_from_json' do
