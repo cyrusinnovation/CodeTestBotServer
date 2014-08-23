@@ -161,6 +161,13 @@ describe SubmissionsController do
             response
             expect(Submission.count).to eq(0)
           end
+          it 'should delete submission assessments' do
+            assessor = Assessor.create({name: 'Bob', email: 'bob@example.com'})
+            Assessment.create({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!' })
+            expect(Assessment.count).to eq(1)
+            response
+            expect(Assessment.count).to eq(0)
+          end
         end
 
         context 'when destroying a submission that does not exist' do

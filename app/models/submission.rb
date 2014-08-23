@@ -1,7 +1,7 @@
 class Submission < ActiveRecord::Base
   belongs_to :language
   belongs_to :level
-  has_many :assessments
+  has_many :assessments, :dependent => :delete_all
   has_many :assessors, through: :assessments
 
   def self.all_active
