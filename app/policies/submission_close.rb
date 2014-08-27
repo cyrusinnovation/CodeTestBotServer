@@ -12,7 +12,7 @@ module Policies
     def self.should_apply?(submission)
       limit = 3
       min_age = 1.hour
-      submission.assessments.length >= limit && submission.assessments.all? {|a| a.age >= min_age }
+      submission.assessments.length >= limit && submission.assessments.all? {|a| a.age >= min_age && a.published }
     end
   end
 end

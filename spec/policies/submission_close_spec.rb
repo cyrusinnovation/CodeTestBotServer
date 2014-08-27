@@ -11,28 +11,43 @@ describe Policies::SubmissionClose do
     before { submission.assessments.stub(:length => 3) }
 
     context 'when all assessments are at least an hour old' do
-      before {
-        assessment = double(:age => 1.hour)
-        submission.stub(:assessments => [assessment, assessment, assessment])
-      }
+      context 'with a published flag' do
+        before {
+          assessment = double(:age => 1.hour, :published => true)
+          submission.stub(:assessments => [assessment, assessment, assessment])
+        }
 
-      it 'should close the submission' do
-        Policies::SubmissionClose.apply(submission)
+        it 'should close the submission' do
+          Policies::SubmissionClose.apply(submission)
 
-        expect(submission).to have_received(:close)
+          expect(submission).to have_received(:close)
+        end
+
+        it 'should trigger closed notification' do
+          Policies::SubmissionClose.apply(submission)
+
+          expect(Notifications::Submissions).to have_received(:closed_by_assessments).with(submission)
+        end
       end
 
-      it 'should trigger closed notification' do
-        Policies::SubmissionClose.apply(submission)
+      context 'without a published flag' do
+        before {
+          assessment = double(:age => 1.hour, :published => true)
+          submission.stub(:assessments => [assessment, assessment, double(:age => 1.hour, :published => false)])
+        }
 
-        expect(Notifications::Submissions).to have_received(:closed_by_assessments).with(submission)
+        it 'should do nothing' do
+          Policies::SubmissionClose.apply(submission)
+
+          expect(submission).not_to have_received(:close)
+        end
       end
     end
 
     context 'when at least one assessment is less than an hour old' do
       before {
-        old_enough = double(:age => 1.hour)
-        too_young = double(:age => (1.hour - 1.second))
+        old_enough = double(:age => 1.hour, :published => true)
+        too_young = double(:age => (1.hour - 1.second), :published => true)
 
         submission.stub(:assessments => [old_enough, too_young, old_enough])
       }
