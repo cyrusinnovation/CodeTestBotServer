@@ -8,6 +8,13 @@ class Submission < ActiveRecord::Base
     where(active: true)
   end
 
+  def self.all_with_average_score
+    fields = ['id', 'candidate_name', 'candidate_email', 'email_text', 'zipfile', 'active', 'language_id', 'level_id', 'created_at', 'updated_at']
+    submission_fields = fields.map { |f| 'submissions.' + f }.join(',')
+    avg = ', round(avg(assessments.score) * 2) / 2 as average_score'
+    select(submission_fields + avg).joins('LEFT JOIN assessments ON (assessments.submission_id = submissions.id)').group(submission_fields).order(updated_at: :desc)
+  end
+
   def has_assessment_by_assessor(assessor)
     assessments.any? {|a| a.assessor == assessor}
   end
@@ -18,16 +25,6 @@ class Submission < ActiveRecord::Base
 
   def attach_file(file_url)
     update_attribute(:zipfile, file_url)
-  end
-
-  def recalculate_average_score
-    score = nil
-    if (assessments.length > 0)
-      score = assessments.reduce(0) {|sum,assess| sum + assess.score} / assessments.length.to_f
-      score = score.round(1)
-    end
-
-    update_attribute(:average_score, score)
   end
 
   def self.create_from_json(submission)

@@ -45,25 +45,6 @@ describe Submission do
     expect(submission.assessors.first).to eql(assessor)
   end
 
-  it 'correctly recalculates the average to 1 decimal' do
-    java = Language.find_by_name('Java')
-    submission = Submission.create(language: java)
-
-    assessor_alice = Assessor.create({name: 'Alice'})
-    assessment_alice = Assessment.create({submission: submission, assessor: assessor_alice, score: 4})
-
-    assessor_bob = Assessor.create({name: 'Bob'})
-    assessment_bob = Assessment.create({submission: submission, assessor: assessor_bob, score: 3})
-
-    assessor_christine = Assessor.create({name: 'Christine'})
-    assessment_christine = Assessment.create({submission: submission, assessor: assessor_christine, score: 3})
-
-    expected_score = ((assessment_alice.score + assessment_bob.score + assessment_christine.score) / 3.0).round(1)
-
-    submission.recalculate_average_score
-    expect(Submission.find(submission.id).average_score).to eql(expected_score)
-  end
-
   describe '.create_from_json' do
     let(:file) { Tempfile.new('codetestbot-submission') }
     let(:email_text) { 'a new code test.' }

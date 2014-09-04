@@ -8,12 +8,12 @@ class SubmissionsController < UserAwareController
 
   def index
     authorize! :index, Submission
-    render :json => Submission.all.order(updated_at: :desc)
+    render :json => Submission.all_with_average_score
   end
 
   def analytics
     authorize! :index, Submission
-    render :json => Submission.all.order(updated_at: :desc)    
+    render :json => Submission.all_with_average_score
   end
 
   def show
@@ -25,7 +25,7 @@ class SubmissionsController < UserAwareController
     authorize! :update, Submission
     submission = params[:submission]
 
-    render :json => Submission.update(params[:id], {email_text: submission[:email_text], active: submission[:active], average_score: submission[:average_score]})
+    render :json => Submission.update(params[:id], {email_text: submission[:email_text], active: submission[:active]})
   end
 
   def destroy
