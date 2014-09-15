@@ -13,7 +13,7 @@ describe AssessmentsController do
     let(:submission) { Submission.new({email_text: 'A submission'}) }
     let(:assessor) { Assessor.new({name: 'Bob', email: 'bob@example.com'}) }
     let(:assessment) { Assessment.new({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!' }) }
-    let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!', published: true}.to_json} }
+    let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!', published: true, exemplary: false}.to_json} }
 
     before { 
       AssessmentCreator.stub(:create_assessment).with(assessment_data[:assessment]).and_return(assessment)
@@ -58,9 +58,9 @@ describe AssessmentsController do
     let(:submission3json) { {email_text: 'third', zipfile: nil, average_score: nil, active: true, candidate_name: nil, candidate_email: nil, level_id: nil, language_id: nil} }
     let(:assessor1json) { {email: 'bob@example.com', name: 'Bob'} }
     let(:assessor2json) { {email: 'alice@example.com', name: 'Alice'} }
-    let(:assessment1json) { {submission_id: submission1.id, assessor_id: assessor1.id, score: 1, notes: 'Terrible!', published: true} }
-    let(:assessment2json) { {submission_id: submission2.id, assessor_id: assessor2.id, score: 5, notes: 'Amazing!', published: true} }
-    let(:assessment3json) { {submission_id: submission3.id, assessor_id: assessor2.id, score: 5, notes: 'Commentary!', published: false} }
+    let(:assessment1json) { {submission_id: submission1.id, assessor_id: assessor1.id, score: 1, notes: 'Terrible!', published: true, exemplary: false} }
+    let(:assessment2json) { {submission_id: submission2.id, assessor_id: assessor2.id, score: 5, notes: 'Amazing!', published: true, exemplary: false} }
+    let(:assessment3json) { {submission_id: submission3.id, assessor_id: assessor2.id, score: 5, notes: 'Commentary!', published: false, exemplary: false} }
 
     subject(:response) { get :index }
 
@@ -106,7 +106,7 @@ describe AssessmentsController do
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let(:another_assessor) { Assessor.create({name: 'Kate', email: 'kate@example.com'}) }
     let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!', published: false}) }
-    let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!', published: true}.to_json}.with_indifferent_access }
+    let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!', published: true, exemplary: false}.to_json}.with_indifferent_access }
 
     subject(:response) { post :update, assessment_data }
 

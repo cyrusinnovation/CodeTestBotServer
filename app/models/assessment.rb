@@ -17,6 +17,7 @@ class Assessment < ActiveRecord::Base
       submission: submission,
       assessor: assessor,
       score: assessment[:score],
+      exemplary: assessment[:exemplary],
       notes: assessment[:notes],
       published: assessment[:published]
     })
@@ -29,6 +30,7 @@ class Assessment < ActiveRecord::Base
   def update_from_json(assessment_json)
     update!({
       score: assessment_json[:score],
+      exemplary: assessment_json[:exemplary],
       notes: assessment_json[:notes],
       published: assessment_json[:published]
     })
