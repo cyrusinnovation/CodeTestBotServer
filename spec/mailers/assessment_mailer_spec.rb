@@ -15,7 +15,7 @@ describe AssessmentMailer do
   end
 
   describe '#new_assessment' do
-    let(:submission) { Submission.new({ candidate_name: 'Test Candidate', candidate_email: 'test.candidate@example.com' }) }
+    let(:submission) { Submission.new({ id: 3, candidate_name: 'Test Candidate', candidate_email: 'test.candidate@example.com' }) }
     let(:assessor) { Assessor.new({ name: 'Test Assessor', email: 'test.assessor@example.com' }) }
     let(:assessment) { Assessment.new({ id: 2, submission: submission, assessor: assessor }) }
     subject(:mail) { AssessmentMailer.new_assessment(assessment) }
