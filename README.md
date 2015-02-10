@@ -19,12 +19,17 @@ bundle install
 
 ##### Database
 
-You'll need to create a `codetestbot` role for Postgres (-d gives permission to create databases).
+Make sure Postgres is running, you can do this by simply opening the application after downloading it. You should see the elephant logo in your menu bar on OSX. It should be running on the default port: 5432.
+
+Make sure you have created at least one Postgres database:
+```sh
+createdb
+```
+
+Create a `codetestbot` role for Postgres (-d gives permission to create databases):
 ```sh
 createuser -d codetestbot
 ```
-
-Note that before you can run the `createuser` script, you'll need to have created at least one Postgres database using `createdb`.
 
 Then you can run Rake to create and seed the database.
 ```sh
@@ -40,6 +45,11 @@ Before you can successfully use CodeTestBot in conjunction with the client appli
 development:
   BASE_URI: http://localhost:3000
   USE_DEV_TOKEN: "true"
+```
+
+Lastly, before running CodeTestBotApp, run CodeTestBotServer:
+```sh
+rails server
 ```
 
 ##### Running Tests
