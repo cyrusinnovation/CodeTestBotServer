@@ -19,6 +19,5 @@ module CodeTestBotServer
       Session.create({token: token, token_expiry: expiry, user: @user})
       @request.headers['Authorization'] = "Bearer #{token}"
     end
-
   end
 end
