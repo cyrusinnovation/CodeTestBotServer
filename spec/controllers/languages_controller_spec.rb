@@ -4,7 +4,6 @@ describe LanguagesController do
   describe '#index' do
     subject(:response) { get :index }
 
-    it_behaves_like 'a secured route'
 
     context 'with an active session' do
       before { add_user_to_session('Assessor') }
