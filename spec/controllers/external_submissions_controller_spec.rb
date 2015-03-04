@@ -25,7 +25,7 @@ describe ExternalSubmissionsController do
 
     it 'should create a submission' do
       expect(response).to be_created
-      expect(SubmissionCreator).to have_received(:create_submission).with(params[:submission])
+      expect(SubmissionCreator).to have_received(:create_submission).with(params[:extsubmission])
     end
   end
 end
