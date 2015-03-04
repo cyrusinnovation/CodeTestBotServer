@@ -17,5 +17,5 @@ CodeTestBotServer::Application.routes.draw do
   get '/auth/google/callback', to: 'omniauth_callbacks#google'
   get '/auth/development_token', to: 'omniauth_callbacks#development_token'
 
-  get '/extsubmission', to: 'external_submissions#create'
+  post '/extsubmissions', to: 'external_submissions#create'
 end
