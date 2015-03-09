@@ -40,6 +40,7 @@ class Submission < ActiveRecord::Base
       candidate_email: submission.fetch(:candidate_email),
       email_text: submission.fetch(:email_text), 
       level: level, 
-      language: language)
+      language: language,
+      source: submission.fetch(:source))
   end
 end
