@@ -55,7 +55,8 @@ describe Submission do
       candidate_name: 'Bob',
       candidate_email: 'bob@example.com',
       level_id: level.id, 
-      language_id: language.id
+      language_id: language.id,
+      source: 'LinkedIn'
     }}}
 
     subject(:creation) { Submission.create_from_json(params[:submission]) }
@@ -70,6 +71,7 @@ describe Submission do
     its(:candidate_email) { should eq 'bob@example.com' }
     its('level.text') { should eq level.text }
     its('language.name') { should eq language.name }
+    its(:source) { should eq 'LinkedIn' }
   end
 
   describe '#close' do
