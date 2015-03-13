@@ -45,6 +45,43 @@ describe Submission do
     expect(submission.assessors.first).to eql(assessor)
   end
 
+  describe '.all_with_average_score' do 
+    let(:submission)   { Submission.create() }
+    let!(:submission_2) { Submission.create() }
+    let!(:assessment1) {Assessment.create({submission: submission, score: 1})}
+    let!(:assessment2) {Assessment.create({submission: submission_2, score: 3})}
+
+    pending 'returns all submissions' do
+      expect(Submission.all_with_average_score).to match_array([submission.as_json, submission_2.as_json])
+    end
+
+    it 'calls average_published_assessment_score on each submission' do
+      submission
+      expect(submission).to receive(:average_published_assessment_score)
+      Submission.all_with_average_score
+    end
+
+    it 'returns a submission with an average score as a hash'
+    it 'returns all submissions as an array of hashes each with an average score'
+
+    it 'does not include scores for unpublished assesments in the average score' do
+      assessment_3 = Assessment.create(submission_id: submission.id, score: 3, published: false)
+      all_submissions = Submission.all_with_average_score
+
+      expect(all_submissions.first[:average_score].to_int).to eq 1
+    end
+  end
+
+  describe '#average_published_assessment_score' do 
+    it 'returns its own average assessment score' do 
+      submission      = Submission.create()
+      assessment      = Assessment.create(submission_id: submission.id, score: 1)
+      assessment_2    = Assessment.create(submission_id: submission.id, score: 3)
+    
+      expect(submission.average_published_assessment_score).to eq 2
+    end
+  end
+
   describe '.create_from_json' do
     let(:file) { Tempfile.new('codetestbot-submission') }
     let(:email_text) { 'a new code test.' }
