@@ -46,39 +46,41 @@ describe Submission do
   end
 
   describe '.all_with_average_score' do 
-    let(:submission)   { Submission.create() }
-    let!(:submission_2) { Submission.create() }
-    let!(:assessment1) {Assessment.create({submission: submission, score: 1})}
-    let!(:assessment2) {Assessment.create({submission: submission_2, score: 3})}
+    let(:submission0) { Submission.create() }
+    let(:submission1) { Submission.create() }
 
-    pending 'returns all submissions' do
-      expect(Submission.all_with_average_score).to match_array([submission.as_json, submission_2.as_json])
+    it 'returns all submissions' do
+      submission0
+      submission1
+      expect(Submission.all_with_average_score.length).to eq 2
     end
 
-    it 'calls average_published_assessment_score on each submission' do
-      submission
-      expect(submission).to receive(:average_published_assessment_score)
+    it 'returns all submissions has hashes with an additional average_score key' do
+      submission0
       Submission.all_with_average_score
+      expect(Submission.all_with_average_score.length).to eq 1
+      expect(Submission.all_with_average_score.first).to respond_to(:average_score)
     end
 
-    it 'returns a submission with an average score as a hash'
-    it 'returns all submissions as an array of hashes each with an average score'
+    it 'calculates the average assessment score for a submission to the nearest half-integer' do
+      Assessment.create({submission: submission0, score: 1})
+      Assessment.create({submission: submission0, score: 2})
+      Assessment.create({submission: submission0, score: 3})
+      Assessment.create({submission: submission0, score: 2})
+      Assessment.create({submission: submission0, score: 3})
+
+      expect(Submission.all_with_average_score.first.average_score).to eq 2.0
+    end
 
     it 'does not include scores for unpublished assesments in the average score' do
-      assessment_3 = Assessment.create(submission_id: submission.id, score: 3, published: false)
-      all_submissions = Submission.all_with_average_score
+      Assessment.create({submission: submission0, score: 1, published: false})
+      Assessment.create({submission: submission0, score: 2, published: false})
+      Assessment.create({submission: submission0, score: 2})
+      Assessment.create({submission: submission0, score: 3})
+      Assessment.create({submission: submission0, score: 2})
+      Assessment.create({submission: submission0, score: 3, published: false})
 
-      expect(all_submissions.first[:average_score].to_int).to eq 1
-    end
-  end
-
-  describe '#average_published_assessment_score' do 
-    it 'returns its own average assessment score' do 
-      submission      = Submission.create()
-      assessment      = Assessment.create(submission_id: submission.id, score: 1)
-      assessment_2    = Assessment.create(submission_id: submission.id, score: 3)
-    
-      expect(submission.average_published_assessment_score).to eq 2
+      expect(Submission.all_with_average_score.first.average_score).to eq 2.5
     end
   end
 

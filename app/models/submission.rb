@@ -9,32 +9,10 @@ class Submission < ActiveRecord::Base
   end
 
   def self.all_with_average_score
-    # fields = ['id', 'candidate_name', 'candidate_email', 'email_text', 'zipfile', 'active', 'language_id', 'level_id', 'created_at', 'updated_at', 'source']
-    # submission_fields = fields.map { |f| 'submissions.' + f }.join(',')
-    # avg = ', round(avg(assessments.score) * 2) / 2 as average_score'
-    # select(submission_fields + avg).joins('LEFT JOIN assessments ON (assessments.submission_id = submissions.id)').group(submission_fields).order(updated_at: :desc)
-    submissions_array = []
-    Submission.all.each do |submission|
-      submission_hash = submission.as_json
-      submission_hash[:average_score] = submission.average_published_assessment_score
-      submissions_array.push(submission_hash)
-      puts submission_hash
-    end
-    submissions_array
-  end
-
-  def average_published_assessment_score 
-    score_sum = 0
-    total_scores = 0
-    assessments.each do  |assessment|
-      if assessment.published 
-        score_sum += assessment.score
-        total_scores += 1
-      end
-    end
-    if total_scores != 0
-      score_sum / total_scores
-    end
+    fields = ['id', 'candidate_name', 'candidate_email', 'email_text', 'zipfile', 'active', 'language_id', 'level_id', 'created_at', 'updated_at', 'source']
+    submission_fields = fields.map { |f| 'submissions.' + f }.join(',')
+    avg = ', round(avg(assessments.score) * 2) / 2 as average_score'
+    select(submission_fields + avg).joins('LEFT JOIN assessments ON (assessments.submission_id = submissions.id AND assessments.published = TRUE)').group(submission_fields).order(updated_at: :desc)
   end
 
   def has_assessment_by_assessor(assessor)
