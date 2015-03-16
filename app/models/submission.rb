@@ -12,7 +12,7 @@ class Submission < ActiveRecord::Base
     fields = ['id', 'candidate_name', 'candidate_email', 'email_text', 'zipfile', 'active', 'language_id', 'level_id', 'created_at', 'updated_at', 'source']
     submission_fields = fields.map { |f| 'submissions.' + f }.join(',')
     avg = ', round(avg(assessments.score) * 2) / 2 as average_score'
-    select(submission_fields + avg).joins('LEFT JOIN assessments ON (assessments.submission_id = submissions.id)').group(submission_fields).order(updated_at: :desc)
+    select(submission_fields + avg).joins('LEFT JOIN assessments ON (assessments.submission_id = submissions.id AND assessments.published = TRUE)').group(submission_fields).order(updated_at: :desc)
   end
 
   def has_assessment_by_assessor(assessor)

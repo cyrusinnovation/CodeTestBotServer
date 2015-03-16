@@ -45,6 +45,45 @@ describe Submission do
     expect(submission.assessors.first).to eql(assessor)
   end
 
+  describe '.all_with_average_score' do 
+    let(:submission0) { Submission.create() }
+    let(:submission1) { Submission.create() }
+
+    it 'returns all submissions' do
+      submission0
+      submission1
+      expect(Submission.all_with_average_score.length).to eq 2
+    end
+
+    it 'returns all submissions has hashes with an additional average_score key' do
+      submission0
+      Submission.all_with_average_score
+      expect(Submission.all_with_average_score.length).to eq 1
+      expect(Submission.all_with_average_score.first).to respond_to(:average_score)
+    end
+
+    it 'calculates the average assessment score for a submission to the nearest half-integer' do
+      Assessment.create({submission: submission0, score: 1})
+      Assessment.create({submission: submission0, score: 2})
+      Assessment.create({submission: submission0, score: 3})
+      Assessment.create({submission: submission0, score: 2})
+      Assessment.create({submission: submission0, score: 3})
+
+      expect(Submission.all_with_average_score.first.average_score).to eq 2.0
+    end
+
+    it 'does not include scores for unpublished assesments in the average score' do
+      Assessment.create({submission: submission0, score: 1, published: false})
+      Assessment.create({submission: submission0, score: 2, published: false})
+      Assessment.create({submission: submission0, score: 2})
+      Assessment.create({submission: submission0, score: 3})
+      Assessment.create({submission: submission0, score: 2})
+      Assessment.create({submission: submission0, score: 3, published: false})
+
+      expect(Submission.all_with_average_score.first.average_score).to eq 2.5
+    end
+  end
+
   describe '.create_from_json' do
     let(:file) { Tempfile.new('codetestbot-submission') }
     let(:email_text) { 'a new code test.' }
