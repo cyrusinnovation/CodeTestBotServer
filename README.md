@@ -11,6 +11,10 @@ The API server for the Code Test Bot application.
 - Ruby 2.1.1
 - PostgreSQL
 
+##### PostgreSQL
+The PostgreSQL app can be installed by [downloading the app](http://postgresapp.com/), or via homebrew cask: `homebrew cask install postgres`.
+To install the CLI Postgres use homebrew: `homebrew install postgresql`. If you do this ensure that your locale is set correctly to UTF-8. This can be done by setting `LC_ALL` to `en_US.UTF-8`. If you don't do this then the database templates used to create new databases will be set up in ASCII mode and you will not be able to create th databases needed for this application.
+
 ##### Bundler
 User Bundler to install Gem dependencies.
 ```sh
