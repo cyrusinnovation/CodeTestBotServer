@@ -27,13 +27,6 @@ ActiveRecord::Schema.define(version: 20150309153149) do
     t.boolean  "exemplary",     default: false
   end
 
-  create_table "cons", force: true do |t|
-    t.string   "text"
-    t.integer  "assessment_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "languages", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -49,13 +42,6 @@ ActiveRecord::Schema.define(version: 20150309153149) do
   create_table "pages", force: true do |t|
     t.string   "name"
     t.text     "raw_text"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "pros", force: true do |t|
-    t.string   "text"
-    t.integer  "assessment_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
