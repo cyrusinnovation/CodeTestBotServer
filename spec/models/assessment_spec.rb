@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Assessment do
-  it "requires a pro and a con" do
+  it "does not requires a pro and a con" do
     submission = Submission.create({email_text: 'test'})
     assessor = Assessor.create({name: 'Bob'})
 
@@ -9,9 +9,9 @@ describe Assessment do
     assessment_no_cons = Assessment.create({score: 5, notes: 'Amazing!', pros: 'Good Code.'})
     assessment_no_pros = Assessment.create({score: 5, notes: 'Amazing!', cons: 'Bad tests.'})
     assessment = Assessment.create({score: 5, notes: 'Amazing!', cons: 'Bad tests.', pros: 'Good Code.'})
-    expect(assessment_no_pros_or_cons.valid?).to be false
-    expect(assessment_no_cons.valid?).to be false
-    expect(assessment_no_pros.valid?).to be false
+    expect(assessment_no_pros_or_cons.valid?).to be true
+    expect(assessment_no_cons.valid?).to be true
+    expect(assessment_no_pros.valid?).to be true
     expect(assessment.valid?).to be true
   end
 

@@ -2,9 +2,6 @@ class Assessment < ActiveRecord::Base
   class ExistingAssessmentError < StandardError
   end
 
-  validates :pros, presence: true
-  validates :cons, presence: true
-
   belongs_to :submission
   belongs_to :assessor
 
