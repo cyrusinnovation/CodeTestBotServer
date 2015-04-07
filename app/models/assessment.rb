@@ -2,6 +2,9 @@ class Assessment < ActiveRecord::Base
   class ExistingAssessmentError < StandardError
   end
 
+  validates :pros, presence: true
+  validates :cons, presence: true
+
   belongs_to :submission
   belongs_to :assessor
 
@@ -14,13 +17,15 @@ class Assessment < ActiveRecord::Base
     end
 
     created = Assessment.create({
-      submission: submission,
-      assessor: assessor,
-      score: assessment[:score],
-      exemplary: assessment[:exemplary],
-      notes: assessment[:notes],
-      published: assessment[:published]
-    })
+                                    submission: submission,
+                                    assessor: assessor,
+                                    score: assessment[:score],
+                                    exemplary: assessment[:exemplary],
+                                    notes: assessment[:notes],
+                                    pros: assessment[:pros],
+                                    cons: assessment[:cons],
+                                    published: assessment[:published]
+                                })
 
     submission.assessments << created
 
@@ -29,11 +34,13 @@ class Assessment < ActiveRecord::Base
 
   def update_from_json(assessment_json)
     update!({
-      score: assessment_json[:score],
-      exemplary: assessment_json[:exemplary],
-      notes: assessment_json[:notes],
-      published: assessment_json[:published]
-    })
+                score: assessment_json[:score],
+                exemplary: assessment_json[:exemplary],
+                notes: assessment_json[:notes],
+                published: assessment_json[:published],
+                pros: assessment_json[:pros],
+                cons: assessment_json[:cons]
+            })
     self
   end
 

@@ -12,10 +12,10 @@ describe AssessmentsController do
   describe '#create' do
     let(:submission) { Submission.new({email_text: 'A submission'}) }
     let(:assessor) { Assessor.new({name: 'Bob', email: 'bob@example.com'}) }
-    let(:assessment) { Assessment.new({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!' }) }
-    let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!', published: true, exemplary: false}.to_json} }
+    let(:assessment) { Assessment.new({submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!', pros: 'Speak the speach I pray thee', cons: 'Auto Conventions'}) }
+    let(:assessment_data) { {assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 5, notes: 'Fantastic!', pros: 'Speak the speach I pray thee', cons: 'Auto Conventions', published: true, exemplary: false}.to_json} }
 
-    before { 
+    before {
       AssessmentCreator.stub(:create_assessment).with(assessment_data[:assessment]).and_return(assessment)
     }
 
@@ -27,7 +27,9 @@ describe AssessmentsController do
       before { add_user_to_session('Assessor') }
 
       it { should be_created }
-      its(:body) { should be_json_eql(assessment_data[:assessment]).at_path('assessment') }
+      its(:body) {
+        should be_json_eql(assessment_data[:assessment]).at_path('assessment')
+      }
 
       it 'should call create assessment service' do
         response
@@ -50,14 +52,14 @@ describe AssessmentsController do
     let!(:submission3) { Submission.create({email_text: 'third'}) }
     let!(:assessor1) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let!(:assessor2) { Assessor.create({name: 'Alice', email: 'alice@example.com'}) }
-    let!(:assessment1) { Assessment.create({submission: submission1, assessor: assessor1, score: 1, notes: 'Terrible!'}) }
-    let!(:assessment2) { Assessment.create({submission: submission2, assessor: assessor2, score: 5, notes: 'Amazing!'}) }
-    let!(:assessment3) { Assessment.create({submission: submission3, assessor: assessor2, score: 5, notes: 'Commentary!', published: false}) }
+    let!(:assessment1) { Assessment.create({submission: submission1, assessor: assessor1, score: 1, notes: 'Terrible!', pros: 'Speak the speach I pray thee', cons: 'Auto Conventions'}) }
+    let!(:assessment2) { Assessment.create({submission: submission2, assessor: assessor2, score: 5, notes: 'Amazing!', pros: 'Great tests', cons: 'Bad OO design'}) }
+    let!(:assessment3) { Assessment.create({submission: submission3, assessor: assessor2, score: 5, notes: 'Commentary!', pros: 'Good OO design', cons: 'Bad tests.', published: false}) }
     let(:assessor1json) { {email: 'bob@example.com', name: 'Bob'} }
     let(:assessor2json) { {email: 'alice@example.com', name: 'Alice'} }
-    let(:assessment1json) { {submission_id: submission1.id, assessor_id: assessor1.id, score: 1, notes: 'Terrible!', published: true, exemplary: false} }
-    let(:assessment2json) { {submission_id: submission2.id, assessor_id: assessor2.id, score: 5, notes: 'Amazing!', published: true, exemplary: false} }
-    let(:assessment3json) { {submission_id: submission3.id, assessor_id: assessor2.id, score: 5, notes: 'Commentary!', published: false, exemplary: false} }
+    let(:assessment1json) { {submission_id: submission1.id, assessor_id: assessor1.id, score: 1, notes: 'Terrible!', pros: 'Speak the speach I pray thee', cons: 'Auto Conventions', published: true, exemplary: false} }
+    let(:assessment2json) { {submission_id: submission2.id, assessor_id: assessor2.id, score: 5, notes: 'Amazing!', pros: 'Great tests', cons: 'Bad OO design', published: true, exemplary: false} }
+    let(:assessment3json) { {submission_id: submission3.id, assessor_id: assessor2.id, score: 5, notes: 'Commentary!', pros: 'Good OO design', cons: 'Bad tests.', published: false, exemplary: false} }
 
     subject(:response) { get :index }
 
@@ -100,8 +102,8 @@ describe AssessmentsController do
     let(:submission) { Submission.create({email_text: 'A submission', candidate_name: 'Test Candidate'}) }
     let(:assessor) { Assessor.create({name: 'Bob', email: 'bob@example.com'}) }
     let(:another_assessor) { Assessor.create({name: 'Kate', email: 'kate@example.com'}) }
-    let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!', published: false}) }
-    let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!', published: true, exemplary: false}.to_json}.with_indifferent_access }
+    let(:assessment) { Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Amazing!', pros: 'Good OO design', cons: 'Bad tests.', published: false}) }
+    let(:assessment_data) { {id: assessment.id, assessment: {submission_id: submission.id, assessor_id: assessor.id, score: 4, notes: 'Actually just good, not amazing!', pros: 'Bad tests.', cons: 'Good OO design', published: true, exemplary: false}.to_json}.with_indifferent_access }
 
     subject(:response) { post :update, assessment_data }
 
@@ -110,7 +112,7 @@ describe AssessmentsController do
     context 'with the assessor signed in who created the assessment' do
       before {
         add_existing_user_to_session('Assessor', assessor.id)
-        AssessmentCreator.stub(:update_assessment).with(assessment, assessment_data[:assessment]).and_return(Assessment.new({submission: submission, assessor: assessor, score: 4, notes: 'Actually just good, not amazing!', published: true}))
+        AssessmentCreator.stub(:update_assessment).with(assessment, assessment_data[:assessment]).and_return(Assessment.new({submission: submission, assessor: assessor, score: 4, notes: 'Actually just good, not amazing!', pros: 'Bad tests.', cons: 'Good OO design', published: true}))
       }
 
       its(:body) { should be_json_eql(assessment_data[:assessment]).at_path('assessment') }
@@ -124,7 +126,7 @@ describe AssessmentsController do
 
     context 'with another assessor signed in' do
       before { add_existing_user_to_session('Assessor', another_assessor.id) }
-      it {should be_forbidden}
+      it { should be_forbidden }
     end
   end
 end

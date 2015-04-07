@@ -25,7 +25,7 @@ class AssessmentsController < UserAwareController
       filters[:assessor_id] = params[:assessor_id]
     end
 
-    include_unpublished = params[:include_unpublished] 
+    include_unpublished = params[:include_unpublished]
     unless include_unpublished
       filters[:published] = true
     end

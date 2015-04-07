@@ -37,7 +37,7 @@ describe Submission do
     java = Language.find_by_name('Java')
     submission = Submission.create(language: java)
     assessor = Assessor.create({name: 'Bob'})
-    assessment = Assessment.create({submission: submission, assessor: assessor, score: 1})
+    assessment = Assessment.create({submission: submission, assessor: assessor, score: 1, pros: 'Bad tests.', cons: 'Good OO design'})
 
     expect(submission.assessments.size).to eql(1)
     expect(submission.assessors.size).to eql(1)
@@ -63,22 +63,22 @@ describe Submission do
     end
 
     it 'calculates the average assessment score for a submission to the nearest half-integer' do
-      Assessment.create({submission: submission0, score: 1})
-      Assessment.create({submission: submission0, score: 2})
-      Assessment.create({submission: submission0, score: 3})
-      Assessment.create({submission: submission0, score: 2})
-      Assessment.create({submission: submission0, score: 3})
+      Assessment.create({submission: submission0, score: 1, pros: 'Bad tests.', cons: 'Good OO design'})
+      Assessment.create({submission: submission0, score: 2, pros: 'Bad tests.', cons: 'Good OO design'})
+      Assessment.create({submission: submission0, score: 3, pros: 'Bad tests.', cons: 'Good OO design'})
+      Assessment.create({submission: submission0, score: 2, pros: 'Bad tests.', cons: 'Good OO design'})
+      Assessment.create({submission: submission0, score: 3, pros: 'Bad tests.', cons: 'Good OO design'})
 
       expect(Submission.all_with_average_score.first.average_score).to eq 2.0
     end
 
     it 'does not include scores for unpublished assesments in the average score' do
-      Assessment.create({submission: submission0, score: 1, published: false})
-      Assessment.create({submission: submission0, score: 2, published: false})
-      Assessment.create({submission: submission0, score: 2})
-      Assessment.create({submission: submission0, score: 3})
-      Assessment.create({submission: submission0, score: 2})
-      Assessment.create({submission: submission0, score: 3, published: false})
+      Assessment.create({submission: submission0, score: 1, pros: 'Bad tests.', cons: 'Good OO design', published: false})
+      Assessment.create({submission: submission0, score: 2, pros: 'Bad tests.', cons: 'Good OO design', published: false})
+      Assessment.create({submission: submission0, score: 2, pros: 'Bad tests.', cons: 'Good OO design'})
+      Assessment.create({submission: submission0, score: 3, pros: 'Bad tests.', cons: 'Good OO design'})
+      Assessment.create({submission: submission0, score: 2, pros: 'Bad tests.', cons: 'Good OO design'})
+      Assessment.create({submission: submission0, score: 3, pros: 'Bad tests.', cons: 'Good OO design', published: false})
 
       expect(Submission.all_with_average_score.first.average_score).to eq 2.5
     end

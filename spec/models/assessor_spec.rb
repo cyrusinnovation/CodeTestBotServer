@@ -4,7 +4,7 @@ describe Assessor do
   it 'has a list of assessments and submissions through assessments' do
     assessor = Assessor.create({name: 'Bob'})
     submission = Submission.create({email_text: 'A submission'})
-    assessment = Assessment.create({submission: submission, assessor: assessor, score: 5})
+    assessment = Assessment.create({submission: submission, assessor: assessor, score: 5, pros: 'Bad tests.', cons: 'Good OO design'})
 
     expect(assessor.assessments.size).to eql(1)
     expect(assessor.submissions.size).to eql(1)

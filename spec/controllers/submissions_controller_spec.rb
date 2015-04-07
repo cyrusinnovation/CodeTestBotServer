@@ -39,8 +39,8 @@ describe SubmissionsController do
 
       context 'when the submission has assessments' do
         let!(:submission) { Submission.create({email_text: 'test', candidate_name: 'Bob', candidate_email: 'bob@example.com'}) }
-        let!(:assessment1) { Assessment.create({submission: submission, score: 3}) }
-        let!(:assessment2) { Assessment.create({submission: submission, score: 4}) }
+        let!(:assessment1) { Assessment.create({submission: submission, score: 3, pros: 'Bad tests.', cons: 'Good OO design'}) }
+        let!(:assessment2) { Assessment.create({submission: submission, score: 4, pros: 'Good OO design', cons: 'Bad tests.'}) }
         let(:expected) { [{email_text: 'test', zipfile: nil, average_score: '3.5', active: true, language_id: nil, level_id: nil, candidate_name: 'Bob', candidate_email: 'bob@example.com', source: nil}].to_json }
         subject(:body) { response.body }
 
@@ -173,7 +173,7 @@ describe SubmissionsController do
           end
           it 'should delete submission assessments' do
             assessor = Assessor.create({name: 'Bob', email: 'bob@example.com'})
-            Assessment.create({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!' })
+            Assessment.create({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!', pros: 'Bad tests.', cons: 'Good OO design' })
             expect(Assessment.count).to eq(1)
             response
             expect(Assessment.count).to eq(0)
