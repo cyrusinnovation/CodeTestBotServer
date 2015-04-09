@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe SubmissionCreator do
     let(:file_url) { '/some/url' }
-    let(:submission_json) { { zipfile: 'header,====', file_name: 'filename.zip' } }
+    let(:submission_json) { { zipfile: 'header,====', zipfile_name: 'filename.zip' } }
     let(:submission) { Submission.new({ id: 5}) }
 
     before {
