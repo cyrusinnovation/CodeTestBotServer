@@ -18,6 +18,6 @@ class SubmissionFileUploader
     extension = self.get_extension(file_name)
     path = "submissions/#{submission_id}/#{type}-#{submission_id}-#{shorthash}.#{extension}"
 
-    UploaderFactory.get_uploader.upload(path, file).to_s
+    CodeTestBotServer::Application.config.file_uploader.upload(path, file).to_s
   end
 end
