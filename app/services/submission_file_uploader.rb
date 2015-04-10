@@ -1,4 +1,3 @@
-
 class SubmissionFileUploader
 
   def self.get_extension(file_name)
@@ -13,12 +12,11 @@ class SubmissionFileUploader
     end
   end
 
-  def self.upload(submission, encoded_file, file_name)
+  def self.upload(submission, encoded_file, file_name, type)
     file = Base64FileDecoder.decode_to_file(encoded_file)
     shorthash = FileHasher.short_hash(OpenSSL::Digest::SHA1.new, file)
     extension = self.get_extension(file_name)
-    path = "submissions/#{submission.id}/codetest-#{submission.id}-#{shorthash}.#{extension}"
+    path = "submissions/#{submission.id}/#{type}-#{submission.id}-#{shorthash}.#{extension}"
     S3Uploader.upload(path, file).to_s
   end
 end
-

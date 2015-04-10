@@ -5,13 +5,15 @@ class SubmissionCreator
     zipfile_name = submission[:zipfile_name]
     zipfile_url = SubmissionFileUploader.upload(created_submission,
                                                 submission[:zipfile],
-                                                zipfile_name)
+                                                zipfile_name,
+                                                'codetest')
     created_submission.attach_zipfile(zipfile_url)
 
     resumefile_name = submission[:resumefile_name]
     resumefile_url = SubmissionFileUploader.upload(created_submission,
                                                    submission[:resumefile],
-                                                   resumefile_name)
+                                                   resumefile_name,
+                                                   'resume')
     created_submission.attach_resumefile(resumefile_url)
 
     Notifications::Submissions.new_submission(created_submission)
