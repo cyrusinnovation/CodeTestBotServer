@@ -17,6 +17,7 @@ class SubmissionFileUploader
     shorthash = FileHasher.short_hash(OpenSSL::Digest::SHA1.new, file)
     extension = self.get_extension(file_name)
     path = "submissions/#{submission_id}/#{type}-#{submission_id}-#{shorthash}.#{extension}"
-    S3Uploader.upload(path, file).to_s
+
+    UploaderFactory.get_uploader.upload(path, file).to_s
   end
 end

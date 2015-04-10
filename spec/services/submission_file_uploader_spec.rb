@@ -8,6 +8,8 @@ describe SubmissionFileUploader do
     hash = 'hash'
     Base64FileDecoder.stub(decode_to_file: file)
     FileHasher.stub(short_hash: hash)
+
+    UploaderFactory.stub(get_uploader: S3Uploader)
     S3Uploader.stub(:upload)
 
     file_name = 'candidate_name.tar'
@@ -15,6 +17,7 @@ describe SubmissionFileUploader do
     SubmissionFileUploader.upload(submission_id, encoded_file, file_name, 'codetest')
 
     expect(FileHasher).to have_received(:short_hash).with(OpenSSL::Digest::SHA1.new, file)
+    expect(UploaderFactory).to have_received(:get_uploader)
     expect(S3Uploader).to have_received(:upload).with(expected_path, file)
   end
 
