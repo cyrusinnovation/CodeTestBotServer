@@ -9,13 +9,13 @@ describe SubmissionCreator do
       Submission.stub(:create_from_json).with(submission_json).and_return(submission)
       SubmissionFileUploader.stub(:upload => file_url)
       Notifications::Submissions.stub(:new_submission)
-      submission.stub(:attach_file)
+      submission.stub(:attach_zipfile)
     }
 
     it 'creates and returns a submission' do
       expect(SubmissionCreator.create_submission(submission_json)).to eql submission
     end
-    
+
     it 'uploads the file' do
       SubmissionCreator.create_submission(submission_json)
       expect(SubmissionFileUploader).to have_received(:upload).with(submission, submission_json[:zipfile], 'filename.zip')
@@ -23,7 +23,7 @@ describe SubmissionCreator do
 
     it 'attaches the uploaded file to the submission' do
       SubmissionCreator.create_submission(submission_json)
-      expect(submission).to have_received(:attach_file).with(file_url)
+      expect(submission).to have_received(:attach_zipfile).with(file_url)
     end
 
     it 'should send notifications' do
@@ -31,4 +31,3 @@ describe SubmissionCreator do
       expect(Notifications::Submissions).to have_received(:new_submission).with(submission)
     end
 end
-

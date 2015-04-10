@@ -23,7 +23,7 @@ class Submission < ActiveRecord::Base
     update_attribute(:active, false)
   end
 
-  def attach_file(file_url)
+  def attach_zipfile(file_url)
     update_attribute(:zipfile, file_url)
   end
 

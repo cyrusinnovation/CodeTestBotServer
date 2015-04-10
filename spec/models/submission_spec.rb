@@ -17,7 +17,7 @@ describe Submission do
   it { should respond_to(:zipfile) }
   it { should respond_to(:email_text)}
   it { should respond_to(:level)}
-  
+
   it 'has a language' do
     java = Language.find_by_name('Java')
     Submission.create(language: java)
@@ -45,7 +45,7 @@ describe Submission do
     expect(submission.assessors.first).to eql(assessor)
   end
 
-  describe '.all_with_average_score' do 
+  describe '.all_with_average_score' do
     let(:submission0) { Submission.create() }
     let(:submission1) { Submission.create() }
 
@@ -90,10 +90,10 @@ describe Submission do
     let(:language) { Language.find_by_name('Java') }
     let(:level) { Level.find_by_text('Junior') }
     let(:params) { {submission: {
-      email_text: email_text, 
+      email_text: email_text,
       candidate_name: 'Bob',
       candidate_email: 'bob@example.com',
-      level_id: level.id, 
+      level_id: level.id,
       language_id: language.id,
       source: 'LinkedIn'
     }}}
@@ -123,12 +123,12 @@ describe Submission do
     end
   end
 
-  describe '#attach_file' do
+  describe '#attach_zipfile' do
     let(:submission) { Submission.create() }
 
     it 'sets the zipfile attribute' do
       url = 'http://example.com'
-      expect { submission.attach_file(url) }.to change(submission, :zipfile).from(nil).to(url)
+      expect { submission.attach_zipfile(url) }.to change(submission, :zipfile).from(nil).to(url)
     end
   end
 
