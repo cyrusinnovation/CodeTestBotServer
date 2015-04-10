@@ -1,5 +1,5 @@
 class UploaderFactory
   def self.get_uploader
-    S3Uploader
+    CodeTestBotServer::Application.config.file_uploader
   end
 end

@@ -2,7 +2,18 @@ require "spec_helper"
 
 describe UploaderFactory do
 
-  it "returns s3uploader" do
-    expect(UploaderFactory.get_uploader).to eq(S3Uploader)
+  before do
+    @oldConfig = CodeTestBotServer::Application.config.file_uploader
+  end
+
+  after do
+    CodeTestBotServer::Application.config.file_uploader = @oldConfig
+  end
+
+  it "returns the configured uploader" do
+    class TestUploader; end
+    CodeTestBotServer::Application.config.file_uploader = TestUploader
+
+    expect(UploaderFactory.get_uploader).to eq TestUploader
   end
 end
