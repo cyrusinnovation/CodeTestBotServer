@@ -132,6 +132,15 @@ describe Submission do
     end
   end
 
+  describe '#attach_resumefile' do
+    let(:submission) { Submission.create() }
+
+    it 'sets the resumefile attribute' do
+      url = 'http://example.com'
+      expect { submission.attach_resumefile(url) }.to change(submission, :resumefile).from(nil).to(url)
+    end
+  end
+
   describe '.all_active' do
     let(:active) { Submission.create!({ active: true }) }
     let(:inactive) { Submission.create!({ active: false }) }

@@ -27,6 +27,10 @@ class Submission < ActiveRecord::Base
     update_attribute(:zipfile, file_url)
   end
 
+  def attach_resumefile(file_url)
+    update_attribute(:resumefile, file_url)
+  end
+
   def self.create_from_json(submission)
     level = Level.find(submission.fetch(:level_id))
 
@@ -38,8 +42,8 @@ class Submission < ActiveRecord::Base
     create!(
       candidate_name: submission.fetch(:candidate_name),
       candidate_email: submission.fetch(:candidate_email),
-      email_text: submission.fetch(:email_text), 
-      level: level, 
+      email_text: submission.fetch(:email_text),
+      level: level,
       language: language,
       source: submission.fetch(:source))
   end
