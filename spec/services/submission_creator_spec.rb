@@ -38,4 +38,19 @@ describe SubmissionCreator do
       SubmissionCreator.create_submission(submission_json)
       expect(Notifications::Submissions).to have_received(:new_submission).with(submission)
     end
+
+    describe "creating submission without files" do
+      let(:submission_json) { {} }
+
+      it 'handles lack of zipfile' do
+        SubmissionCreator.create_submission(submission_json)
+        expect(SubmissionFileUploader).to_not have_received(:upload)
+        expect(submission).to_not have_received(:attach_zipfile)
+      end
+      it 'handles lack of resumefile' do
+        SubmissionCreator.create_submission(submission_json)
+        expect(SubmissionFileUploader).to_not have_received(:upload)
+        expect(submission).to_not have_received(:attach_resumefile)
+      end
+    end
 end
