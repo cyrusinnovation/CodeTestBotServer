@@ -24,13 +24,13 @@ describe SubmissionCreator do
 
     it 'uploads the zipfile and attaches to submission' do
       SubmissionCreator.create_submission(submission_json)
-      expect(SubmissionFileUploader).to have_received(:upload).with(submission, submission_json[:zipfile], 'filename.zip', 'codetest')
+      expect(SubmissionFileUploader).to have_received(:upload).with(submission.id, submission_json[:zipfile], 'filename.zip', 'codetest')
       expect(submission).to have_received(:attach_zipfile).with(file_url)
     end
 
     it 'uploads the resumefile and attaches to submission' do
       SubmissionCreator.create_submission(submission_json)
-      expect(SubmissionFileUploader).to have_received(:upload).with(submission, submission_json[:resumefile], 'resumefile.pdf', 'resume')
+      expect(SubmissionFileUploader).to have_received(:upload).with(submission.id, submission_json[:resumefile], 'resumefile.pdf', 'resume')
       expect(submission).to have_received(:attach_resumefile).with(file_url)
     end
 

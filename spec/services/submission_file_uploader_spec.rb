@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe SubmissionFileUploader do
   it 'uploads the file to S3 with the correct path, hash, type and extension' do
-    submission = double(id: 5)
+    submission_id = 5
     encoded_file = double()
     file = double()
     hash = 'hash'
@@ -11,8 +11,8 @@ describe SubmissionFileUploader do
     S3Uploader.stub(:upload)
 
     file_name = 'candidate_name.tar'
-    expected_path = "submissions/#{submission.id}/codetest-#{submission.id}-#{hash}.tar"
-    SubmissionFileUploader.upload(submission, encoded_file, file_name, 'codetest')
+    expected_path = "submissions/#{submission_id}/codetest-#{submission_id}-#{hash}.tar"
+    SubmissionFileUploader.upload(submission_id, encoded_file, file_name, 'codetest')
 
     expect(FileHasher).to have_received(:short_hash).with(OpenSSL::Digest::SHA1.new, file)
     expect(S3Uploader).to have_received(:upload).with(expected_path, file)

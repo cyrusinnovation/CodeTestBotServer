@@ -3,14 +3,14 @@ class SubmissionCreator
     created_submission = Submission.create_from_json(submission)
 
     zipfile_name = submission[:zipfile_name]
-    zipfile_url = SubmissionFileUploader.upload(created_submission,
+    zipfile_url = SubmissionFileUploader.upload(created_submission.id,
                                                 submission[:zipfile],
                                                 zipfile_name,
                                                 'codetest')
     created_submission.attach_zipfile(zipfile_url)
 
     resumefile_name = submission[:resumefile_name]
-    resumefile_url = SubmissionFileUploader.upload(created_submission,
+    resumefile_url = SubmissionFileUploader.upload(created_submission.id,
                                                    submission[:resumefile],
                                                    resumefile_name,
                                                    'resume')
