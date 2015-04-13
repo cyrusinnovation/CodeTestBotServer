@@ -27,5 +27,6 @@ CodeTestBotServer::Application.configure do
   # number of complex assets.
   config.assets.debug = true
 
-  config.file_uploader = NullUploader
+  config.file_uploader = LocalUploader
+  config.serve_static_assets = true
 end
