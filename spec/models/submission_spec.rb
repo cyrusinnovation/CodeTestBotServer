@@ -15,8 +15,8 @@ describe Submission do
   end
 
   it { should respond_to(:zipfile) }
-  it { should respond_to(:email_text)}
-  it { should respond_to(:level)}
+  it { should respond_to(:email_text) }
+  it { should respond_to(:level) }
 
   it 'has a language' do
     java = Language.find_by_name('Java')
@@ -89,15 +89,20 @@ describe Submission do
     let(:email_text) { 'a new code test.' }
     let(:language) { Language.find_by_name('Java') }
     let(:level) { Level.find_by_text('Junior') }
-    let(:params) { {submission: {
-      email_text: email_text,
-      candidate_name: 'Bob',
-      candidate_email: 'bob@example.com',
-      level_id: level.id,
-      language_id: language.id,
-      source: 'LinkedIn',
-      github: 'www.github.com/name'
-    }}}
+    let(:params) do
+      {
+        submission: {
+          email_text: email_text,
+          candidate_name: 'Bob',
+          candidate_email: 'bob@example.com',
+          level_id: level.id,
+          language_id: language.id,
+          source: 'LinkedIn',
+          github: 'www.github.com/name',
+          linkedin: 'www.linkedin.com/name'
+        }
+      }
+    end
 
     subject(:creation) { Submission.create_from_json(params[:submission]) }
 
@@ -113,6 +118,7 @@ describe Submission do
     its('language.name') { should eq language.name }
     its(:source) { should eq 'LinkedIn' }
     its(:github) { should eq 'www.github.com/name' }
+    its(:linkedin) { should eq 'www.linkedin.com/name' }
   end
 
   describe '#close' do
@@ -144,8 +150,8 @@ describe Submission do
   end
 
   describe '.all_active' do
-    let(:active) { Submission.create!({ active: true }) }
-    let(:inactive) { Submission.create!({ active: false }) }
+    let(:active) { Submission.create!({active: true}) }
+    let(:inactive) { Submission.create!({active: false}) }
 
     subject { Submission.all_active }
 

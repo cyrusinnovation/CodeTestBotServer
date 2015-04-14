@@ -26,8 +26,33 @@ describe SubmissionsController do
       context 'when there is a submission' do
         let(:language) { Language.find_by_name('Java') }
         let(:level) { Level.find_by_text('Junior') }
-        let!(:submission) { Submission.create({email_text: 'test', language: language, candidate_name: 'Bob', candidate_email: 'bob@example.com', level: level, github: 'github'}) }
-        let(:expected) { [{email_text: 'test', zipfile: nil, resumefile: nil, average_score: nil, active: true, language_id: language.id, level_id: level.id, candidate_name: 'Bob', candidate_email: 'bob@example.com', source: nil, github: 'github' }].to_json }
+        let!(:submission) do
+          Submission.create({email_text: 'test',
+                             language: language,
+                             candidate_name: 'Bob',
+                             candidate_email: 'bob@example.com',
+                             level: level,
+                             github: 'github',
+                             linkedin: 'linkedin'})
+        end
+        let(:expected) do
+          [
+            {
+              email_text: 'test',
+              zipfile: nil,
+              resumefile: nil,
+              average_score: nil,
+              active: true,
+              language_id: language.id,
+              level_id: level.id,
+              candidate_name: 'Bob',
+              candidate_email: 'bob@example.com',
+              source: nil,
+              github: 'github',
+              linkedin: 'linkedin'
+            }
+          ].to_json
+        end
 
         subject(:body) { response.body }
 
@@ -41,7 +66,24 @@ describe SubmissionsController do
         let!(:submission) { Submission.create({email_text: 'test', candidate_name: 'Bob', candidate_email: 'bob@example.com'}) }
         let!(:assessment1) { Assessment.create({submission: submission, score: 3, pros: 'Bad tests.', cons: 'Good OO design'}) }
         let!(:assessment2) { Assessment.create({submission: submission, score: 4, pros: 'Good OO design', cons: 'Bad tests.'}) }
-        let(:expected) { [{email_text: 'test', zipfile: nil, resumefile: nil, average_score: '3.5', active: true, language_id: nil, level_id: nil, candidate_name: 'Bob', candidate_email: 'bob@example.com', source: nil, github: nil}].to_json }
+        let(:expected) do
+          [
+            {
+              email_text: 'test',
+              zipfile: nil,
+              resumefile: nil,
+              average_score: '3.5',
+              active: true,
+              language_id: nil,
+              level_id: nil,
+              candidate_name: 'Bob',
+              candidate_email: 'bob@example.com',
+              source: nil,
+              github: nil,
+              linkedin: nil
+            }
+          ].to_json
+        end
         subject(:body) { response.body }
 
         it { should be_json_eql(expected).at_path('submissions') }
@@ -52,8 +94,38 @@ describe SubmissionsController do
         let(:level) { Level.find_by_text('Junior') }
         let!(:submission) { Submission.create({email_text: 'test1', language: language, candidate_name: 'Submission One', candidate_email: 'bob@example.com', level: level}) }
         let!(:submission2) { Submission.create({email_text: 'test2', language: language, candidate_name: 'Submission Two', candidate_email: 'bob@example.com', level: level}) }
-        let(:expected) { [{email_text: 'test2', zipfile: nil, resumefile: nil, active: true, average_score: nil, language_id: language.id, level_id: level.id, candidate_name: 'Submission Two', candidate_email: 'bob@example.com', source: nil, github: nil},
-                          {email_text: 'test1', zipfile: nil, resumefile: nil, active: true, average_score: nil, language_id: language.id, level_id: level.id, candidate_name: 'Submission One', candidate_email: 'bob@example.com', source: nil, github: nil}].to_json }
+        let(:expected) do
+          [
+            {
+              email_text: 'test2',
+              zipfile: nil,
+              resumefile: nil,
+              active: true,
+              average_score: nil,
+              language_id: language.id,
+              level_id: level.id,
+              candidate_name: 'Submission Two',
+              candidate_email: 'bob@example.com',
+              source: nil,
+              github: nil,
+              linkedin: nil
+            },
+            {
+              email_text: 'test1',
+              zipfile: nil,
+              resumefile: nil,
+              active: true,
+              average_score: nil,
+              language_id: language.id,
+              level_id: level.id,
+              candidate_name: 'Submission One',
+              candidate_email: 'bob@example.com',
+              source: nil,
+              github: nil,
+              linkedin: nil
+            }
+          ].to_json
+        end
 
         subject(:body) { response.body }
 
@@ -69,7 +141,7 @@ describe SubmissionsController do
     let(:language) { Language.find_by_name('Java') }
     let(:level) { Level.find_by_text('Junior') }
     let(:params) { {submission: {email_text: email_text, zipfile: 'header,====', candidate_name: 'Bob', level_id: level.id.to_s, language_id: language.id.to_s}}.with_indifferent_access }
-    let(:submission) { Submission.new({ language: language }) }
+    let(:submission) { Submission.new({language: language}) }
 
     before {
       SubmissionCreator.stub(:create_submission => submission)
@@ -109,7 +181,22 @@ describe SubmissionsController do
       let!(:submission1) { Submission.create({email_text: 'first'}) }
       let!(:submission2) { Submission.create({email_text: 'second'}) }
       let(:params) { {id: submission2.id} }
-      let(:expected) { {email_text: 'second', zipfile: nil, active: true, average_score: nil, language_id: nil, candidate_name: nil, candidate_email: nil, level_id: nil, source: nil, resumefile: nil, github: nil}.to_json }
+      let(:expected) do
+        {
+          email_text: 'second',
+          zipfile: nil,
+          active: true,
+          average_score: nil,
+          language_id: nil,
+          candidate_name: nil,
+          candidate_email: nil,
+          level_id: nil,
+          source: nil,
+          resumefile: nil,
+          github: nil,
+          linkedin: nil
+        }.to_json
+      end
 
       it { should be_ok }
       its(:body) { should be_json_eql(expected).at_path('submission') }
@@ -129,7 +216,22 @@ describe SubmissionsController do
         before { add_user_to_session(role) }
 
         context 'when updating an existing submission' do
-          let(:expected) { {email_text: 'updated', average_score: nil, zipfile: nil, resumefile: nil, active: false, language_id: nil, candidate_name: nil, candidate_email: nil, level_id: nil, source: nil, github: nil}.to_json }
+          let(:expected) do
+            {
+              email_text: 'updated',
+              average_score: nil,
+              zipfile: nil,
+              resumefile: nil,
+              active: false,
+              language_id: nil,
+              candidate_name: nil,
+              candidate_email: nil,
+              level_id: nil,
+              source: nil,
+              github: nil,
+              linkedin: nil
+            }.to_json
+          end
 
           it { should be_ok }
           its(:body) { should be_json_eql(expected).at_path('submission') }
@@ -173,7 +275,7 @@ describe SubmissionsController do
           end
           it 'should delete submission assessments' do
             assessor = Assessor.create({name: 'Bob', email: 'bob@example.com'})
-            Assessment.create({ submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!', pros: 'Bad tests.', cons: 'Good OO design' })
+            Assessment.create({submission: submission, assessor: assessor, score: 5, notes: 'Fantastic!', pros: 'Bad tests.', cons: 'Good OO design'})
             expect(Assessment.count).to eq(1)
             response
             expect(Assessment.count).to eq(0)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150414154915) do
+ActiveRecord::Schema.define(version: 20150414184221) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 20150414154915) do
     t.string   "source"
     t.string   "resumefile"
     t.string   "github"
+    t.string   "linkedin"
   end
 
   create_table "users", force: true do |t|

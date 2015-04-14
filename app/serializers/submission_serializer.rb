@@ -1,6 +1,18 @@
 class SubmissionSerializer < ActiveModel::Serializer
   embed :ids, include: true
-  attributes :id, :candidate_name, :candidate_email, :email_text, :zipfile, :created_at, :updated_at, :active, :average_score, :source, :resumefile, :github
+  attributes :id,
+             :candidate_name,
+             :candidate_email,
+             :email_text,
+             :zipfile,
+             :created_at,
+             :updated_at,
+             :active,
+             :average_score,
+             :source,
+             :resumefile,
+             :github,
+             :linkedin
   has_one :language
   has_one :level
 

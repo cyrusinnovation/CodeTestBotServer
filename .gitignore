@@ -26,3 +26,5 @@
 
 # Ignore uploaded files in dev mode (served as static asset)
 /public/uploads
+
+/out
