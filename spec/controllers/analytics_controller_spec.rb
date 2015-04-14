@@ -27,7 +27,7 @@ describe AnalyticsController do
         let(:language) { Language.find_by_name('Java') }
         let(:level) { Level.find_by_text('Junior') }
         let!(:submission) { Submission.create({email_text: 'test', language: language, candidate_name: 'Bob', candidate_email: 'bob@example.com', level: level}) }
-        let(:expected) { [{email_text: 'test', zipfile: nil, average_score: nil, active: true, language_id: language.id, level_id: level.id, candidate_name: 'Bob', candidate_email: 'bob@example.com', source: nil}].to_json }
+        let(:expected) { [{email_text: 'test', zipfile: nil, resumefile: nil, average_score: nil, active: true, language_id: language.id, level_id: level.id, candidate_name: 'Bob', candidate_email: 'bob@example.com', source: nil}].to_json }
 
         subject(:body) { response.body }
 
@@ -41,8 +41,8 @@ describe AnalyticsController do
         let(:level) { Level.find_by_text('Junior') }
         let!(:submission) { Submission.create({email_text: 'test1', language: language, candidate_name: 'Submission One', candidate_email: 'bob@example.com', level: level}) }
         let!(:submission2) { Submission.create({email_text: 'test2', language: language, candidate_name: 'Submission Two', candidate_email: 'bob@example.com', level: level}) }
-        let(:expected) { [{email_text: 'test2', zipfile: nil, active: true, average_score: nil, language_id: language.id, level_id: level.id, candidate_name: 'Submission Two', candidate_email: 'bob@example.com', source: nil},
-                          {email_text: 'test1', zipfile: nil, active: true, average_score: nil, language_id: language.id, level_id: level.id, candidate_name: 'Submission One', candidate_email: 'bob@example.com', source: nil}].to_json }
+        let(:expected) { [{email_text: 'test2', zipfile: nil, resumefile: nil, active: true, average_score: nil, language_id: language.id, level_id: level.id, candidate_name: 'Submission Two', candidate_email: 'bob@example.com', source: nil},
+                          {email_text: 'test1', zipfile: nil, resumefile: nil, active: true, average_score: nil, language_id: language.id, level_id: level.id, candidate_name: 'Submission One', candidate_email: 'bob@example.com', source: nil}].to_json }
 
         subject(:body) { response.body }
 

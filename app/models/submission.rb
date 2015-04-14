@@ -9,7 +9,7 @@ class Submission < ActiveRecord::Base
   end
 
   def self.all_with_average_score
-    fields = ['id', 'candidate_name', 'candidate_email', 'email_text', 'zipfile', 'active', 'language_id', 'level_id', 'created_at', 'updated_at', 'source']
+    fields = ['id', 'candidate_name', 'candidate_email', 'email_text', 'zipfile', 'resumefile', 'active', 'language_id', 'level_id', 'created_at', 'updated_at', 'source']
     submission_fields = fields.map { |f| 'submissions.' + f }.join(',')
     avg = ', round(avg(assessments.score) * 2) / 2 as average_score'
     select(submission_fields + avg).joins('LEFT JOIN assessments ON (assessments.submission_id = submissions.id AND assessments.published = TRUE)').group(submission_fields).order(updated_at: :desc)
