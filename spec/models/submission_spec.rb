@@ -95,7 +95,8 @@ describe Submission do
       candidate_email: 'bob@example.com',
       level_id: level.id,
       language_id: language.id,
-      source: 'LinkedIn'
+      source: 'LinkedIn',
+      github: 'www.github.com/name'
     }}}
 
     subject(:creation) { Submission.create_from_json(params[:submission]) }
@@ -111,6 +112,7 @@ describe Submission do
     its('level.text') { should eq level.text }
     its('language.name') { should eq language.name }
     its(:source) { should eq 'LinkedIn' }
+    its(:github) { should eq 'www.github.com/name' }
   end
 
   describe '#close' do
