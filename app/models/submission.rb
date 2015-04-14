@@ -52,13 +52,13 @@ class Submission < ActiveRecord::Base
       language = Language.find(submission.fetch(:language_id))
     end
 
-    create!(candidate_name: submission.fetch(:candidate_name),
-            candidate_email: submission.fetch(:candidate_email),
-            email_text: submission.fetch(:email_text),
+    create!(candidate_name: submission[:candidate_name],
+            candidate_email: submission[:candidate_email],
+            email_text: submission[:email_text],
             level: level,
             language: language,
-            source: submission.fetch(:source),
-            github: submission.fetch(:github),
-            linkedin: submission.fetch(:linkedin))
+            source: submission[:source],
+            github: submission[:github],
+            linkedin: submission[:linkedin])
   end
 end
