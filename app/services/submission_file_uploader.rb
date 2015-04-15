@@ -13,10 +13,15 @@ class SubmissionFileUploader
   end
 
   def self.upload(submission_id, encoded_file, file_name, type)
-    file = Base64FileDecoder.decode_to_file(encoded_file)
-    shorthash = FileHasher.short_hash(OpenSSL::Digest::SHA1.new, file)
-    extension = self.get_extension(file_name)
-    path = "submissions/#{submission_id}/#{type}-#{submission_id}-#{shorthash}.#{extension}"
+    if type == 'codetest'
+      file = Base64FileDecoder.decode_to_file(encoded_file)
+      shorthash = FileHasher.short_hash(OpenSSL::Digest::SHA1.new, file)
+      extension = self.get_extension(file_name)
+      path = "submissions/#{submission_id}/#{type}-#{submission_id}-#{shorthash}.#{extension}"
+    else
+      file = Base64FileDecoder.decode_to_file(encoded_file)
+      path = "submissions/#{submission_id}/#{type}-#{submission_id}-#{file_name}"
+    end
 
     CodeTestBotServer::Application.config.file_uploader.upload(path, file).to_s
   end
