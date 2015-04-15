@@ -28,3 +28,6 @@
 /public/uploads
 
 /out
+
+*.swp
+*.swo
