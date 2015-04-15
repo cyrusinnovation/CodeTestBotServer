@@ -204,10 +204,25 @@ describe SubmissionsController do
   end
 
   describe '#update' do
-    let(:submission) { Submission.create({email_text: 'original'}) }
+    let(:submission) do
+      Submission.create({email_text: 'original',
+                         candidate_name: 'name',
+                         candidate_email: 'email',
+                         linkedin: 'linkedin',
+                         github: 'github'})
+    end
+
     let(:submission_id) { submission.id }
 
-    subject(:response) { put :update, {id: submission_id, submission: {email_text: 'updated', active: false}} }
+    subject(:response) do
+      put :update, {id: submission_id,
+                    submission: {email_text: 'updated',
+                                 active: false,
+                                 candidate_name: 'sandy',
+                                 candidate_email: 'otheremail',
+                                 github: 'othergithub',
+                                 linkedin: 'otherlinkedin'}}
+    end
 
     it_behaves_like 'a secured route'
 
@@ -224,12 +239,12 @@ describe SubmissionsController do
               resumefile: nil,
               active: false,
               language_id: nil,
-              candidate_name: nil,
-              candidate_email: nil,
+              candidate_name: 'sandy',
+              candidate_email: 'otheremail',
               level_id: nil,
               source: nil,
-              github: nil,
-              linkedin: nil
+              github: 'othergithub',
+              linkedin: 'otherlinkedin'
             }.to_json
           end
 
@@ -237,7 +252,12 @@ describe SubmissionsController do
           its(:body) { should be_json_eql(expected).at_path('submission') }
           it 'should update the submission' do
             response
-            expect(Submission.first.email_text).to eq('updated')
+            sandys_submission = Submission.find(submission_id)
+            expect(sandys_submission.email_text).to eq('updated')
+            expect(sandys_submission.candidate_email).to eq('otheremail')
+            expect(sandys_submission.candidate_name).to eq('sandy')
+            expect(sandys_submission.github).to eq('othergithub')
+            expect(sandys_submission.linkedin).to eq('otherlinkedin')
           end
         end
 
