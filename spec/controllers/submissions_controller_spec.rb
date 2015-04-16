@@ -213,6 +213,7 @@ describe SubmissionsController do
     end
 
     let(:submission_id) { submission.id }
+    let(:uploaded_file) { double('file contents') }
 
     subject(:response) do
       put :update, {id: submission_id,
@@ -221,14 +222,19 @@ describe SubmissionsController do
                                  candidate_name: 'sandy',
                                  candidate_email: 'otheremail',
                                  github: 'othergithub',
-                                 linkedin: 'otherlinkedin'}}
+                                 linkedin: 'otherlinkedin',
+                                 resumefile_name: 'name.pdf',
+                                 resumefile: uploaded_file}}
     end
 
     it_behaves_like 'a secured route'
 
     %w(Recruiter Administrator).each do |role|
       context "when user has role #{role}" do
-        before { add_user_to_session(role) }
+        before do
+          add_user_to_session(role)
+          expect(SubmissionFileUploader).to receive(:upload).with(submission_id.to_s, uploaded_file.to_s, 'name.pdf', 'resume').and_return("public/uploads/submissions/#{submission_id}/resume-#{submission_id}-name.pdf")
+        end
 
         context 'when updating an existing submission' do
           let(:expected) do
@@ -244,7 +250,8 @@ describe SubmissionsController do
               level_id: nil,
               source: nil,
               github: 'othergithub',
-              linkedin: 'otherlinkedin'
+              linkedin: 'otherlinkedin',
+              resumefile: "public/uploads/submissions/#{submission_id}/resume-#{submission_id}-name.pdf"
             }.to_json
           end
 
@@ -258,6 +265,7 @@ describe SubmissionsController do
             expect(sandys_submission.candidate_name).to eq('sandy')
             expect(sandys_submission.github).to eq('othergithub')
             expect(sandys_submission.linkedin).to eq('otherlinkedin')
+            expect(sandys_submission.resumefile).to eq("public/uploads/submissions/#{submission_id}/resume-#{submission_id}-name.pdf")
           end
         end
 

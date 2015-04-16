@@ -23,14 +23,29 @@ class SubmissionsController < UserAwareController
 
   def update
     authorize! :update, Submission
+    submission_id = params[:id]
     submission = params[:submission]
 
-    render :json => Submission.update(params[:id], {email_text: submission[:email_text],
-                                                    active: submission[:active],
-                                                    candidate_name: submission[:candidate_name],
-                                                    candidate_email: submission[:candidate_email],
-                                                    github: submission[:github],
-                                                    linkedin: submission[:linkedin]})
+    resumefile_name = submission[:resumefile_name]
+    if resumefile_name
+      resumefile_url = SubmissionFileUploader.upload(submission_id,
+                                                     submission[:resumefile],
+                                                     resumefile_name,
+                                                     'resume')
+    end
+
+
+    submission_params = {email_text: submission[:email_text],
+                         active: submission[:active],
+                         candidate_name: submission[:candidate_name],
+                         candidate_email: submission[:candidate_email],
+                         github: submission[:github],
+                         linkedin: submission[:linkedin]}
+    if (resumefile_url)
+      submission_params[:resumefile] = resumefile_url
+    end
+
+    render :json => Submission.update(submission_id, submission_params)
   end
 
   def destroy
