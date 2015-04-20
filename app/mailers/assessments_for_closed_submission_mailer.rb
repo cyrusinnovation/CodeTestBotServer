@@ -7,7 +7,7 @@ class AssessmentsForClosedSubmissionMailer < ActionMailer::Base
       to: Figaro.env.recruiter_address,
       from: Figaro.env.from_address,
       subject: "[CTB] #{@candidate_name}: #{@level.text} #{@language.name} Closed Submission with Assessments"
-    )
+    ).deliver
   end
 
   private

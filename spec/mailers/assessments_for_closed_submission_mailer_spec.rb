@@ -38,6 +38,7 @@ describe AssessmentsForClosedSubmissionMailer do
     it 'body should match fixture' do
       expected = read_mailer_fixture(AssessmentsForClosedSubmissionMailer, 'closed_submission_summary')
       expect(mail.body.to_s).to eq(expected)
+      expect(AssessmentsForClosedSubmissionMailer.deliveries.first.subject).to include('Mario Batali')
     end
   end
 end
