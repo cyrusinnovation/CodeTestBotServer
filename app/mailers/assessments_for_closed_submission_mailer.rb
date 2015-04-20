@@ -1,10 +1,10 @@
 class AssessmentsForClosedSubmissionMailer < ActionMailer::Base
 
-  def closed_submission_summary(submission)
+  def closed_submission_summary(submission, recruiter_email)
     extract(submission)
     extract_assessments(submission)
     mail(
-      to: Figaro.env.recruiter_address,
+      to: recruiter_email,
       from: Figaro.env.from_address,
       subject: "[CTB] #{@candidate_name}: #{@level.text} #{@language.name} Closed Submission with Assessments"
     ).deliver

@@ -4,11 +4,10 @@ require 'mailer_spec_helper'
 describe AssessmentsForClosedSubmissionMailer do
   include MailerSpecHelper
 
-  let(:recruiter_address) { 'recruiter@example.com' }
+  let(:recruiter_address) { 'closedassessment@example.com' }
   let(:from_address) { 'test.from@example.com' }
 
   before(:each) do
-    Figaro.env.stub(:recruiter_address => recruiter_address)
     Figaro.env.stub(:from_address => from_address)
     Figaro.env.stub(:app_uri => 'http://example.com')
   end
@@ -21,7 +20,7 @@ describe AssessmentsForClosedSubmissionMailer do
     let(:assessor2) { Assessor.new({ name: 'Assessor2', role_id: 1 }) }
     let(:assessment1) { Assessment.new({ assessor: assessor1, score: 3, pros: 'Pros1', cons: 'Cons1', notes: 'Notes1' }) }
     let(:assessment2) { Assessment.new({ assessor: assessor2, score: 4, pros: 'Pros2', cons: 'Cons2', notes: 'Notes2' }) }
-    subject(:mail) { AssessmentsForClosedSubmissionMailer.closed_submission_summary(submission) }
+    subject(:mail) { AssessmentsForClosedSubmissionMailer.closed_submission_summary(submission, recruiter_address) }
 
     before(:each) do
       submission.assessments << [ assessment1, assessment2 ]
