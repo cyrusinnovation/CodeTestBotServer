@@ -20,7 +20,7 @@ class SubmissionFileUploader
       path = "submissions/#{submission_id}/#{type}-#{submission_id}-#{shorthash}.#{extension}"
     else
       file = Base64FileDecoder.decode_to_file(encoded_file)
-      path = "submissions/#{submission_id}/#{type}-#{submission_id}-#{file_name}"
+      path = "submissions/#{submission_id}/#{type}-#{submission_id}-#{URI.encode(file_name)}"
     end
 
     CodeTestBotServer::Application.config.file_uploader.upload(path, file).to_s

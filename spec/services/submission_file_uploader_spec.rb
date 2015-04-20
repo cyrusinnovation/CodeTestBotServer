@@ -33,6 +33,21 @@ describe SubmissionFileUploader do
     expect(CodeTestBotServer::Application.config.file_uploader).to have_received(:upload).with(expected_path, file)
   end
 
+
+  it 'uri encodes a resume file with spaces in the name the correct path and filename without hashing the filename' do
+    submission_id = 2
+    encoded_file = double()
+    file = double()
+    file_name = 'candidate resume.pdf'
+    expected_path = "submissions/#{submission_id}/resume-#{submission_id}-#{URI.encode(file_name)}"
+
+    Base64FileDecoder.stub(decode_to_file: file)
+    CodeTestBotServer::Application.config.file_uploader.stub(:upload)
+
+    SubmissionFileUploader.upload(submission_id, encoded_file, file_name, 'resume')
+    expect(CodeTestBotServer::Application.config.file_uploader).to have_received(:upload).with(expected_path, file)
+  end
+
   it 'extension is parsed out correctly' do
     expect(SubmissionFileUploader.get_extension("candidate_name.jar")).to eq('jar')
     expect(SubmissionFileUploader.get_extension("candidate_name.tar.gz")).to eq('tar.gz')
