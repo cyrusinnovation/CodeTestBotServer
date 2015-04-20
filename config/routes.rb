@@ -1,4 +1,5 @@
 CodeTestBotServer::Application.routes.draw do
+
   resources :candidates
   resources :sessions, only: [:new, :show]
   resources :submissions, except: [:new, :edit]
@@ -8,6 +9,7 @@ CodeTestBotServer::Application.routes.draw do
   resources :pages, only: [:show, :update]
   resources :analytics, only: [:index]
 
+  post 'email/submission_summary', to: 'email#submission_summary'
   post '/users/assign_role_to_user', to: 'users#assign_role_to_user'
   post '/users/remove_role_from_user', to: 'users#remove_role_from_user'
   get '/users/filter_by_role', to: 'users#filter_by_role'
