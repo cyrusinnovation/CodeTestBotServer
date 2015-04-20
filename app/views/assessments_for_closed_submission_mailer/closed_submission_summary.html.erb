@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<h1>Summary of Closed Submission</h1>
+<p>
+  A <%= @language.name %> submission for a <%= @level.text %> candidate has been closed and the assessments are included below.
+</p>
+
+<% @assessments.each_with_index do |a, index| %>
+<div>
+  <h2>Assessment <%= index + 1 %></h2>
+  <p>Assessed by <%= a.assessor.name %></p>
+  <p>Score: <%= a.score %></p>
+  <p>Pros: <%= a.pros %></p>
+  <p>Cons: <%= a.cons %></p>
+  <p>Notes: <%= a.notes %></p>
+</div>
+
+<% end %>
+</body>
+</html>
