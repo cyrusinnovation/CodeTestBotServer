@@ -5,6 +5,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
                :name => 'google',
                :access_type => 'online',
                :image_aspect_ratio => 'square',
-               :image_size => 40
+               :image_size => 40,
+               :hd => ENV['GOOGLE_CLIENT_HOST_DOMAIN']
            }
 end
