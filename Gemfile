@@ -36,6 +36,10 @@ group :development, :test do
   gem 'rspec-rails',  '~> 2.14.1'
   gem 'guard',        '~> 2.6.0'
   gem 'guard-rspec',  '~> 4.2.7'
+  gem 'pry'
+  gem 'pry-stack_explorer'
+  gem 'pry-remote'
+  gem 'pry-nav'
 end
 
 group :development do
