@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'mailer_spec_helper'
+require 'pry'
 
 describe AssessmentsForClosedSubmissionMailer do
   include MailerSpecHelper
@@ -34,10 +35,31 @@ describe AssessmentsForClosedSubmissionMailer do
     its(:to) { should include recruiter_address }
     its(:from) { should include from_address }
     its(:subject) { should eq("[CTB] #{submission.candidate_name}: #{level.text} #{language.name} Closed Submission with Assessments") }
+    
     it 'body should match fixture' do
       expected = read_mailer_fixture(AssessmentsForClosedSubmissionMailer, 'closed_submission_summary')
       expect(mail.body.to_s).to eq(expected)
       expect(AssessmentsForClosedSubmissionMailer.deliveries.first.subject).to include('Mario Batali')
     end
+
+    it 'body should render markdown for pros, cons and notes' do 
+      md_bold_pros = '**Markdown PROS**'
+      md_italic_cons = 'Markdown _CONS_'
+      md_bold_notes = 'Markdown **NOTES**'
+      md_assessment1 = Assessment.new({ 
+        assessor: assessor1, 
+        score: 3, 
+        pros: markdown_to_html(md_bold_pros), 
+        cons: markdown_to_html(md_italic_cons), 
+        notes: markdown_to_html(md_bold_notes) 
+      })
+
+      submission.assessments = [md_assessment1]
+      submission.save
+
+      expected = read_mailer_fixture(AssessmentsForClosedSubmissionMailer, 'closed_submission_summary_md')
+      expect(mail.body.to_s).to eq(expected)
+    end
+
   end
 end

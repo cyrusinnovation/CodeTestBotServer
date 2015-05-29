@@ -14,9 +14,9 @@
   <h2>Assessment <%= index + 1 %></h2>
   <p>Assessed by <%= a.assessor.name %></p>
   <p>Score: <%= a.score %></p>
-  <p>Pros: <%= a.pros %></p>
-  <p>Cons: <%= a.cons %></p>
-  <p>Notes: <%= a.notes %></p>
+  <p>Pros: <%= markdown_to_html(a.pros) %></p>
+  <p>Cons: <%= markdown_to_html(a.cons) %></p>
+  <p>Notes: <%= markdown_to_html(a.notes) %></p>
 </div>
 
 <% end %>

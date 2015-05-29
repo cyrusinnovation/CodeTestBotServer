@@ -1,4 +1,5 @@
 class AssessmentsForClosedSubmissionMailer < ActionMailer::Base
+  helper ApplicationHelper
 
   def closed_submission_summary(submission, recruiter_email)
     extract(submission)

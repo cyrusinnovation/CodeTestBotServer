@@ -13,23 +13,11 @@
   <h2>Assessment 1</h2>
   <p>Assessed by Assessor1</p>
   <p>Score: 3</p>
-  <p>Pros: &lt;p&gt;Pros1&lt;/p&gt;
+  <p>Pros: &lt;p&gt;&lt;strong&gt;Markdown PROS&lt;/strong&gt;&lt;/p&gt;
 </p>
-  <p>Cons: &lt;p&gt;Cons1&lt;/p&gt;
+  <p>Cons: &lt;p&gt;Markdown &lt;em&gt;CONS&lt;/em&gt;&lt;/p&gt;
 </p>
-  <p>Notes: &lt;p&gt;Notes1&lt;/p&gt;
-</p>
-</div>
-
-<div>
-  <h2>Assessment 2</h2>
-  <p>Assessed by Assessor2</p>
-  <p>Score: 4</p>
-  <p>Pros: &lt;p&gt;Pros2&lt;/p&gt;
-</p>
-  <p>Cons: &lt;p&gt;Cons2&lt;/p&gt;
-</p>
-  <p>Notes: &lt;p&gt;Notes2&lt;/p&gt;
+  <p>Notes: &lt;p&gt;Markdown &lt;strong&gt;NOTES&lt;/strong&gt;&lt;/p&gt;
 </p>
 </div>
 
