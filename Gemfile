@@ -26,6 +26,7 @@ gem 'omniauth-google-oauth2'
 gem 'cancan', '~> 1.6.10'
 gem 'figaro', github: 'laserlemon/figaro'
 gem 'timecop'
+gem 'kramdown'
 
 group :doc do
   gem 'sdoc', require: false

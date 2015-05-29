@@ -83,6 +83,7 @@ GEM
       multi_json (~> 1.0)
       rspec (>= 2.0, < 4.0)
     jwt (1.0.0)
+    kramdown (1.7.0)
     listen (2.7.9)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
@@ -240,6 +241,7 @@ DEPENDENCIES
   guard-rspec (~> 4.2.7)
   jbuilder (~> 2.0.5)
   json_spec
+  kramdown
   omniauth-google-oauth2
   pg
   pry

@@ -29,6 +29,10 @@ class Assessment < ActiveRecord::Base
     created
   end
 
+  def self.markdown_to_html(md)
+    Kramdown::Document.new(md).to_html
+  end
+
   def update_from_json(assessment_json)
     update!({
                 score: assessment_json[:score],
