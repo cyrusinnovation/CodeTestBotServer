@@ -6,12 +6,12 @@
 <body>
 <h1>Summary of Closed Submission</h1>
 <p>
-  A <%= @language.name %> submission for a <%= @level.text %> candidate has been closed and the assessments are included below.
+  A <%= @language.name %> submission from <%= @candidate_name %> has been closed and the assessments are included below.
 </p>
 
 <% @assessments.each_with_index do |a, index| %>
 <div>
-  <h2>Assessment <%= index + 1 %></h2>
+  <p><strong>Assessment <%= index + 1 %></strong></p>
   <p>Assessed by <%= a.assessor.name %></p>
   <p>Conclusion: <%= a.conclusion %></p>
   <p>Pros:</p>
