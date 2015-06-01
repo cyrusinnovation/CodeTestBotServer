@@ -15,11 +15,11 @@
   <p>Assessed by <%= a.assessor.name %></p>
   <p>Score: <%= a.score %></p>
   <p>Pros:</p>
-  <%= markdown_to_html(a.pros) %>
+  <%= markdown_to_html(a.pros).html_safe %>
   <p>Cons:</p>
-  <%= markdown_to_html(a.cons) %>
+  <%= markdown_to_html(a.cons).html_safe %>
   <p>Notes:</p>
-  <%= markdown_to_html(a.notes) %>
+  <%= markdown_to_html(a.notes).html_safe %>
 </div>
 
 <% end %>
