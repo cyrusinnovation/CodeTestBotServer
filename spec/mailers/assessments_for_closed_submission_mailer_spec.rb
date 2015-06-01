@@ -20,7 +20,7 @@ describe AssessmentsForClosedSubmissionMailer do
     let(:assessor1) { Assessor.new({ name: 'Assessor1', role_id: 1 }) }
     let(:assessor2) { Assessor.new({ name: 'Assessor2', role_id: 1 }) }
     let(:assessment1) { Assessment.new({ assessor: assessor1, score: 3, pros: 'Pros1', cons: 'Cons1', notes: 'Notes1' }) }
-    let(:assessment2) { Assessment.new({ assessor: assessor2, score: 4, pros: 'Pros2', cons: 'Cons2', notes: 'Notes2' }) }
+    let(:assessment2) { Assessment.new({ assessor: assessor2, score: 2, pros: 'Pros2', cons: 'Cons2', notes: 'Notes2' }) }
     subject(:mail) { AssessmentsForClosedSubmissionMailer.closed_submission_summary(submission, recruiter_address) }
 
     before(:each) do

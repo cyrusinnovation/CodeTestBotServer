@@ -12,30 +12,30 @@
 <div>
   <h2>Assessment 1</h2>
   <p>Assessed by Assessor1</p>
-  <p>Score: 3</p>
+  <p>Conclusion: Yes</p>
   <p>Pros:</p>
-  &lt;p&gt;Pros1&lt;/p&gt;
+  <p>Pros1</p>
 
   <p>Cons:</p>
-  &lt;p&gt;Cons1&lt;/p&gt;
+  <p>Cons1</p>
 
   <p>Notes:</p>
-  &lt;p&gt;Notes1&lt;/p&gt;
+  <p>Notes1</p>
 
 </div>
 
 <div>
   <h2>Assessment 2</h2>
   <p>Assessed by Assessor2</p>
-  <p>Score: 4</p>
+  <p>Conclusion: Maybe</p>
   <p>Pros:</p>
-  &lt;p&gt;Pros2&lt;/p&gt;
+  <p>Pros2</p>
 
   <p>Cons:</p>
-  &lt;p&gt;Cons2&lt;/p&gt;
+  <p>Cons2</p>
 
   <p>Notes:</p>
-  &lt;p&gt;Notes2&lt;/p&gt;
+  <p>Notes2</p>
 
 </div>
 

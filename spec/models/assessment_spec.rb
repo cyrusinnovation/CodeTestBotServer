@@ -99,4 +99,16 @@ describe Assessment do
       end
     end
   end
+
+  describe '#conclusion' do 
+    it 'outputs yes/no/maybe based on its score' do 
+      assessment_no = Assessment.new(score: 1)
+      assessment_maybe = Assessment.new(score: 2)
+      assessment_yes = Assessment.new(score: 3)
+
+      expect(assessment_no.conclusion).to eq 'No'
+      expect(assessment_maybe.conclusion).to eq 'Maybe'
+      expect(assessment_yes.conclusion).to eq 'Yes'
+    end
+  end
 end

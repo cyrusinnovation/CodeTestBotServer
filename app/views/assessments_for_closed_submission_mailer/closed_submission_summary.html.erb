@@ -13,7 +13,7 @@
 <div>
   <h2>Assessment <%= index + 1 %></h2>
   <p>Assessed by <%= a.assessor.name %></p>
-  <p>Score: <%= a.score %></p>
+  <p>Conclusion: <%= a.conclusion %></p>
   <p>Pros:</p>
   <%= markdown_to_html(a.pros).html_safe %>
   <p>Cons:</p>

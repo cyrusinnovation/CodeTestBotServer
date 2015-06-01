@@ -48,4 +48,17 @@ class Assessment < ActiveRecord::Base
   def age
     Time.now.utc - created_at
   end
+
+  def conclusion
+    if score
+      case score
+      when 1
+        "No"
+      when 2
+        "Maybe"
+      when 3
+        "Yes"
+      end
+    end
+  end
 end
