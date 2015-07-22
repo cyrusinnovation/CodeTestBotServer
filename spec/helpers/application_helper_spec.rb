@@ -7,5 +7,9 @@ describe ApplicationHelper do
       expected_html = "<ul>\n  <li>google.com</li>\n  <li>yahoo.com</li>\n</ul>\n"
       expect(helper.markdown_to_html(markdown)).to eq expected_html
     end
+
+    it 'returns empty string if given nil' do
+      expect(helper.markdown_to_html(nil)).to eq ''
+    end
   end
 end
