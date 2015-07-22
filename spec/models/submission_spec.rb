@@ -99,7 +99,8 @@ describe Submission do
           language_id: language.id,
           source: 'LinkedIn',
           github: 'www.github.com/name',
-          linkedin: 'www.linkedin.com/name'
+          linkedin: 'www.linkedin.com/name',
+          agile: 'I lurve it'
         }
       }
     end
@@ -119,6 +120,7 @@ describe Submission do
     its(:source) { should eq 'LinkedIn' }
     its(:github) { should eq 'www.github.com/name' }
     its(:linkedin) { should eq 'www.linkedin.com/name' }
+    its(:agile) { should eq 'I lurve it' }
   end
 
   describe '#close' do

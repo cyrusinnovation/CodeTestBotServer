@@ -36,6 +36,7 @@ class SubmissionsController < UserAwareController
 
 
     submission_params = {email_text: submission[:email_text],
+                         # agile: submission[:agile],
                          active: submission[:active],
                          candidate_name: submission[:candidate_name],
                          candidate_email: submission[:candidate_email],

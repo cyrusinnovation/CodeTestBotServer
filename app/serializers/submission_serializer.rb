@@ -4,6 +4,7 @@ class SubmissionSerializer < ActiveModel::Serializer
              :candidate_name,
              :candidate_email,
              :email_text,
+             :agile,
              :zipfile,
              :created_at,
              :updated_at,

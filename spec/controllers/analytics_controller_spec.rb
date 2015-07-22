@@ -31,6 +31,7 @@ describe AnalyticsController do
           [
             {
               email_text: 'test',
+              agile: nil,
               zipfile: nil,
               resumefile: nil,
               average_score: nil,
@@ -62,6 +63,7 @@ describe AnalyticsController do
           [
             {
               email_text: 'test2',
+              agile: nil,
               zipfile: nil,
               resumefile: nil,
               active: true,
@@ -76,6 +78,7 @@ describe AnalyticsController do
             },
             {
               email_text: 'test1',
+              agile: nil,
               zipfile: nil,
               resumefile: nil,
               active: true,
